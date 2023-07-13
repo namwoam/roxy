@@ -64,4 +64,11 @@ rtos_status_code rtos_leave_region( void );
 1. Use the scheduler provided by the os for now (2023-07-13), may implement time slot in the future.
 2. Each task only use one thread, but still seperate task and thread for better abstraction.
 3. Support SMP, future obc might have two cores.
-4. 
+
+## Worklog
+
+### 2023-07-13
+
+1. Setup the overall structure.
+2. Setup data structure & types.
+3. Setup config file.

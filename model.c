@@ -3,4 +3,4 @@
 
 #include <stdlib.h>
 
-struct roxy_task default_task = {ROXY_TASK_COUNT_LIMIT, ROXY_PRIORITY_LEVEL_COUNT, NULL, NULL, NULL};
+struct roxy_task default_task = {-1, -1, NULL, NULL};
