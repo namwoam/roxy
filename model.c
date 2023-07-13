@@ -1,8 +1,6 @@
+#include "model.h"
+#include "config.h"
+
 #include <stdlib.h>
-struct roxy_task
-{
-    unsigned int task_id;
-    unsigned int priority;
-    void *function_pointer;
-    void *argument_pointer;
-} default_task = {-1, -1, NULL, NULL};
+
+struct roxy_task default_task = {ROXY_TASK_COUNT_LIMIT, ROXY_PRIORITY_LEVEL_COUNT, NULL, NULL, NULL};
