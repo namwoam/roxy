@@ -1,5 +1,5 @@
 #include "main.h"
-
+/*
 #define SCIO_VHF_TASK_ID 100
 #define DHS_VHF_TASK_ID 101
 #define TC_VHF_TASK_ID 102
@@ -282,3 +282,4 @@ int main(int argc, char *argv[])
     printf("seq=%d, scio=%d, dhs=%d, tc=%d, tm=%d, gcq=%d, mpq=%d\n", seq, scio, dhs, tc, tm, gcq, mpq);
     printf("sys=%d, aocs=%d, pf=%d, pl=%d\n", sys, aocs, pf, pl);
 }
+*/
