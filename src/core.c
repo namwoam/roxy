@@ -4,6 +4,7 @@
 
 static struct roxy_task roxy_tasks[ROXY_TASK_COUNT_LIMIT];
 static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT_LIMIT];
+static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT_LIMIT];
 
 enum roxy_status_code roxy_init()
 {
@@ -20,6 +21,11 @@ enum roxy_status_code roxy_init()
     {
         roxy_threads[i].status = EMPTY;
     }
+    for (int i = 0; i < ROXY_CRITICAL_SECTION_COUNT_LIMIT; i++)
+    {
+        pthread_mutex_init(&roxy_critical_sections[i], NULL);
+    }
+
     // check config
     const int os_priority_level = sched_get_priority_max(ROXY_SCHEDULE_POLICY) - sched_get_priority_min(ROXY_SCHEDULE_POLICY);
     if (ROXY_DEBUG)
@@ -92,6 +98,10 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             return RUNTIME_ERROR;
         }
     }
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    for (size_t i = 0; i < ROXY_CPU_COUNT; i++)
+        CPU_SET(i, &cpuset);
     for (unsigned thread_n = 0; thread_n < thread_count; thread_n++)
     {
         int ret;
@@ -165,6 +175,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             if (roxy_threads[search_index].status == EMPTY)
             {
                 struct arg_struct arg = {task_id};
+                
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -174,6 +185,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                     }
                     return RUNTIME_ERROR;
                 }
+                pthread_setaffinity_np(roxy_threads[search_index].posix_thread_id, sizeof(cpuset), &cpuset);
             }
             roxy_threads[search_index].status = EXECUTING;
             roxy_tasks[task_id].thread_ids[thread_n] = search_index;
@@ -189,4 +201,40 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 enum roxy_status_code roxy_task_suspend(unsigned task_id)
 {
     // no need to implement yeah!
+}
+
+enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
+{
+    if (section_id >= ROXY_CRITICAL_SECTION_COUNT_LIMIT)
+    {
+        return RUNTIME_ERROR;
+    }
+    int ret = pthread_mutex_lock(&roxy_critical_sections[section_id]);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to lock the critical section mutex (section_id=%d)\n", section_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
+{
+    if (section_id >= ROXY_CRITICAL_SECTION_COUNT_LIMIT)
+    {
+        return RUNTIME_ERROR;
+    }
+    int ret = pthread_mutex_unlock(&roxy_critical_sections[section_id]);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to unlock the critical section mutex (section_id=%d)\n", section_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
 }

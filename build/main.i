@@ -3478,8 +3478,6 @@ extern int shm_unlink (const char *__name);
 
 
 
-
-
 # 1 "include/model.h" 1
 
 
@@ -3526,19 +3524,12 @@ enum thread_status
 
 struct roxy_thread
 {
-    unsigned thread_id;
     pthread_t posix_thread_id;
     enum thread_status status;
-
-    int suspend_flag;
-    pthread_mutex_t suspend_mutex;
-    pthread_cond_t resume_condition;
 };
-# 14 "include/core.h" 2
+# 12 "include/core.h" 2
 # 1 "include/config.h" 1
-# 15 "include/core.h" 2
-
-
+# 13 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr);
@@ -3546,6 +3537,9 @@ enum roxy_status_code roxy_task_start(unsigned, unsigned);
 enum roxy_status_code roxy_task_suspend(unsigned);
 enum roxy_status_code roxy_task_wake_after(unsigned, unsigned);
 enum roxy_status_code roxy_task_set_priority(unsigned, unsigned);
+
+enum roxy_status_code roxy_critical_section_enter(unsigned section_id);
+enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 # 7 "include/main.h" 2
 # 2 "src/main.c" 2
 
@@ -3571,6 +3565,30 @@ void idle_task()
     return;
 }
 
+int fib(int n)
+{
+    if (n == 0 || n == 1)
+    {
+        return 1;
+    }
+    else
+    {
+        return fib(n - 1) + fib(n - 2);
+    }
+}
+
+void compute_task()
+{
+    while (1)
+    {
+        for (int i = 0; i < 40; i++)
+        {
+            printf("fib(%d)=%d on thread:%d \n", i, fib(i), sched_getcpu());
+        }
+    }
+    return;
+}
+
 int main(int argc, char *argv[])
 {
     enum roxy_status_code status;
@@ -3580,28 +3598,43 @@ int main(int argc, char *argv[])
         printf("Failed at init\n");
         return 0;
     }
-    status = roxy_task_create(1, 5, 
-# 34 "src/main.c" 3 4
+    status = roxy_task_create(0, 5, 
+# 58 "src/main.c" 3 4
                                    ((void *)0)
-# 34 "src/main.c"
+# 58 "src/main.c"
                                        , idle_task, 
-# 34 "src/main.c" 3 4
+# 58 "src/main.c" 3 4
                                                     ((void *)0)
-# 34 "src/main.c"
+# 58 "src/main.c"
                                                         , 
-# 34 "src/main.c" 3 4
+# 58 "src/main.c" 3 4
                                                           ((void *)0)
-# 34 "src/main.c"
+# 58 "src/main.c"
                                                               );
     if (status != SUCCESS)
     {
-        printf("Failed at create\n");
         return 0;
     }
-    status = roxy_task_start(1, 4);
+    status = roxy_task_create(1, 20, 
+# 63 "src/main.c" 3 4
+                                    ((void *)0)
+# 63 "src/main.c"
+                                        , compute_task, 
+# 63 "src/main.c" 3 4
+                                                        ((void *)0)
+# 63 "src/main.c"
+                                                            , 
+# 63 "src/main.c" 3 4
+                                                              ((void *)0)
+# 63 "src/main.c"
+                                                                  );
     if (status != SUCCESS)
     {
-        printf("Failed at start\n");
+        return 0;
+    }
+    status = roxy_task_start(1, 2);
+    if (status != SUCCESS)
+    {
         return 0;
     }
 }

@@ -22,6 +22,30 @@ void idle_task()
     return;
 }
 
+int fib(int n)
+{
+    if (n == 0 || n == 1)
+    {
+        return 1;
+    }
+    else
+    {
+        return fib(n - 1) + fib(n - 2);
+    }
+}
+
+void compute_task()
+{
+    while (1)
+    {
+        for (int i = 0; i < 40; i++)
+        {
+            printf("fib(%d)=%d on thread:%d \n", i, fib(i), sched_getcpu());
+        }
+    }
+    return;
+}
+
 int main(int argc, char *argv[])
 {
     enum roxy_status_code status;
@@ -31,16 +55,19 @@ int main(int argc, char *argv[])
         printf("Failed at init\n");
         return 0;
     }
-    status = roxy_task_create(1, 5, NULL, idle_task, NULL, NULL);
+    status = roxy_task_create(0, 5, NULL, idle_task, NULL, NULL);
     if (status != SUCCESS)
     {
-        printf("Failed at create\n");
         return 0;
     }
-    status = roxy_task_start(1, 4);
+    status = roxy_task_create(1, 20, NULL, compute_task, NULL, NULL);
     if (status != SUCCESS)
     {
-        printf("Failed at start\n");
+        return 0;
+    }
+    status = roxy_task_start(1, 2);
+    if (status != SUCCESS)
+    {
         return 0;
     }
 }
