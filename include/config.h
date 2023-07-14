@@ -1,4 +1,5 @@
 #include <sched.h>
+#include <limits.h>
 #ifndef CONFIG_H
 #define CONFIG_H
 enum roxy_status_code
