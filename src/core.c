@@ -9,13 +9,18 @@ enum roxy_status_code roxy_init()
 {
     // init random generator
     srand(ROXY_RANDOM_SEED);
-    // check system
+    // init tasks and threads
     for (int i = 0; i < ROXY_TASK_COUNT_LIMIT; i++)
     {
         struct roxy_task default_task = {ROXY_TASK_PREINIT_TASKID, ROXY_TASK_PREINIT_PRIORITY, NULL, NULL, NULL, NULL, {[0 ... ROXY_TASK_THREAD_LIMIT - 1] = ROXY_TASK_PREINIT_THREADID}};
         roxy_tasks[i] = default_task;
     }
 
+    for (int i = 0; i < ROXY_THREAD_COUNT_LIMIT; i++)
+    {
+        roxy_threads[i].status = EMPTY;
+    }
+    // check config
     const int os_priority_level = sched_get_priority_max(ROXY_SCHEDULE_POLICY) - sched_get_priority_min(ROXY_SCHEDULE_POLICY);
     if (ROXY_DEBUG)
     {
@@ -52,14 +57,17 @@ enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void
 struct arg_struct
 {
     unsigned task_id;
+    unsigned thread_id;
 };
 
 void *roxy_thread_runner(void *data)
 {
     struct arg_struct *args = (struct arg_struct *)data;
     void (*task_function)();
+    roxy_threads[args->thread_id].status = EXECUTING;
     task_function = roxy_tasks[args->task_id].function_pointer;
     task_function();
+    roxy_threads[args->thread_id].status = TERMINATED;
     return NULL;
 }
 
@@ -68,9 +76,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     if (task_id > ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].task_id == ROXY_TASK_PREINIT_TASKID || thread_count > ROXY_TASK_THREAD_LIMIT)
     {
         if (ROXY_DEBUG)
-            {
-                printf("ROXY-DEBUG: Failed to start the task (task_id=%d)\n", task_id);
-            }
+        {
+            printf("ROXY-DEBUG: Failed to start the task (task_id=%d)\n", task_id);
+        }
         return RUNTIME_ERROR;
     }
     for (int i = 0; i < ROXY_TASK_THREAD_LIMIT; i++)

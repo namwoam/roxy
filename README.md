@@ -72,3 +72,9 @@ rtos_status_code rtos_leave_region( void );
 1. Setup the overall structure.
 2. Setup data structure & types.
 3. Setup config file.
+
+### 2023-07-14
+
+1. Done `roxy_task_create` and `roxy_task_start`, still testing.
+2. Use makefile to organize `*.c` and `*.h`.
+3. Better project structure.

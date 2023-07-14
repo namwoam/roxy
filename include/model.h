@@ -31,13 +31,8 @@ enum thread_status
 
 struct roxy_thread
 {
-    unsigned thread_id;
     pthread_t posix_thread_id;
     enum thread_status status;
-    // artifact of roxy_task_suspend
-    int suspend_flag;
-    pthread_mutex_t suspend_mutex;
-    pthread_cond_t resume_condition;
 };
 
 #endif
