@@ -78,4 +78,5 @@ rtos_status_code rtos_leave_region( void );
 1. Done `roxy_task_create` and `roxy_task_start`, still testing.
 2. Use makefile to organize `*.c` and `*.h`.
 3. Better project structure.
-4. 
+4. Implement the logic for limiting the available CPU core for threads to run (config by `ROXY_CPU_COUNT`).
+5. Implement functions for critical section, not tested.
