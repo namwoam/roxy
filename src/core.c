@@ -1,12 +1,4 @@
-#include "config.h"
 #include "core.h"
-#include "model.h"
-
-#include <pthread.h>
-#include <sched.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
 
 #define MAX_SEARCH_ITERATION 100
 
@@ -20,6 +12,7 @@ enum roxy_status_code roxy_init()
     // check system
     for (int i = 0; i < ROXY_TASK_COUNT_LIMIT; i++)
     {
+        struct roxy_task default_task = {ROXY_TASK_PREINIT_PRIORITY, ROXY_TASK_PREINIT_PRIORITY, NULL, NULL, NULL, NULL, {[0 ... ROXY_TASK_THREAD_LIMIT - 1] = ROXY_TASK_PREINIT_THREADID}};
         roxy_tasks[i] = default_task;
     }
 
@@ -50,6 +43,13 @@ enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void
         return SUCCESS;
     }
     return RUNTIME_ERROR;
+}
+
+void roxy_thread_runner(unsigned task_id)
+{
+    void (*task_function)();
+    task_function = roxy_tasks[task_id].function_pointer;
+    return task_function();
 }
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
@@ -145,27 +145,13 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                 }
             }
             roxy_threads[search_index].status = EXECUTING;
+            roxy_tasks[task_id].thread_ids[thread_n] = search_index;
         }
+        pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_n]].posix_thread_id, NULL);
     }
 }
 
 enum roxy_status_code roxy_task_suspend(unsigned task_id)
 {
     // no need to implement yeah!
-}
-
-void roxy_thread_runner(unsigned task_id)
-{
-    void (*task_function)();
-    task_function = roxy_tasks[task_id].function_pointer;
-    while (1)
-    {
-        task_function();
-    }
-}
-
-int main(int argc, char *argv[])
-{
-    roxy_init();
-    return 0;
 }

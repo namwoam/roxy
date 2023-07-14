@@ -1,5 +1,9 @@
 #include <pthread.h>
-#include <config.h>
+
+#ifndef MODEL_H
+#define MODEL_H
+
+#include "config.h"
 
 #define ROXY_TASK_PREINIT_TASKID -1
 #define ROXY_TASK_PREINIT_PRIORITY -1
@@ -17,7 +21,6 @@ struct roxy_task
     void *deconstructor_pointer;
     unsigned thread_ids[ROXY_TASK_THREAD_LIMIT];
 };
-struct roxy_task default_task;
 
 enum thread_status
 {
@@ -37,4 +40,4 @@ struct roxy_thread
     pthread_cond_t resume_condition;
 };
 
-struct roxy_task default_thread;
+#endif

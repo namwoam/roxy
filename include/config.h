@@ -1,4 +1,6 @@
 #include <sched.h>
+#ifndef CONFIG_H
+#define CONFIG_H
 enum roxy_status_code
 {
     SUCCESS = 0,
@@ -20,7 +22,9 @@ enum roxy_status_code
 
 #define ROXY_PRIORITY_LEVEL_COUNT 64
 
-#define ROXY_SCHEDULE_POLICY SCHED_RR 
+#define ROXY_SCHEDULE_POLICY SCHED_RR
 
 #define ROXY_DEBUG 1 // 1 for active
 #define ROXY_RANDOM_SEED 8080
+
+#endif
