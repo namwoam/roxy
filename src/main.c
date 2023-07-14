@@ -19,12 +19,28 @@ void idle_task()
             exit(1);
         }
     }
-    return ;
+    return;
 }
 
 int main(int argc, char *argv[])
 {
-    roxy_init();
-    roxy_task_create(1, 20, NULL, idle_task, NULL, NULL);
-    roxy_task_start(1, 10);
+    enum roxy_status_code status;
+    status = roxy_init();
+    if (status != SUCCESS)
+    {
+        printf("Failed at init\n");
+        return 0;
+    }
+    status = roxy_task_create(1, 5, NULL, idle_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        printf("Failed at create\n");
+        return 0;
+    }
+    status = roxy_task_start(1, 4);
+    if (status != SUCCESS)
+    {
+        printf("Failed at start\n");
+        return 0;
+    }
 }

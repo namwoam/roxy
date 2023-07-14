@@ -63,6 +63,13 @@ idle_task:
 	.cfi_endproc
 .LFE40:
 	.size	idle_task, .-idle_task
+	.section	.rodata.str1.1
+.LC3:
+	.string	"Failed at init"
+.LC4:
+	.string	"Failed at create"
+.LC5:
+	.string	"Failed at start"
 	.section	.text.startup,"ax",@progbits
 	.p2align 4
 	.globl	main
@@ -74,20 +81,41 @@ main:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
 	call	roxy_init@PLT
+	testl	%eax, %eax
+	jne	.L15
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
+	movl	$5, %esi
 	leaq	idle_task(%rip), %rcx
-	movl	$20, %esi
 	movl	$1, %edi
 	call	roxy_task_create@PLT
-	movl	$10, %esi
+	testl	%eax, %eax
+	jne	.L16
+	movl	$4, %esi
 	movl	$1, %edi
 	call	roxy_task_start@PLT
+	testl	%eax, %eax
+	jne	.L17
+.L9:
 	xorl	%eax, %eax
 	addq	$8, %rsp
+	.cfi_remember_state
 	.cfi_def_cfa_offset 8
 	ret
+.L16:
+	.cfi_restore_state
+	leaq	.LC4(%rip), %rdi
+	call	puts@PLT
+	jmp	.L9
+.L15:
+	leaq	.LC3(%rip), %rdi
+	call	puts@PLT
+	jmp	.L9
+.L17:
+	leaq	.LC5(%rip), %rdi
+	call	puts@PLT
+	jmp	.L9
 	.cfi_endproc
 .LFE41:
 	.size	main, .-main
