@@ -505,3 +505,37 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *messag
     }
     return SUCCESS;
 }
+
+int roxy_mqueue_get_pending(unsigned mqueue_id)
+{
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return -1;
+    }
+    mqd_t mqueue_descriptor;
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_WRONLY | O_CREAT);
+    if (mqueue_descriptor == -1)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return -1;
+    }
+    int ret;
+    struct mq_attr mqueue_attr;
+    ret = mq_getattr(mqueue_descriptor, &mqueue_attr);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return -1;
+    }
+    return mqueue_attr.mq_curmsgs;
+}
