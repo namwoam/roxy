@@ -83,3 +83,6 @@ rtos_status_code rtos_leave_region( void );
 
 ### 2023-07-15
 
+1. Done `roxy_task_wait`.
+2. Done `roxy_task_set_priority`, but POSIX interface only provide API to change `NI` priority.
+3. Done `roxy_mqueue_xxx` but still testing, some bugs to be solved.
