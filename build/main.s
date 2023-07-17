@@ -46,7 +46,7 @@ idle_task:
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	$1, %esi
-	movl	$10, %edi
+	movl	$3, %edi
 	call	roxy_task_wait@PLT
 	jmp	.L2
 	.cfi_endproc

@@ -3503,6 +3503,275 @@ extern int *__errno_location (void) __attribute__ ((__nothrow__ , __leaf__)) __a
 # 52 "/usr/include/errno.h" 3 4
 
 # 8 "include/core.h" 2
+# 1 "/usr/include/x86_64-linux-gnu/sys/resource.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/resource.h" 1 3 4
+# 31 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+enum __rlimit_resource
+{
+
+  RLIMIT_CPU = 0,
+
+
+
+  RLIMIT_FSIZE = 1,
+
+
+
+  RLIMIT_DATA = 2,
+
+
+
+  RLIMIT_STACK = 3,
+
+
+
+  RLIMIT_CORE = 4,
+
+
+
+
+
+
+  __RLIMIT_RSS = 5,
+
+
+
+  RLIMIT_NOFILE = 7,
+  __RLIMIT_OFILE = RLIMIT_NOFILE,
+
+
+
+
+  RLIMIT_AS = 9,
+
+
+
+  __RLIMIT_NPROC = 6,
+
+
+
+  __RLIMIT_MEMLOCK = 8,
+
+
+
+  __RLIMIT_LOCKS = 10,
+
+
+
+  __RLIMIT_SIGPENDING = 11,
+
+
+
+  __RLIMIT_MSGQUEUE = 12,
+
+
+
+
+
+  __RLIMIT_NICE = 13,
+
+
+
+
+  __RLIMIT_RTPRIO = 14,
+
+
+
+
+
+  __RLIMIT_RTTIME = 15,
+
+
+  __RLIMIT_NLIMITS = 16,
+  __RLIM_NLIMITS = __RLIMIT_NLIMITS
+
+
+};
+# 131 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+typedef __rlim_t rlim_t;
+
+
+
+
+
+
+
+struct rlimit
+  {
+
+    rlim_t rlim_cur;
+
+    rlim_t rlim_max;
+  };
+# 158 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+enum __rusage_who
+{
+
+  RUSAGE_SELF = 0,
+
+
+
+  RUSAGE_CHILDREN = -1
+# 176 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+};
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_rusage.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/types/struct_rusage.h" 3 4
+struct rusage
+  {
+
+    struct timeval ru_utime;
+
+    struct timeval ru_stime;
+
+    __extension__ union
+      {
+ long int ru_maxrss;
+ __syscall_slong_t __ru_maxrss_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_ixrss;
+ __syscall_slong_t __ru_ixrss_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_idrss;
+ __syscall_slong_t __ru_idrss_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_isrss;
+  __syscall_slong_t __ru_isrss_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_minflt;
+ __syscall_slong_t __ru_minflt_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_majflt;
+ __syscall_slong_t __ru_majflt_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_nswap;
+ __syscall_slong_t __ru_nswap_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_inblock;
+ __syscall_slong_t __ru_inblock_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_oublock;
+ __syscall_slong_t __ru_oublock_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_msgsnd;
+ __syscall_slong_t __ru_msgsnd_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_msgrcv;
+ __syscall_slong_t __ru_msgrcv_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_nsignals;
+ __syscall_slong_t __ru_nsignals_word;
+      };
+
+
+
+    __extension__ union
+      {
+ long int ru_nvcsw;
+ __syscall_slong_t __ru_nvcsw_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_nivcsw;
+ __syscall_slong_t __ru_nivcsw_word;
+      };
+  };
+# 180 "/usr/include/x86_64-linux-gnu/bits/resource.h" 2 3 4
+
+
+
+
+
+
+
+enum __priority_which
+{
+  PRIO_PROCESS = 0,
+
+  PRIO_PGRP = 1,
+
+  PRIO_USER = 2
+
+};
+
+
+
+# 223 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+
+# 25 "/usr/include/x86_64-linux-gnu/sys/resource.h" 2 3 4
+
+
+
+
+
+
+
+# 42 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+typedef int __rlimit_resource_t;
+typedef int __rusage_who_t;
+typedef int __priority_which_t;
+
+
+
+
+
+extern int getrlimit (__rlimit_resource_t __resource,
+        struct rlimit *__rlimits) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+# 70 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int setrlimit (__rlimit_resource_t __resource,
+        const struct rlimit *__rlimits) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+# 89 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int getrusage (__rusage_who_t __who, struct rusage *__usage) __attribute__ ((__nothrow__ , __leaf__));
+# 105 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int getpriority (__priority_which_t __which, id_t __who) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern int setpriority (__priority_which_t __which, id_t __who, int __prio)
+     __attribute__ ((__nothrow__ , __leaf__));
+
+
+# 9 "include/core.h" 2
 
 
 
@@ -3560,9 +3829,9 @@ struct roxy_thread
     enum thread_status status;
     int os_thread_id;
 };
-# 13 "include/core.h" 2
-# 1 "include/config.h" 1
 # 14 "include/core.h" 2
+# 1 "include/config.h" 1
+# 15 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_loop(unsigned task_id);
@@ -3585,6 +3854,7 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 
 void idle_task()
 {
+    int p = 0;
     while (1)
     {
         time_t rawtime;
@@ -3592,7 +3862,9 @@ void idle_task()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
-        roxy_task_wait(10, 1);
+        roxy_task_wait(3, 1);
+
+        p = (p + 1) % 10;
     }
     return;
 }
@@ -3631,17 +3903,17 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_create(100, 10, 
-# 52 "src/main.c" 3 4
+# 55 "src/main.c" 3 4
                                                     ((void *)0)
-# 52 "src/main.c"
+# 55 "src/main.c"
                                                         , idle_task, 
-# 52 "src/main.c" 3 4
+# 55 "src/main.c" 3 4
                                                                      ((void *)0)
-# 52 "src/main.c"
+# 55 "src/main.c"
                                                                          , 
-# 52 "src/main.c" 3 4
+# 55 "src/main.c" 3 4
                                                                            ((void *)0)
-# 52 "src/main.c"
+# 55 "src/main.c"
                                                                                );
     if (status != SUCCESS)
     {

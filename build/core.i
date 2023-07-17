@@ -4325,6 +4325,324 @@ typedef int error_t;
 
 
 # 8 "include/core.h" 2
+# 1 "/usr/include/x86_64-linux-gnu/sys/resource.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/resource.h" 1 3 4
+# 31 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+enum __rlimit_resource
+{
+
+  RLIMIT_CPU = 0,
+
+
+
+  RLIMIT_FSIZE = 1,
+
+
+
+  RLIMIT_DATA = 2,
+
+
+
+  RLIMIT_STACK = 3,
+
+
+
+  RLIMIT_CORE = 4,
+
+
+
+
+
+
+  __RLIMIT_RSS = 5,
+
+
+
+  RLIMIT_NOFILE = 7,
+  __RLIMIT_OFILE = RLIMIT_NOFILE,
+
+
+
+
+  RLIMIT_AS = 9,
+
+
+
+  __RLIMIT_NPROC = 6,
+
+
+
+  __RLIMIT_MEMLOCK = 8,
+
+
+
+  __RLIMIT_LOCKS = 10,
+
+
+
+  __RLIMIT_SIGPENDING = 11,
+
+
+
+  __RLIMIT_MSGQUEUE = 12,
+
+
+
+
+
+  __RLIMIT_NICE = 13,
+
+
+
+
+  __RLIMIT_RTPRIO = 14,
+
+
+
+
+
+  __RLIMIT_RTTIME = 15,
+
+
+  __RLIMIT_NLIMITS = 16,
+  __RLIM_NLIMITS = __RLIMIT_NLIMITS
+
+
+};
+# 131 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+typedef __rlim_t rlim_t;
+
+
+
+
+typedef __rlim64_t rlim64_t;
+
+
+struct rlimit
+  {
+
+    rlim_t rlim_cur;
+
+    rlim_t rlim_max;
+  };
+
+
+struct rlimit64
+  {
+
+    rlim64_t rlim_cur;
+
+    rlim64_t rlim_max;
+ };
+
+
+
+enum __rusage_who
+{
+
+  RUSAGE_SELF = 0,
+
+
+
+  RUSAGE_CHILDREN = -1
+
+
+
+  ,
+
+  RUSAGE_THREAD = 1
+
+
+
+
+};
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_rusage.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/types/struct_rusage.h" 3 4
+struct rusage
+  {
+
+    struct timeval ru_utime;
+
+    struct timeval ru_stime;
+
+    __extension__ union
+      {
+ long int ru_maxrss;
+ __syscall_slong_t __ru_maxrss_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_ixrss;
+ __syscall_slong_t __ru_ixrss_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_idrss;
+ __syscall_slong_t __ru_idrss_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_isrss;
+  __syscall_slong_t __ru_isrss_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_minflt;
+ __syscall_slong_t __ru_minflt_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_majflt;
+ __syscall_slong_t __ru_majflt_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_nswap;
+ __syscall_slong_t __ru_nswap_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_inblock;
+ __syscall_slong_t __ru_inblock_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_oublock;
+ __syscall_slong_t __ru_oublock_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_msgsnd;
+ __syscall_slong_t __ru_msgsnd_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_msgrcv;
+ __syscall_slong_t __ru_msgrcv_word;
+      };
+
+    __extension__ union
+      {
+ long int ru_nsignals;
+ __syscall_slong_t __ru_nsignals_word;
+      };
+
+
+
+    __extension__ union
+      {
+ long int ru_nvcsw;
+ __syscall_slong_t __ru_nvcsw_word;
+      };
+
+
+    __extension__ union
+      {
+ long int ru_nivcsw;
+ __syscall_slong_t __ru_nivcsw_word;
+      };
+  };
+# 180 "/usr/include/x86_64-linux-gnu/bits/resource.h" 2 3 4
+
+
+
+
+
+
+
+enum __priority_which
+{
+  PRIO_PROCESS = 0,
+
+  PRIO_PGRP = 1,
+
+  PRIO_USER = 2
+
+};
+
+
+
+
+
+
+
+extern int prlimit (__pid_t __pid, enum __rlimit_resource __resource,
+      const struct rlimit *__new_limit,
+      struct rlimit *__old_limit) __attribute__ ((__nothrow__ , __leaf__));
+# 217 "/usr/include/x86_64-linux-gnu/bits/resource.h" 3 4
+extern int prlimit64 (__pid_t __pid, enum __rlimit_resource __resource,
+        const struct rlimit64 *__new_limit,
+        struct rlimit64 *__old_limit) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+# 25 "/usr/include/x86_64-linux-gnu/sys/resource.h" 2 3 4
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef enum __rlimit_resource __rlimit_resource_t;
+typedef enum __rusage_who __rusage_who_t;
+typedef enum __priority_which __priority_which_t;
+# 50 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int getrlimit (__rlimit_resource_t __resource,
+        struct rlimit *__rlimits) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+# 62 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int getrlimit64 (__rlimit_resource_t __resource,
+   struct rlimit64 *__rlimits) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+
+
+extern int setrlimit (__rlimit_resource_t __resource,
+        const struct rlimit *__rlimits) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+# 82 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int setrlimit64 (__rlimit_resource_t __resource,
+   const struct rlimit64 *__rlimits) __attribute__ ((__nothrow__ , __leaf__))
+   __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern int getrusage (__rusage_who_t __who, struct rusage *__usage) __attribute__ ((__nothrow__ , __leaf__));
+# 105 "/usr/include/x86_64-linux-gnu/sys/resource.h" 3 4
+extern int getpriority (__priority_which_t __which, id_t __who) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern int setpriority (__priority_which_t __which, id_t __who, int __prio)
+     __attribute__ ((__nothrow__ , __leaf__));
+
+
+# 9 "include/core.h" 2
 
 
 
@@ -4382,9 +4700,9 @@ struct roxy_thread
     enum thread_status status;
     int os_thread_id;
 };
-# 13 "include/core.h" 2
-# 1 "include/config.h" 1
 # 14 "include/core.h" 2
+# 1 "include/config.h" 1
+# 15 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_loop(unsigned task_id);
@@ -4507,7 +4825,7 @@ void *roxy_thread_runner(void *data)
     roxy_threads[args->thread_id].os_thread_id = gettid();
     if (1)
     {
-        printf("pthread_id:%lu running on os thread:%d\n", roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
+        printf("thread_id:%d pthread_id:%lu running on os thread:%d\n", args->thread_id, roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
     }
     if (roxy_tasks[args->task_id].constructor_pointer != 
 # 82 "src/core.c" 3 4
@@ -4671,7 +4989,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             search_index = rand() % 1024;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
-                struct arg_struct arg = {task_id};
+                struct arg_struct arg = {task_id, search_index};
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -4739,9 +5057,16 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
         }
         return RUNTIME_ERROR;
     }
-    for (int i = 0; i < 8; i++)
+    if (roxy_tasks[task_id].status != TASK_LOADED)
     {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Task must be in the loaded state to set priority, task_id=%d\n", task_id);
+        }
+        return RUNTIME_ERROR;
     }
+    roxy_tasks[task_id].priority = new_priority;
+# 289 "src/core.c"
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -4796,9 +5121,9 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         if (roxy_tasks[task_id].thread_ids[thread_index] != -1)
         {
             ret = pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, 
-# 316 "src/core.c" 3 4
+# 342 "src/core.c" 3 4
                                                                                                           ((void *)0)
-# 316 "src/core.c"
+# 342 "src/core.c"
                                                                                                               );
             if (ret)
             {

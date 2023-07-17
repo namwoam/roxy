@@ -4,6 +4,7 @@
 
 void idle_task()
 {
+    int p = 0;
     while (1)
     {
         time_t rawtime;
@@ -11,7 +12,9 @@ void idle_task()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
-        roxy_task_wait(10, ROXY_WAIT_SECOND);
+        roxy_task_wait(3, ROXY_WAIT_SECOND);
+        // roxy_task_set_priority(ROXY_IDLE_TASK_ID, p);
+        p = (p + 1) % 10;
     }
     return;
 }
@@ -60,6 +63,11 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_loop(ROXY_IDLE_TASK_ID);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_clean();
     if (status != SUCCESS)
     {
         return 0;

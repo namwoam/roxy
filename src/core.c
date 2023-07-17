@@ -5,6 +5,7 @@
 static struct roxy_task roxy_tasks[ROXY_TASK_COUNT_LIMIT];
 static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT_LIMIT];
 static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT_LIMIT];
+static struct roxy_mqueue roxy_mqueues[ROXY_MQUEUE_COUNT_LIMIT];
 
 enum roxy_status_code roxy_init()
 {
@@ -26,6 +27,10 @@ enum roxy_status_code roxy_init()
     {
         pthread_mutex_init(&roxy_critical_sections[i], NULL);
     }
+    for (int i = 0; i < ROXY_MQUEUE_COUNT_LIMIT; i++)
+    {
+        strcpy(roxy_mqueues[i].channel_name, "");
+    }
 
     // check config
     const int os_priority_level = sched_get_priority_max(ROXY_SCHEDULE_POLICY) - sched_get_priority_min(ROXY_SCHEDULE_POLICY);
@@ -39,6 +44,28 @@ enum roxy_status_code roxy_init()
         return CONFIG_ERROR;
     }
     return SUCCESS;
+}
+
+enum roxy_status_code roxy_clean()
+{
+    int ret;
+    for (int mqueue_id = 0; mqueue_id < ROXY_MQUEUE_COUNT_LIMIT; mqueue_id++)
+    {
+        if (strcmp(roxy_mqueues[mqueue_id].channel_name, " ") != 0)
+        {
+            ret = mq_unlink(roxy_mqueues[mqueue_id].channel_name);
+            if (ret)
+            {
+                if (ROXY_DEBUG)
+                {
+                    printf("ROXY-DEBUG: Failed to unlink the mqueue (mqueue_id=%d , channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
+                }
+                return RUNTIME_ERROR;
+            }
+            printf("Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+            strcpy(roxy_mqueues[mqueue_id].channel_name, "");
+        }
+    }
 }
 
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstructor_ptr, void *argument_ptr)
@@ -56,7 +83,7 @@ enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void
     }
     if (ROXY_DEBUG)
     {
-        printf("ROXY-DEBUG: Task id out-of-bound or task already existed\n");
+        printf("ROXY-DEBUG: task_id out-of-bound or task already existed\n");
     }
     return RUNTIME_ERROR;
 }
@@ -77,7 +104,7 @@ void *roxy_thread_runner(void *data)
     roxy_threads[args->thread_id].os_thread_id = gettid();
     if (ROXY_DEBUG)
     {
-        printf("pthread_id:%lu running on os thread:%d\n", roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
+        printf("thread_id:%d pthread_id:%lu running on os thread:%d\n", args->thread_id, roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
     }
     if (roxy_tasks[args->task_id].constructor_pointer != NULL)
     {
@@ -189,7 +216,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             search_index = rand() % ROXY_THREAD_COUNT_LIMIT;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
-                struct arg_struct arg = {task_id};
+                struct arg_struct arg = {task_id, search_index};
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -257,9 +284,35 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
         }
         return RUNTIME_ERROR;
     }
-    for (int i = 0; i < ROXY_TASK_THREAD_LIMIT; i++)
+    if (roxy_tasks[task_id].status != TASK_LOADED)
     {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Task must be in the loaded state to set priority, task_id=%d\n", task_id);
+        }
+        return RUNTIME_ERROR;
     }
+    roxy_tasks[task_id].priority = new_priority;
+    /*
+    setpriority change NI value, which is irreverent in rt system.
+    for (int thread_index = 0; thread_index < ROXY_TASK_THREAD_LIMIT; thread_index++)
+    {
+        int ret;
+        if (roxy_tasks[task_id].thread_ids[thread_index] != ROXY_TASK_PREINIT_THREADID)
+        {
+            int priority = new_priority;
+            ret = setpriority(PRIO_PROCESS, roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].os_thread_id, priority);
+            if (ret)
+            {
+                if (ROXY_DEBUG)
+                {
+                    printf("ROXY-DEBUG: Failed to set the new priority: thread_id=%d, error_code=%d\n", roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].os_thread_id, ret);
+                }
+                return RUNTIME_ERROR;
+            }
+        }
+    }
+    */
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -325,5 +378,130 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         }
     }
 
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_size)
+{
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to start the message queue (mqueue_id=%d)\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    if (strcmp(roxy_mqueues[mqueue_id].channel_name, "") != 0)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    sprintf(roxy_mqueues[mqueue_id].channel_name, "/%x", mqueue_id);
+    struct mq_attr mqueue_attr;
+    mqueue_attr.mq_maxmsg = queue_capacity;
+    mqueue_attr.mq_msgsize = message_size;
+    mqueue_attr.mq_flags = 0;
+    roxy_mqueues[mqueue_id].mqueue_attribute = mqueue_attr;
+}
+
+enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_buffer, unsigned *message_length)
+{
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    mqd_t mqueue_descriptor;
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_WRONLY | O_CREAT);
+    if (mqueue_descriptor == -1)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return RUNTIME_ERROR;
+    }
+    int ret;
+    ret = mq_send(mqueue_descriptor, message_buffer, message_length, 0); // default message priority
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_threads[mqueue_id], ret);
+        }
+        return RUNTIME_ERROR;
+    }
+    ret = mq_close(mqueue_descriptor);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *message_buffer, unsigned *message_length, int blocking)
+{
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    mqd_t mqueue_descriptor;
+    if (blocking == ROXY_MQUEUE_BLOCKING)
+    {
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY | O_CREAT);
+    }
+    else if (blocking == ROXY_MQUEUE_NONBLOCKING)
+    {
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY | O_CREAT | O_NONBLOCK);
+    }
+    else
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Invalid blocking option at roxy_mqueue_receive\n");
+        }
+        return RUNTIME_ERROR;
+    }
+    if (mqueue_descriptor == -1)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return RUNTIME_ERROR;
+    }
+    int ret;
+    ret = mq_receive(mqueue_descriptor, message_buffer, message_length, 0); // default message priority
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_threads[mqueue_id], ret);
+        }
+        return RUNTIME_ERROR;
+    }
+    ret = mq_close(mqueue_descriptor);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+        }
+        return RUNTIME_ERROR;
+    }
     return SUCCESS;
 }

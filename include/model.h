@@ -46,4 +46,10 @@ struct roxy_thread
     int os_thread_id;
 };
 
+struct roxy_mqueue
+{
+    char channel_name[ROXY_MQUEUE_NAME_LENGTH + 3];
+    struct mq_attr mqueue_attribute;
+};
+
 #endif
