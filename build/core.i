@@ -5919,34 +5919,33 @@ void *roxy_thread_runner(void *data)
     void (*task_function)();
     void (*constructor)();
     void (*deconstructor)();
-    roxy_threads[args->thread_id].status = THREAD_EXECUTING;
     roxy_threads[args->thread_id].os_thread_id = gettid();
     if (1)
     {
         printf("thread_id:%d pthread_id:%lu running on os thread:%d\n", args->thread_id, roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
     }
     if (roxy_tasks[args->task_id].constructor_pointer != 
-# 109 "src/core.c" 3 4
+# 108 "src/core.c" 3 4
                                                         ((void *)0)
-# 109 "src/core.c"
+# 108 "src/core.c"
                                                             )
     {
         constructor = roxy_tasks[args->task_id].constructor_pointer;
         constructor();
     }
     if (roxy_tasks[args->task_id].function_pointer != 
-# 114 "src/core.c" 3 4
+# 113 "src/core.c" 3 4
                                                      ((void *)0)
-# 114 "src/core.c"
+# 113 "src/core.c"
                                                          )
     {
         task_function = roxy_tasks[args->task_id].function_pointer;
         task_function();
     }
     if (roxy_tasks[args->task_id].deconstructor_pointer != 
-# 119 "src/core.c" 3 4
+# 118 "src/core.c" 3 4
                                                           ((void *)0)
-# 119 "src/core.c"
+# 118 "src/core.c"
                                                               )
     {
         deconstructor = roxy_tasks[args->task_id].deconstructor_pointer;
@@ -5954,9 +5953,9 @@ void *roxy_thread_runner(void *data)
     }
     roxy_threads[args->thread_id].status = THREAD_TERMINATED;
     return 
-# 125 "src/core.c" 3 4
+# 124 "src/core.c" 3 4
           ((void *)0)
-# 125 "src/core.c"
+# 124 "src/core.c"
               ;
 }
 
@@ -5983,28 +5982,28 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     }
     cpu_set_t cpuset;
     
-# 150 "src/core.c" 3 4
+# 149 "src/core.c" 3 4
    do __builtin_memset (
-# 150 "src/core.c"
+# 149 "src/core.c"
    &cpuset
-# 150 "src/core.c" 3 4
+# 149 "src/core.c" 3 4
    , '\0', sizeof (cpu_set_t)); while (0)
-# 150 "src/core.c"
+# 149 "src/core.c"
                     ;
     for (size_t i = 0; i < 2; i++)
     {
         
-# 153 "src/core.c" 3 4
+# 152 "src/core.c" 3 4
        (__extension__ ({ size_t __cpu = (
-# 153 "src/core.c"
+# 152 "src/core.c"
        i
-# 153 "src/core.c" 3 4
+# 152 "src/core.c" 3 4
        ); __cpu / 8 < (sizeof (cpu_set_t)) ? (((__cpu_mask *) ((
-# 153 "src/core.c"
+# 152 "src/core.c"
        &cpuset
-# 153 "src/core.c" 3 4
+# 152 "src/core.c" 3 4
        )->__bits))[((__cpu) / (8 * sizeof (__cpu_mask)))] |= ((__cpu_mask) 1 << ((__cpu) % (8 * sizeof (__cpu_mask))))) : 0; }))
-# 153 "src/core.c"
+# 152 "src/core.c"
                           ;
     }
 
@@ -6026,9 +6025,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setstacksize(&thread_attr, 
-# 173 "src/core.c" 3 4
+# 172 "src/core.c" 3 4
                                                      __sysconf (75)
-# 173 "src/core.c"
+# 172 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -6040,9 +6039,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setschedpolicy(&thread_attr, 
-# 183 "src/core.c" 3 4
+# 182 "src/core.c" 3 4
                                                        2
-# 183 "src/core.c"
+# 182 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -6053,9 +6052,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             return RUNTIME_ERROR;
         }
         scheduler_param.
-# 192 "src/core.c" 3 4
+# 191 "src/core.c" 3 4
                        sched_priority 
-# 192 "src/core.c"
+# 191 "src/core.c"
                                       = roxy_tasks[task_id].priority;
         ret = pthread_attr_setschedparam(&thread_attr, &scheduler_param);
         if (ret)
@@ -6068,9 +6067,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setinheritsched(&thread_attr, 
-# 203 "src/core.c" 3 4
+# 202 "src/core.c" 3 4
                                                         PTHREAD_EXPLICIT_SCHED
-# 203 "src/core.c"
+# 202 "src/core.c"
                                                                               );
         if (ret)
         {
@@ -6087,6 +6086,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             search_index = rand() % 1024;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
+                roxy_threads[search_index].status = THREAD_EXECUTING;
                 struct arg_struct arg = {task_id, search_index};
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
@@ -6098,7 +6098,6 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                     return RUNTIME_ERROR;
                 }
                 pthread_setaffinity_np(roxy_threads[search_index].posix_thread_id, sizeof(cpuset), &cpuset);
-                roxy_threads[search_index].status = THREAD_EXECUTING;
                 roxy_tasks[task_id].thread_ids[thread_n] = search_index;
                 break;
             }
@@ -6164,7 +6163,7 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
         return RUNTIME_ERROR;
     }
     roxy_tasks[task_id].priority = new_priority;
-# 316 "src/core.c"
+# 315 "src/core.c"
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -6219,9 +6218,9 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         if (roxy_tasks[task_id].thread_ids[thread_index] != -1)
         {
             ret = pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, 
-# 369 "src/core.c" 3 4
+# 368 "src/core.c" 3 4
                                                                                                           ((void *)0)
-# 369 "src/core.c"
+# 368 "src/core.c"
                                                                                                               );
             if (ret)
             {
@@ -6275,17 +6274,17 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
     }
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 421 "src/core.c" 3 4
+# 420 "src/core.c" 3 4
                                                                      01 
-# 421 "src/core.c"
+# 420 "src/core.c"
                                                                               | 
-# 421 "src/core.c" 3 4
+# 420 "src/core.c" 3 4
                                                                                 0100
-# 421 "src/core.c"
+# 420 "src/core.c"
                                                                                        , 
-# 421 "src/core.c" 3 4
+# 420 "src/core.c" 3 4
                                                                                          (((0400|0200|0100) >> 3) >> 3)
-# 421 "src/core.c"
+# 420 "src/core.c"
                                                                                                 , roxy_mqueues[mqueue_id].mqueue_attribute);
     if (mqueue_descriptor == -1)
     {
@@ -6331,21 +6330,21 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
     if (blocking == 1)
     {
         mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 465 "src/core.c" 3 4
+# 464 "src/core.c" 3 4
                                                                          00
-# 465 "src/core.c"
+# 464 "src/core.c"
                                                                                  );
     }
     else if (blocking == 0)
     {
         mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 469 "src/core.c" 3 4
+# 468 "src/core.c" 3 4
                                                                          00 
-# 469 "src/core.c"
+# 468 "src/core.c"
                                                                                   | 
-# 469 "src/core.c" 3 4
+# 468 "src/core.c" 3 4
                                                                                     04000
-# 469 "src/core.c"
+# 468 "src/core.c"
                                                                                               );
     }
     else
@@ -6398,9 +6397,9 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
     }
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 520 "src/core.c" 3 4
+# 519 "src/core.c" 3 4
                                                                      00
-# 520 "src/core.c"
+# 519 "src/core.c"
                                                                              );
     if (mqueue_descriptor == -1)
     {

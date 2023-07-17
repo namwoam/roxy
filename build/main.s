@@ -323,10 +323,6 @@ fib:
 	.cfi_endproc
 .LFE56:
 	.size	fib, .-fib
-	.section	.rodata.str1.1
-.LC1:
-	.string	"fib(%d)=%d on thread:%d \n"
-	.text
 	.p2align 4
 	.globl	compute_task
 	.type	compute_task, @function
@@ -334,83 +330,43 @@ compute_task:
 .LFB57:
 	.cfi_startproc
 	endbr64
-	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
-	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
-	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
-	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
+	.cfi_def_cfa_offset 24
+	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
-.L68:
-	xorl	%eax, %eax
-	xorl	%r13d, %r13d
-	xorl	%r12d, %r12d
-	call	sched_getcpu@PLT
-	movl	%eax, %r14d
+	.cfi_def_cfa_offset 32
+	.p2align 4,,10
+	.p2align 3
+.L66:
+	movl	$39, %ebp
+.L67:
+	movl	%ebp, %ebx
+	cmpl	$1, %ebp
+	jbe	.L74
 	.p2align 4,,10
 	.p2align 3
 .L65:
-	movl	%r13d, %edx
-	leal	1(%r12), %ecx
-	movl	%r14d, %r8d
-	movl	$1, %edi
-	leaq	.LC1(%rip), %rsi
-	xorl	%eax, %eax
-	addl	$1, %r13d
-	call	__printf_chk@PLT
-	cmpl	$40, %r13d
-	je	.L68
-	xorl	%eax, %eax
-	movl	%r13d, %ebp
-	xorl	%r12d, %r12d
-	call	sched_getcpu@PLT
-	movl	%eax, %r14d
-	cmpl	$1, %r13d
-	je	.L65
-	leal	-1(%rbp), %ebx
-	xorl	%r15d, %r15d
-	cmpl	$1, %ebx
-	je	.L79
-	.p2align 4,,10
-	.p2align 3
-.L69:
 	leal	-1(%rbx), %edi
 	subl	$2, %ebx
 	call	fib
-	addl	%eax, %r15d
 	cmpl	$1, %ebx
-	jg	.L69
-	leal	1(%r15), %edx
-.L71:
+	ja	.L65
 	subl	$2, %ebp
-	addl	%edx, %r12d
+	movl	%ebp, %ebx
 	cmpl	$1, %ebp
-	jle	.L65
-	leal	-1(%rbp), %ebx
-	xorl	%r15d, %r15d
-	cmpl	$1, %ebx
-	jne	.L69
-.L79:
-	movl	$1, %edx
-	jmp	.L71
+	ja	.L65
+.L74:
+	je	.L66
+	movl	$-2, %ebp
+	jmp	.L67
 	.cfi_endproc
 .LFE57:
 	.size	compute_task, .-compute_task
 	.section	.rodata.str1.1
-.LC2:
+.LC1:
 	.string	"Failed at init"
 	.section	.text.startup,"ax",@progbits
 	.p2align 4
@@ -424,7 +380,7 @@ main:
 	.cfi_def_cfa_offset 16
 	call	roxy_init@PLT
 	testl	%eax, %eax
-	jne	.L86
+	jne	.L81
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
@@ -433,30 +389,44 @@ main:
 	movl	$100, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	je	.L87
-.L82:
+	je	.L82
+.L77:
 	xorl	%eax, %eax
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
 	ret
-.L87:
+.L82:
 	.cfi_restore_state
-	movl	$1, %esi
+	movl	$5, %esi
 	movl	$100, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L82
+	jne	.L77
+	xorl	%r9d, %r9d
+	xorl	%r8d, %r8d
+	xorl	%edx, %edx
+	movl	$8, %esi
+	leaq	compute_task(%rip), %rcx
+	movl	$101, %edi
+	call	roxy_task_create@PLT
+	testl	%eax, %eax
+	jne	.L77
+	movl	$2, %esi
+	movl	$101, %edi
+	call	roxy_task_start@PLT
+	testl	%eax, %eax
+	jne	.L77
 	movl	$100, %edi
 	call	roxy_loop@PLT
 	testl	%eax, %eax
-	jne	.L82
+	jne	.L77
 	call	roxy_clean@PLT
-	jmp	.L82
-.L86:
-	leaq	.LC2(%rip), %rdi
+	jmp	.L77
+.L81:
+	leaq	.LC1(%rip), %rdi
 	call	puts@PLT
-	jmp	.L82
+	jmp	.L77
 	.cfi_endproc
 .LFE58:
 	.size	main, .-main

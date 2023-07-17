@@ -100,7 +100,6 @@ void *roxy_thread_runner(void *data)
     void (*task_function)();
     void (*constructor)();
     void (*deconstructor)();
-    roxy_threads[args->thread_id].status = THREAD_EXECUTING;
     roxy_threads[args->thread_id].os_thread_id = gettid();
     if (ROXY_DEBUG)
     {
@@ -216,6 +215,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             search_index = rand() % ROXY_THREAD_COUNT_LIMIT;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
+                roxy_threads[search_index].status = THREAD_EXECUTING;
                 struct arg_struct arg = {task_id, search_index};
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
@@ -227,7 +227,6 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                     return RUNTIME_ERROR;
                 }
                 pthread_setaffinity_np(roxy_threads[search_index].posix_thread_id, sizeof(cpuset), &cpuset);
-                roxy_threads[search_index].status = THREAD_EXECUTING;
                 roxy_tasks[task_id].thread_ids[thread_n] = search_index;
                 break;
             }

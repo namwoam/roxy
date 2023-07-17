@@ -26,12 +26,10 @@ roxy_thread_runner:
 	movl	4(%rdi), %r12d
 	movq	%rdi, %rbx
 	salq	$4, %r12
-	addq	%rbp, %r12
-	movl	$1, 8(%r12)
 	call	gettid@PLT
 	leaq	.LC0(%rip), %rsi
 	movl	$1, %edi
-	movl	%eax, 12(%r12)
+	movl	%eax, 12(%rbp,%r12)
 	movl	4(%rbx), %eax
 	leaq	roxy_tasks(%rip), %r12
 	movq	%rax, %rdx
@@ -353,16 +351,16 @@ roxy_task_start:
 	pushq	%rbx
 	.cfi_def_cfa_offset 56
 	.cfi_offset 3, -56
-	subq	$280, %rsp
-	.cfi_def_cfa_offset 336
+	subq	$264, %rsp
+	.cfi_def_cfa_offset 320
 	movq	%fs:40, %rax
-	movq	%rax, 264(%rsp)
+	movq	%rax, 248(%rsp)
 	xorl	%eax, %eax
 	cmpl	$128, %edi
 	ja	.L46
 	movl	%edi, %eax
 	leaq	roxy_tasks(%rip), %rcx
-	movq	%rax, 40(%rsp)
+	movq	%rax, 24(%rsp)
 	leaq	(%rax,%rax,8), %rax
 	leaq	(%rcx,%rax,8), %rax
 	movl	(%rax), %edx
@@ -385,27 +383,27 @@ roxy_task_start:
 	jne	.L50
 	cmpl	$-1, 64(%rax)
 	jne	.L50
-	movq	40(%rsp), %rax
+	movq	24(%rsp), %rax
 	leaq	(%rax,%rax,8), %rsi
 	leaq	roxy_tasks(%rip), %rax
 	leaq	(%rax,%rsi,8), %r13
 	cmpl	$-1, 68(%r13)
 	jne	.L50
-	leaq	136(%rsp), %r8
-	xorl	%eax, %eax
+	leaq	120(%rsp), %r8
 	movl	$15, %ecx
-	movq	$3, 128(%rsp)
+	xorl	%eax, %eax
+	movq	$3, 112(%rsp)
 	movq	%r8, %rdi
 	rep stosq
 	testl	%edx, %edx
 	je	.L52
 	leal	-1(%rdx), %eax
-	movq	%r13, 24(%rsp)
-	leaq	64(%rsp), %r12
+	leaq	48(%rsp), %r12
+	movq	%r13, %r15
 	leaq	(%rax,%rsi,2), %rdx
 	leaq	4+roxy_tasks(%rip), %rax
 	leaq	(%rax,%rdx,4), %rax
-	movq	%rax, 32(%rsp)
+	movq	%rax, 16(%rsp)
 	.p2align 4,,10
 	.p2align 3
 .L62:
@@ -425,11 +423,10 @@ roxy_task_start:
 	call	pthread_attr_setschedpolicy@PLT
 	testl	%eax, %eax
 	jne	.L73
-	movq	24(%rsp), %rax
-	leaq	52(%rsp), %rsi
+	movl	4(%r15), %eax
+	leaq	36(%rsp), %rsi
 	movq	%r12, %rdi
-	movl	4(%rax), %eax
-	movl	%eax, 52(%rsp)
+	movl	%eax, 36(%rsp)
 	call	pthread_attr_setschedparam@PLT
 	testl	%eax, %eax
 	jne	.L74
@@ -457,37 +454,36 @@ roxy_task_start:
 	salq	$4, %rdi
 	addq	%rbp, %rdi
 	movl	8(%rdi), %eax
-	leaq	8(%rdi), %r15
 	testl	%eax, %eax
 	jne	.L59
+	movl	$1, 8(%rdi)
 	movd	%r8d, %xmm1
-	movd	%r14d, %xmm0
-	leaq	56(%rsp), %rcx
 	movq	%r12, %rsi
+	movd	%r14d, %xmm0
 	punpckldq	%xmm1, %xmm0
+	leaq	40(%rsp), %rcx
 	leaq	roxy_thread_runner(%rip), %rdx
-	movl	%r8d, 20(%rsp)
-	movq	%rdi, 8(%rsp)
-	movq	%xmm0, 56(%rsp)
+	movl	%r8d, 12(%rsp)
+	movq	%rdi, (%rsp)
+	movq	%xmm0, 40(%rsp)
 	call	pthread_create@PLT
-	movq	8(%rsp), %rdi
-	movl	20(%rsp), %r8d
+	movq	(%rsp), %rdi
+	movl	12(%rsp), %r8d
 	testl	%eax, %eax
 	jne	.L76
 	movq	(%rdi), %rdi
+	leaq	112(%rsp), %rdx
 	movl	$128, %esi
-	movl	%r8d, 8(%rsp)
-	leaq	128(%rsp), %rdx
+	movl	%r8d, (%rsp)
 	call	pthread_setaffinity_np@PLT
-	movl	8(%rsp), %r8d
-	movl	$1, (%r15)
+	movl	(%rsp), %r8d
 	movl	%r8d, 40(%r13)
 .L61:
 	addq	$4, %r13
-	cmpq	32(%rsp), %r13
+	cmpq	16(%rsp), %r13
 	jne	.L62
 .L52:
-	movq	40(%rsp), %rax
+	movq	24(%rsp), %rax
 	leaq	roxy_tasks(%rip), %rcx
 	leaq	(%rax,%rax,8), %rax
 	movl	$2, (%rcx,%rax,8)
@@ -503,10 +499,10 @@ roxy_task_start:
 	call	__printf_chk@PLT
 	movl	$2, %eax
 .L45:
-	movq	264(%rsp), %rdx
+	movq	248(%rsp), %rdx
 	subq	%fs:40, %rdx
 	jne	.L77
-	addq	$280, %rsp
+	addq	$264, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 56
 	popq	%rbx

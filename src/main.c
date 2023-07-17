@@ -1,6 +1,7 @@
 #include "main.h"
 
 #define ROXY_IDLE_TASK_ID 100
+#define ROXY_COMPUTE_TASK_ID 101
 
 void idle_task()
 {
@@ -35,10 +36,7 @@ void compute_task()
 {
     while (1)
     {
-        for (int i = 0; i < 40; i++)
-        {
-            printf("fib(%d)=%d on thread:%d \n", i, fib(i), sched_getcpu());
-        }
+        fib(40);
     }
     return;
 }
@@ -58,6 +56,16 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_start(ROXY_IDLE_TASK_ID, 1);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_create(ROXY_COMPUTE_TASK_ID, 8, NULL, compute_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_COMPUTE_TASK_ID, 2);
     if (status != SUCCESS)
     {
         return 0;
