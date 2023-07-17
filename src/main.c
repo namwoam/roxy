@@ -3,7 +3,7 @@
 #define ROXY_IDLE_TASK_ID 100
 #define ROXY_COMPUTE_TASK_ID 101
 #define ROXY_SENDER_TASK_ID 102
-#define MQUEUE_ID 25
+#define MQUEUE_ID 30
 #define MESSAGE_LENGTH 12
 void idle_task()
 {
@@ -15,6 +15,7 @@ void idle_task()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
+        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(MQUEUE_ID));
         roxy_task_wait(3, ROXY_WAIT_SECOND);
         // roxy_task_set_priority(ROXY_IDLE_TASK_ID, p);
         p = (p + 1) % 10;
@@ -53,7 +54,6 @@ void send_task()
         roxy_mqueue_send(MQUEUE_ID, message_buffer, MESSAGE_LENGTH);
         roxy_task_wait(1, ROXY_WAIT_SECOND);
         p = (p + 1) % 5;
-        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(MQUEUE_ID));
     }
 }
 

@@ -3,6 +3,10 @@
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
 	.string	"roxy idle on cpu:%d %s"
+	.section	.rodata.str1.8,"aMS",@progbits,1
+	.align 8
+.LC1:
+	.string	"message queue pending message:%d\n"
 	.text
 	.p2align 4
 	.globl	idle_task
@@ -11,18 +15,22 @@ idle_task:
 .LFB67:
 	.cfi_startproc
 	endbr64
-	pushq	%r12
+	pushq	%r13
 	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
-	pushq	%rbp
+	.cfi_offset 13, -16
+	pushq	%r12
 	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
-	leaq	.LC0(%rip), %rbp
-	pushq	%rbx
+	.cfi_offset 12, -24
+	leaq	.LC0(%rip), %r12
+	pushq	%rbp
 	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
-	subq	$16, %rsp
-	.cfi_def_cfa_offset 48
+	.cfi_offset 6, -32
+	leaq	.LC1(%rip), %rbp
+	pushq	%rbx
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
+	subq	$24, %rsp
+	.cfi_def_cfa_offset 64
 	movq	%fs:40, %rax
 	movq	%rax, 8(%rsp)
 	xorl	%eax, %eax
@@ -36,11 +44,18 @@ idle_task:
 	call	localtime@PLT
 	movq	%rax, %rdi
 	call	asctime@PLT
-	movq	%rax, %r12
+	movq	%rax, %r13
 	xorl	%eax, %eax
 	call	sched_getcpu@PLT
+	movq	%r13, %rcx
+	movq	%r12, %rsi
+	movl	$1, %edi
+	movl	%eax, %edx
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	movl	$30, %edi
+	call	roxy_mqueue_get_pending@PLT
 	movq	%rbp, %rsi
-	movq	%r12, %rcx
 	movl	$1, %edi
 	movl	%eax, %edx
 	xorl	%eax, %eax
@@ -53,12 +68,8 @@ idle_task:
 .LFE67:
 	.size	idle_task, .-idle_task
 	.section	.rodata.str1.1
-.LC1:
-	.string	"%d!"
-	.section	.rodata.str1.8,"aMS",@progbits,1
-	.align 8
 .LC2:
-	.string	"message queue pending message:%d\n"
+	.string	"%d!"
 	.text
 	.p2align 4
 	.globl	send_task
@@ -67,26 +78,22 @@ send_task:
 .LFB70:
 	.cfi_startproc
 	endbr64
-	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
-	leaq	.LC1(%rip), %r14
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
 	leaq	.LC2(%rip), %r13
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
 	movl	$3435973837, %r12d
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
+	.cfi_def_cfa_offset 32
+	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
 	xorl	%ebx, %ebx
-	subq	$32, %rsp
+	subq	$40, %rsp
 	.cfi_def_cfa_offset 80
 	movq	%fs:40, %rax
 	movq	%rax, 24(%rsp)
@@ -96,33 +103,26 @@ send_task:
 	.p2align 3
 .L7:
 	movl	%ebx, %r8d
-	movq	%r14, %rcx
-	movq	%rbp, %rdi
+	movq	%r13, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
+	movq	%rbp, %rdi
 	xorl	%eax, %eax
 	addl	$1, %ebx
 	call	__sprintf_chk@PLT
 	movl	$12, %edx
 	movq	%rbp, %rsi
-	movl	$25, %edi
+	movl	$30, %edi
 	call	roxy_mqueue_send@PLT
 	movl	$1, %esi
 	movl	$1, %edi
 	call	roxy_task_wait@PLT
 	movq	%rbx, %rax
 	imulq	%r12, %rbx
-	movl	$25, %edi
 	shrq	$34, %rbx
 	leal	(%rbx,%rbx,4), %edx
 	subl	%edx, %eax
 	movl	%eax, %ebx
-	call	roxy_mqueue_get_pending@PLT
-	movq	%r13, %rsi
-	movl	$1, %edi
-	movl	%eax, %edx
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
 	jmp	.L7
 	.cfi_endproc
 .LFE70:
@@ -480,7 +480,7 @@ main:
 	jne	.L81
 	movl	$12, %edx
 	movl	$20, %esi
-	movl	$25, %edi
+	movl	$30, %edi
 	call	roxy_mqueue_create@PLT
 	testl	%eax, %eax
 	jne	.L81

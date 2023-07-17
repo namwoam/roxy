@@ -210,13 +210,16 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
         /* Create a pthread with specified attributes */
         int search_index;
+        roxy_critical_section_enter(0);
         for (int i = 0; i < MAX_SEARCH_ITERATION; i++)
         {
             search_index = rand() % ROXY_THREAD_COUNT_LIMIT;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
                 roxy_threads[search_index].status = THREAD_EXECUTING;
-                struct arg_struct arg = {task_id, search_index};
+                struct arg_struct arg;
+                arg.task_id = task_id;
+                arg.thread_id = search_index;
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -231,6 +234,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                 break;
             }
         }
+        roxy_critical_section_leave(0);
     }
     roxy_tasks[task_id].status = TASK_EXECUTING;
     return SUCCESS;

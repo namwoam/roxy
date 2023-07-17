@@ -6096,6 +6096,7 @@ void idle_task()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
+        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(30));
         roxy_task_wait(3, 1);
 
         p = (p + 1) % 10;
@@ -6131,10 +6132,9 @@ void send_task()
     while (1)
     {
         sprintf(message_buffer, "%d!", p);
-        roxy_mqueue_send(25, message_buffer, 12);
+        roxy_mqueue_send(30, message_buffer, 12);
         roxy_task_wait(1, 1);
         p = (p + 1) % 5;
-        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(25));
     }
 }
 
@@ -6169,7 +6169,7 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_mqueue_create(25, 20, 12);
+    status = roxy_mqueue_create(30, 20, 12);
     if (status != SUCCESS)
     {
         return 0;
