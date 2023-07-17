@@ -1026,6 +1026,13 @@ roxy_loop:
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC23:
 	.string	"/%x"
+	.section	.rodata.str1.8
+	.align 8
+.LC24:
+	.string	"ROXY-DEBUG: Failed to create message queue (mqueue_id=%d, channel_name=%s), error_code=%d\n"
+	.align 8
+.LC25:
+	.string	"ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n"
 	.text
 	.p2align 4
 	.globl	roxy_mqueue_create
@@ -1034,114 +1041,16 @@ roxy_mqueue_create:
 .LFB76:
 	.cfi_startproc
 	endbr64
-	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
-	movl	%edi, %r8d
-	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
-	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
-	cmpl	$127, %edi
-	ja	.L177
-	movl	%edi, %eax
-	leaq	(%rax,%rax,4), %rbx
-	leaq	roxy_mqueues(%rip), %rax
-	salq	$4, %rbx
-	addq	%rax, %rbx
-	cmpb	$0, (%rbx)
-	jne	.L178
-	movl	%esi, %r12d
-	movl	%edx, %ebp
-	movq	%rbx, %rdi
-	movl	$11, %edx
-	leaq	.LC23(%rip), %rcx
-	movl	$1, %esi
-	xorl	%eax, %eax
-	call	__sprintf_chk@PLT
-	movl	%r12d, %eax
-	movq	$0, 16(%rbx)
-	movq	%rax, 24(%rbx)
-	movl	%ebp, %eax
-	movq	%rax, 32(%rbx)
-	movq	$0, 40(%rbx)
-	movq	$0, 48(%rbx)
-	movq	$0, 56(%rbx)
-	movq	$0, 64(%rbx)
-	movq	$0, 72(%rbx)
-	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
-	popq	%rbp
-	.cfi_def_cfa_offset 16
-	popq	%r12
-	.cfi_def_cfa_offset 8
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L178:
-	.cfi_restore_state
-	movl	%edi, %edx
-	leaq	.LC22(%rip), %rsi
-	movl	$1, %edi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-.L174:
-	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
-	movl	$2, %eax
-	popq	%rbp
-	.cfi_def_cfa_offset 16
-	popq	%r12
-	.cfi_def_cfa_offset 8
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L177:
-	.cfi_restore_state
-	movl	%edi, %edx
-	leaq	.LC21(%rip), %rsi
-	movl	$1, %edi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	jmp	.L174
-	.cfi_endproc
-.LFE76:
-	.size	roxy_mqueue_create, .-roxy_mqueue_create
-	.section	.rodata.str1.8
-	.align 8
-.LC24:
-	.string	"ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n"
-	.align 8
-.LC25:
-	.string	"ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n"
-	.align 8
-.LC26:
-	.string	"ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n"
-	.align 8
-.LC27:
-	.string	"ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n"
-	.text
-	.p2align 4
-	.globl	roxy_mqueue_send
-	.type	roxy_mqueue_send, @function
-roxy_mqueue_send:
-.LFB77:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
 	.cfi_def_cfa_offset 16
 	.cfi_offset 14, -16
 	pushq	%r13
 	.cfi_def_cfa_offset 24
 	.cfi_offset 13, -24
+	movl	%edi, %r13d
 	pushq	%r12
 	.cfi_def_cfa_offset 32
 	.cfi_offset 12, -32
-	movl	%edi, %r12d
 	pushq	%rbp
 	.cfi_def_cfa_offset 40
 	.cfi_offset 6, -40
@@ -1151,19 +1060,36 @@ roxy_mqueue_send:
 	cmpl	$127, %edi
 	ja	.L180
 	movl	%edi, %eax
-	leaq	roxy_mqueues(%rip), %r14
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	addq	%rax, %r14
-	cmpb	$0, (%r14)
-	je	.L180
-	leaq	16+roxy_mqueues(%rip), %rcx
-	movq	%rsi, %r13
-	movl	%edx, %ebx
-	movq	%r14, %rdi
-	addq	%rcx, %rax
-	movl	$7, %edx
-	movl	$65, %esi
+	leaq	roxy_mqueues(%rip), %r12
+	leaq	(%rax,%rax,4), %rbx
+	salq	$4, %rbx
+	addq	%rbx, %r12
+	cmpb	$0, (%r12)
+	jne	.L181
+	movl	%edi, %r8d
+	movl	%esi, %r14d
+	movl	%edx, %ebp
+	movl	$1, %esi
+	leaq	.LC23(%rip), %rcx
+	movl	$11, %edx
+	movq	%r12, %rdi
+	xorl	%eax, %eax
+	call	__sprintf_chk@PLT
+	movl	%r14d, %eax
+	movq	%r12, %rdi
+	movl	$438, %edx
+	movq	%rax, 24(%r12)
+	movl	%ebp, %eax
+	movl	$66, %esi
+	movq	%rax, 32(%r12)
+	leaq	16+roxy_mqueues(%rip), %rax
+	movq	$0, 16(%r12)
+	addq	%rbx, %rax
+	movq	$0, 40(%r12)
+	movq	$0, 48(%r12)
+	movq	$0, 56(%r12)
+	movq	$0, 64(%r12)
+	movq	$0, 72(%r12)
 	pushq	56(%rax)
 	.cfi_def_cfa_offset 56
 	pushq	48(%rax)
@@ -1184,26 +1110,40 @@ roxy_mqueue_send:
 	call	mq_open@PLT
 	addq	$64, %rsp
 	.cfi_def_cfa_offset 48
-	movl	%eax, %ebp
-	cmpl	$-1, %eax
-	je	.L188
-	xorl	%ecx, %ecx
-	movl	%ebx, %edx
-	movq	%r13, %rsi
 	movl	%eax, %edi
-	call	mq_send@PLT
-	testl	%eax, %eax
-	jne	.L189
-	movl	%ebp, %edi
+	cmpl	$-1, %eax
+	je	.L182
 	call	mq_close@PLT
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L190
-.L179:
+	jne	.L183
+.L172:
 	popq	%rbx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L181:
+	.cfi_restore_state
+	movl	%edi, %edx
+	leaq	.LC22(%rip), %rsi
+	movl	$1, %edi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	movl	$2, %eax
 	popq	%rbp
 	.cfi_def_cfa_offset 32
 	popq	%r12
@@ -1217,44 +1157,136 @@ roxy_mqueue_send:
 	.p2align 3
 .L180:
 	.cfi_restore_state
-	movl	%r12d, %edx
+	movl	%edi, %edx
+	leaq	.LC21(%rip), %rsi
+	movl	$1, %edi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	movl	$2, %eax
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L182:
+	.cfi_restore_state
+	call	__errno_location@PLT
+	movq	%r12, %rcx
+	movl	%r13d, %edx
+	movl	$1, %edi
+	movl	(%rax), %r8d
 	leaq	.LC24(%rip), %rsi
-	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movl	$2, %eax
-	popq	%rbp
-	.cfi_def_cfa_offset 32
-	popq	%r12
-	.cfi_def_cfa_offset 24
-	popq	%r13
-	.cfi_def_cfa_offset 16
-	popq	%r14
-	.cfi_def_cfa_offset 8
-	ret
+	jmp	.L172
 	.p2align 4,,10
 	.p2align 3
-.L188:
-	.cfi_restore_state
-	movq	%r14, %rcx
-	movl	%r12d, %edx
+.L183:
+	movq	%r12, %rcx
+	movl	%r13d, %edx
+	movl	$1, %edi
 	leaq	.LC25(%rip), %rsi
-	xorl	%eax, %eax
-	movl	$1, %edi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L179
+	jmp	.L172
+	.cfi_endproc
+.LFE76:
+	.size	roxy_mqueue_create, .-roxy_mqueue_create
+	.section	.rodata.str1.8
+	.align 8
+.LC26:
+	.string	"ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n"
+	.align 8
+.LC27:
+	.string	"ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s), error_code=%d\n"
+	.align 8
+.LC28:
+	.string	"ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n"
+	.text
+	.p2align 4
+	.globl	roxy_mqueue_send
+	.type	roxy_mqueue_send, @function
+roxy_mqueue_send:
+.LFB77:
+	.cfi_startproc
+	endbr64
+	pushq	%r14
+	.cfi_def_cfa_offset 16
+	.cfi_offset 14, -16
+	pushq	%r13
+	.cfi_def_cfa_offset 24
+	.cfi_offset 13, -24
+	movl	%edi, %r13d
+	pushq	%r12
+	.cfi_def_cfa_offset 32
+	.cfi_offset 12, -32
+	pushq	%rbp
+	.cfi_def_cfa_offset 40
+	.cfi_offset 6, -40
+	pushq	%rbx
+	.cfi_def_cfa_offset 48
+	.cfi_offset 3, -48
+	cmpl	$127, %edi
+	ja	.L185
+	movl	%edi, %eax
+	leaq	(%rax,%rax,4), %r12
+	leaq	roxy_mqueues(%rip), %rax
+	salq	$4, %r12
+	addq	%rax, %r12
+	cmpb	$0, (%r12)
+	je	.L185
+	movq	%rsi, %rbp
+	movq	%r12, %rdi
+	movl	$1, %esi
+	xorl	%eax, %eax
+	movl	%edx, %ebx
+	call	mq_open@PLT
+	movl	%eax, %r14d
+	cmpl	$-1, %eax
+	je	.L193
+	xorl	%ecx, %ecx
+	movl	%ebx, %edx
+	movq	%rbp, %rsi
+	movl	%eax, %edi
+	call	mq_send@PLT
+	testl	%eax, %eax
+	jne	.L194
+	movl	%r14d, %edi
+	call	mq_close@PLT
+	movl	%eax, %r8d
+	xorl	%eax, %eax
+	testl	%r8d, %r8d
+	jne	.L195
+.L184:
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
 	.p2align 4,,10
 	.p2align 3
-.L189:
-	movl	%eax, %r8d
-	movq	%r14, %rcx
-	movl	%r12d, %edx
-	movl	$1, %edi
+.L185:
+	.cfi_restore_state
+	movl	%r13d, %edx
 	leaq	.LC26(%rip), %rsi
+	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	popq	%rbx
@@ -1272,24 +1304,64 @@ roxy_mqueue_send:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L190:
+.L193:
 	.cfi_restore_state
-	movq	%r14, %rcx
-	movl	%r12d, %edx
+	call	__errno_location@PLT
+	movq	%r12, %rcx
+	movl	%r13d, %edx
 	movl	$1, %edi
+	movl	(%rax), %r8d
 	leaq	.LC27(%rip), %rsi
+	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L179
+	jmp	.L184
+	.p2align 4,,10
+	.p2align 3
+.L194:
+	movl	%eax, %r8d
+	movq	%r12, %rcx
+	movl	%r13d, %edx
+	movl	$1, %edi
+	leaq	.LC28(%rip), %rsi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	movl	$2, %eax
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L195:
+	.cfi_restore_state
+	movq	%r12, %rcx
+	movl	%r13d, %edx
+	movl	$1, %edi
+	leaq	.LC25(%rip), %rsi
+	call	__printf_chk@PLT
+	movl	$2, %eax
+	jmp	.L184
 	.cfi_endproc
 .LFE77:
 	.size	roxy_mqueue_send, .-roxy_mqueue_send
 	.section	.rodata.str1.8
 	.align 8
-.LC28:
+.LC29:
 	.string	"ROXY-DEBUG: Invalid blocking option at roxy_mqueue_receive"
 	.align 8
-.LC29:
+.LC30:
+	.string	"ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n"
+	.align 8
+.LC31:
 	.string	"ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n"
 	.text
 	.p2align 4
@@ -1316,42 +1388,42 @@ roxy_mqueue_receive:
 	.cfi_def_cfa_offset 48
 	.cfi_offset 3, -48
 	cmpl	$127, %edi
-	ja	.L192
+	ja	.L197
 	movl	%edi, %eax
 	leaq	(%rax,%rax,4), %r12
 	leaq	roxy_mqueues(%rip), %rax
 	salq	$4, %r12
 	addq	%rax, %r12
 	cmpb	$0, (%r12)
-	je	.L192
+	je	.L197
 	movq	%rsi, %rbp
 	movl	%edx, %ebx
 	cmpl	$1, %ecx
-	je	.L203
+	je	.L208
 	testl	%ecx, %ecx
-	jne	.L197
+	jne	.L202
 	movl	$2048, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r14d
-.L196:
+.L201:
 	cmpl	$-1, %r14d
-	je	.L204
+	je	.L209
 	xorl	%ecx, %ecx
 	movl	%ebx, %edx
 	movq	%rbp, %rsi
 	movl	%r14d, %edi
 	call	mq_receive@PLT
 	testl	%eax, %eax
-	jne	.L205
+	jne	.L210
 	movl	%r14d, %edi
 	call	mq_close@PLT
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L206
-.L191:
+	jne	.L211
+.L196:
 	popq	%rbx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
@@ -1366,10 +1438,10 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L192:
+.L197:
 	.cfi_restore_state
 	movl	%r13d, %edx
-	leaq	.LC24(%rip), %rsi
+	leaq	.LC26(%rip), %rsi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
@@ -1388,9 +1460,9 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L197:
+.L202:
 	.cfi_restore_state
-	leaq	.LC28(%rip), %rdi
+	leaq	.LC29(%rip), %rdi
 	call	puts@PLT
 	popq	%rbx
 	.cfi_remember_state
@@ -1407,22 +1479,22 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L203:
+.L208:
 	.cfi_restore_state
 	xorl	%esi, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r14d
-	jmp	.L196
+	jmp	.L201
 	.p2align 4,,10
 	.p2align 3
-.L205:
+.L210:
 	movl	%eax, %r8d
 	movq	%r12, %rcx
 	movl	%r13d, %edx
 	movl	$1, %edi
-	leaq	.LC29(%rip), %rsi
+	leaq	.LC31(%rip), %rsi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	popq	%rbx
@@ -1440,32 +1512,32 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L204:
+.L209:
 	.cfi_restore_state
 	movq	%r12, %rcx
 	movl	%r13d, %edx
-	leaq	.LC25(%rip), %rsi
+	leaq	.LC30(%rip), %rsi
 	xorl	%eax, %eax
 	movl	$1, %edi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L191
+	jmp	.L196
 	.p2align 4,,10
 	.p2align 3
-.L206:
+.L211:
 	movq	%r12, %rcx
 	movl	%r13d, %edx
 	movl	$1, %edi
-	leaq	.LC27(%rip), %rsi
+	leaq	.LC25(%rip), %rsi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L191
+	jmp	.L196
 	.cfi_endproc
 .LFE78:
 	.size	roxy_mqueue_receive, .-roxy_mqueue_receive
 	.section	.rodata.str1.8
 	.align 8
-.LC30:
+.LC32:
 	.string	"ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n"
 	.text
 	.p2align 4
@@ -1491,31 +1563,31 @@ roxy_mqueue_get_pending:
 	movq	%rax, 72(%rsp)
 	xorl	%eax, %eax
 	cmpl	$127, %edi
-	ja	.L208
+	ja	.L213
 	movl	%edi, %eax
 	leaq	(%rax,%rax,4), %r12
 	leaq	roxy_mqueues(%rip), %rax
 	salq	$4, %r12
 	addq	%rax, %r12
 	cmpb	$0, (%r12)
-	je	.L208
+	je	.L213
 	xorl	%esi, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r13d
 	cmpl	$-1, %eax
-	je	.L215
+	je	.L220
 	movq	%rsp, %rsi
 	movl	%eax, %edi
 	call	mq_getattr@PLT
 	testl	%eax, %eax
-	jne	.L216
+	jne	.L221
 	movl	24(%rsp), %r13d
-.L207:
+.L212:
 	movq	72(%rsp), %rax
 	subq	%fs:40, %rax
-	jne	.L217
+	jne	.L222
 	addq	$80, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 32
@@ -1529,33 +1601,33 @@ roxy_mqueue_get_pending:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L208:
+.L213:
 	.cfi_restore_state
 	movl	%r14d, %edx
 	movl	$1, %edi
 	xorl	%eax, %eax
 	movl	$-1, %r13d
-	leaq	.LC24(%rip), %rsi
+	leaq	.LC26(%rip), %rsi
 	call	__printf_chk@PLT
-	jmp	.L207
-.L215:
-	movq	%r12, %rcx
-	movl	%r14d, %edx
-	leaq	.LC25(%rip), %rsi
-	xorl	%eax, %eax
-	movl	$1, %edi
-	call	__printf_chk@PLT
-	jmp	.L207
-.L216:
+	jmp	.L212
+.L220:
 	movq	%r12, %rcx
 	movl	%r14d, %edx
 	leaq	.LC30(%rip), %rsi
 	xorl	%eax, %eax
 	movl	$1, %edi
+	call	__printf_chk@PLT
+	jmp	.L212
+.L221:
+	movq	%r12, %rcx
+	movl	%r14d, %edx
+	leaq	.LC32(%rip), %rsi
+	xorl	%eax, %eax
+	movl	$1, %edi
 	movl	$-1, %r13d
 	call	__printf_chk@PLT
-	jmp	.L207
-.L217:
+	jmp	.L212
+.L222:
 	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE79:

@@ -29,7 +29,7 @@ enum roxy_status_code roxy_task_suspend(unsigned task_id);
 enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned option);
 enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority);
 
-enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_size);
+enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_maximum_length);
 enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length);
 #define ROXY_MQUEUE_BLOCKING 1
 #define ROXY_MQUEUE_NONBLOCKING 0

@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "pthread.h": "c",
-        "model.h": "c"
+        "model.h": "c",
+        "unistd.h": "c",
+        "resource.h": "c",
+        "mman.h": "c",
+        "errno.h": "c",
+        "mqueue.h": "c"
     }
 }
