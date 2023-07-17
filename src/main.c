@@ -50,10 +50,10 @@ void send_task()
     char message_buffer[MESSAGE_LENGTH];
     while (1)
     {
-        sprintf(message_buffer, "%d!", p);
-        roxy_mqueue_send(MQUEUE_ID, message_buffer, MESSAGE_LENGTH);
+        roxy_mqueue_send(MQUEUE_ID, "0", 3);
         roxy_task_wait(1, ROXY_WAIT_SECOND);
         p = (p + 1) % 5;
+        printf("Hello!!!!\n");
     }
 }
 

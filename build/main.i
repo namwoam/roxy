@@ -6131,10 +6131,10 @@ void send_task()
     char message_buffer[12];
     while (1)
     {
-        sprintf(message_buffer, "%d!", p);
-        roxy_mqueue_send(30, message_buffer, 12);
+        roxy_mqueue_send(30, "0", 3);
         roxy_task_wait(1, 1);
         p = (p + 1) % 5;
+        printf("Hello!!!!\n");
     }
 }
 
