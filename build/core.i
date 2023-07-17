@@ -6259,34 +6259,35 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
     mqueue_attr.mq_maxmsg = queue_capacity;
     mqueue_attr.mq_msgsize = message_maximum_length;
     mqueue_attr.mq_flags = 0;
+    mqueue_attr.mq_curmsgs = 0;
     roxy_mqueues[mqueue_id].mqueue_attribute = mqueue_attr;
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 408 "src/core.c" 3 4
+# 409 "src/core.c" 3 4
                                                                      0100 
-# 408 "src/core.c"
+# 409 "src/core.c"
                                                                              | 
-# 408 "src/core.c" 3 4
-                                                                               00 
-# 408 "src/core.c"
-                                                                                        | 
-# 408 "src/core.c" 3 4
-                                                                                          0200
-# 408 "src/core.c"
-                                                                                                , 0666, roxy_mqueues[mqueue_id].mqueue_attribute);
-    if (mqueue_descriptor == -1)
+# 409 "src/core.c" 3 4
+                                                                               02
+# 409 "src/core.c"
+                                                                                     , 0644, 
+# 409 "src/core.c" 3 4
+                                                                                             ((void *)0)
+# 409 "src/core.c"
+                                                                                                 );
+    if (((mqd_t)-1) == mqueue_descriptor)
     {
         if (1)
         {
             extern int 
-# 413 "src/core.c" 3 4
+# 414 "src/core.c" 3 4
                       (*__errno_location ())
-# 413 "src/core.c"
+# 414 "src/core.c"
                            ;
             printf("ROXY-DEBUG: Failed to create message queue (mqueue_id=%d, channel_name=%s), error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, 
-# 414 "src/core.c" 3 4
+# 415 "src/core.c" 3 4
                                                                                                                                                                   (*__errno_location ())
-# 414 "src/core.c"
+# 415 "src/core.c"
                                                                                                                                                                        );
         }
         return RUNTIME_ERROR;
@@ -6316,23 +6317,23 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
     }
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 442 "src/core.c" 3 4
+# 443 "src/core.c" 3 4
                                                                      01
-# 442 "src/core.c"
+# 443 "src/core.c"
                                                                              );
     if (mqueue_descriptor == -1)
     {
         if (1)
         {
             extern int 
-# 447 "src/core.c" 3 4
+# 448 "src/core.c" 3 4
                       (*__errno_location ())
-# 447 "src/core.c"
+# 448 "src/core.c"
                            ;
             printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s), error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, 
-# 448 "src/core.c" 3 4
+# 449 "src/core.c" 3 4
                                                                                                                                                                 (*__errno_location ())
-# 448 "src/core.c"
+# 449 "src/core.c"
                                                                                                                                                                      );
         }
         return RUNTIME_ERROR;
@@ -6373,21 +6374,21 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
     if (blocking == 1)
     {
         mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 487 "src/core.c" 3 4
+# 488 "src/core.c" 3 4
                                                                          00
-# 487 "src/core.c"
+# 488 "src/core.c"
                                                                                  );
     }
     else if (blocking == 0)
     {
         mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 491 "src/core.c" 3 4
+# 492 "src/core.c" 3 4
                                                                          00 
-# 491 "src/core.c"
+# 492 "src/core.c"
                                                                                   | 
-# 491 "src/core.c" 3 4
+# 492 "src/core.c" 3 4
                                                                                     04000
-# 491 "src/core.c"
+# 492 "src/core.c"
                                                                                               );
     }
     else
@@ -6440,9 +6441,9 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
     }
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 542 "src/core.c" 3 4
+# 543 "src/core.c" 3 4
                                                                      00
-# 542 "src/core.c"
+# 543 "src/core.c"
                                                                              );
     if (mqueue_descriptor == -1)
     {

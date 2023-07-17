@@ -403,10 +403,11 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
     mqueue_attr.mq_maxmsg = queue_capacity;
     mqueue_attr.mq_msgsize = message_maximum_length;
     mqueue_attr.mq_flags = 0;
+    mqueue_attr.mq_curmsgs = 0;
     roxy_mqueues[mqueue_id].mqueue_attribute = mqueue_attr;
     mqd_t mqueue_descriptor;
-    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_CREAT | O_RDONLY | O_EXCL, 0666, roxy_mqueues[mqueue_id].mqueue_attribute);
-    if (mqueue_descriptor == -1)
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_CREAT | O_RDWR, 0644, NULL);
+    if (((mqd_t)-1) == mqueue_descriptor)
     {
         if (ROXY_DEBUG)
         {

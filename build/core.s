@@ -1041,75 +1041,55 @@ roxy_mqueue_create:
 .LFB76:
 	.cfi_startproc
 	endbr64
-	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
 	movl	%edi, %r13d
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
+	.cfi_def_cfa_offset 32
+	.cfi_offset 6, -32
 	pushq	%rbx
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
+	subq	$8, %rsp
 	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	cmpl	$127, %edi
 	ja	.L180
 	movl	%edi, %eax
-	leaq	roxy_mqueues(%rip), %r12
-	leaq	(%rax,%rax,4), %rbx
-	salq	$4, %rbx
-	addq	%rbx, %r12
+	leaq	(%rax,%rax,4), %r12
+	leaq	roxy_mqueues(%rip), %rax
+	salq	$4, %r12
+	addq	%rax, %r12
 	cmpb	$0, (%r12)
 	jne	.L181
 	movl	%edi, %r8d
-	movl	%esi, %r14d
-	movl	%edx, %ebp
+	movl	%esi, %ebp
+	movl	%edx, %ebx
 	movl	$1, %esi
 	leaq	.LC23(%rip), %rcx
 	movl	$11, %edx
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	__sprintf_chk@PLT
-	movl	%r14d, %eax
-	movq	%r12, %rdi
-	movl	$438, %edx
-	movq	%rax, 24(%r12)
 	movl	%ebp, %eax
-	movl	$192, %esi
+	movq	%r12, %rdi
+	xorl	%ecx, %ecx
+	movq	%rax, 24(%r12)
+	movl	%ebx, %eax
+	movl	$420, %edx
+	movl	$66, %esi
 	movq	%rax, 32(%r12)
-	leaq	16+roxy_mqueues(%rip), %rax
+	xorl	%eax, %eax
 	movq	$0, 16(%r12)
-	addq	%rbx, %rax
 	movq	$0, 40(%r12)
 	movq	$0, 48(%r12)
 	movq	$0, 56(%r12)
 	movq	$0, 64(%r12)
 	movq	$0, 72(%r12)
-	pushq	56(%rax)
-	.cfi_def_cfa_offset 56
-	pushq	48(%rax)
-	.cfi_def_cfa_offset 64
-	pushq	40(%rax)
-	.cfi_def_cfa_offset 72
-	pushq	32(%rax)
-	.cfi_def_cfa_offset 80
-	pushq	24(%rax)
-	.cfi_def_cfa_offset 88
-	pushq	16(%rax)
-	.cfi_def_cfa_offset 96
-	pushq	8(%rax)
-	.cfi_def_cfa_offset 104
-	pushq	(%rax)
-	.cfi_def_cfa_offset 112
-	xorl	%eax, %eax
 	call	mq_open@PLT
-	addq	$64, %rsp
-	.cfi_def_cfa_offset 48
 	movl	%eax, %edi
 	cmpl	$-1, %eax
 	je	.L182
@@ -1119,16 +1099,16 @@ roxy_mqueue_create:
 	testl	%r8d, %r8d
 	jne	.L183
 .L172:
-	popq	%rbx
+	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
-	popq	%rbp
+	popq	%rbx
 	.cfi_def_cfa_offset 32
-	popq	%r12
+	popq	%rbp
 	.cfi_def_cfa_offset 24
-	popq	%r13
+	popq	%r12
 	.cfi_def_cfa_offset 16
-	popq	%r14
+	popq	%r13
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
@@ -1140,17 +1120,17 @@ roxy_mqueue_create:
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	popq	%rbx
+	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
 	movl	$2, %eax
-	popq	%rbp
+	popq	%rbx
 	.cfi_def_cfa_offset 32
-	popq	%r12
+	popq	%rbp
 	.cfi_def_cfa_offset 24
-	popq	%r13
+	popq	%r12
 	.cfi_def_cfa_offset 16
-	popq	%r14
+	popq	%r13
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
@@ -1162,17 +1142,17 @@ roxy_mqueue_create:
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	popq	%rbx
+	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
 	movl	$2, %eax
-	popq	%rbp
+	popq	%rbx
 	.cfi_def_cfa_offset 32
-	popq	%r12
+	popq	%rbp
 	.cfi_def_cfa_offset 24
-	popq	%r13
+	popq	%r12
 	.cfi_def_cfa_offset 16
-	popq	%r14
+	popq	%r13
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10

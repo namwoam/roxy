@@ -6127,12 +6127,14 @@ void compute_task()
 void send_task()
 {
     int p = 0;
-    char message_buffer[32];
+    char message_buffer[12];
     while (1)
     {
-        sprintf(message_buffer, "Hello from user %d!", p);
-        roxy_mqueue_send(25, message_buffer, 32);
+        sprintf(message_buffer, "%d!", p);
+        roxy_mqueue_send(25, message_buffer, 12);
         roxy_task_wait(1, 1);
+        p = (p + 1) % 5;
+        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(25));
     }
 }
 
@@ -6146,17 +6148,17 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_create(100, 10, 
-# 67 "src/main.c" 3 4
+# 69 "src/main.c" 3 4
                                                     ((void *)0)
-# 67 "src/main.c"
+# 69 "src/main.c"
                                                         , idle_task, 
-# 67 "src/main.c" 3 4
+# 69 "src/main.c" 3 4
                                                                      ((void *)0)
-# 67 "src/main.c"
+# 69 "src/main.c"
                                                                          , 
-# 67 "src/main.c" 3 4
+# 69 "src/main.c" 3 4
                                                                            ((void *)0)
-# 67 "src/main.c"
+# 69 "src/main.c"
                                                                                );
     if (status != SUCCESS)
     {
@@ -6167,46 +6169,24 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_create(101, 8, 
-# 77 "src/main.c" 3 4
-                                                      ((void *)0)
-# 77 "src/main.c"
-                                                          , compute_task, 
-# 77 "src/main.c" 3 4
-                                                                          ((void *)0)
-# 77 "src/main.c"
-                                                                              , 
-# 77 "src/main.c" 3 4
-                                                                                ((void *)0)
-# 77 "src/main.c"
-                                                                                    );
+    status = roxy_mqueue_create(25, 20, 12);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_start(101, 1);
-    if (status != SUCCESS)
-    {
-        return 0;
-    }
-    status = roxy_mqueue_create(25, 20, 32);
-    if (status != SUCCESS)
-    {
-        return 0;
-    }
-    status = roxy_task_create(102, 10, 
-# 92 "src/main.c" 3 4
-                                                      ((void *)0)
-# 92 "src/main.c"
-                                                          , send_task, 
-# 92 "src/main.c" 3 4
-                                                                       ((void *)0)
-# 92 "src/main.c"
-                                                                           , 
-# 92 "src/main.c" 3 4
-                                                                             ((void *)0)
-# 92 "src/main.c"
-                                                                                 );
+    status = roxy_task_create(102, 3, 
+# 84 "src/main.c" 3 4
+                                                     ((void *)0)
+# 84 "src/main.c"
+                                                         , send_task, 
+# 84 "src/main.c" 3 4
+                                                                      ((void *)0)
+# 84 "src/main.c"
+                                                                          , 
+# 84 "src/main.c" 3 4
+                                                                            ((void *)0)
+# 84 "src/main.c"
+                                                                                );
     if (status != SUCCESS)
     {
         return 0;

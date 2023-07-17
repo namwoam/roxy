@@ -54,7 +54,11 @@ idle_task:
 	.size	idle_task, .-idle_task
 	.section	.rodata.str1.1
 .LC1:
-	.string	"Hello from user %d!"
+	.string	"%d!"
+	.section	.rodata.str1.8,"aMS",@progbits,1
+	.align 8
+.LC2:
+	.string	"message queue pending message:%d\n"
 	.text
 	.p2align 4
 	.globl	send_task
@@ -63,36 +67,62 @@ send_task:
 .LFB70:
 	.cfi_startproc
 	endbr64
-	pushq	%rbp
+	pushq	%r14
 	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	leaq	.LC1(%rip), %rbp
-	pushq	%rbx
+	.cfi_offset 14, -16
+	leaq	.LC1(%rip), %r14
+	pushq	%r13
 	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
-	subq	$56, %rsp
+	.cfi_offset 13, -24
+	leaq	.LC2(%rip), %r13
+	pushq	%r12
+	.cfi_def_cfa_offset 32
+	.cfi_offset 12, -32
+	movl	$3435973837, %r12d
+	pushq	%rbp
+	.cfi_def_cfa_offset 40
+	.cfi_offset 6, -40
+	pushq	%rbx
+	.cfi_def_cfa_offset 48
+	.cfi_offset 3, -48
+	xorl	%ebx, %ebx
+	subq	$32, %rsp
 	.cfi_def_cfa_offset 80
 	movq	%fs:40, %rax
-	movq	%rax, 40(%rsp)
+	movq	%rax, 24(%rsp)
 	xorl	%eax, %eax
-	movq	%rsp, %rbx
+	leaq	12(%rsp), %rbp
 	.p2align 4,,10
 	.p2align 3
 .L7:
-	xorl	%r8d, %r8d
-	movq	%rbp, %rcx
-	movq	%rbx, %rdi
-	movl	$32, %edx
+	movl	%ebx, %r8d
+	movq	%r14, %rcx
+	movq	%rbp, %rdi
+	movl	$12, %edx
 	movl	$1, %esi
 	xorl	%eax, %eax
+	addl	$1, %ebx
 	call	__sprintf_chk@PLT
-	movq	%rbx, %rsi
-	movl	$32, %edx
+	movl	$12, %edx
+	movq	%rbp, %rsi
 	movl	$25, %edi
 	call	roxy_mqueue_send@PLT
 	movl	$1, %esi
 	movl	$1, %edi
 	call	roxy_task_wait@PLT
+	movq	%rbx, %rax
+	imulq	%r12, %rbx
+	movl	$25, %edi
+	shrq	$34, %rbx
+	leal	(%rbx,%rbx,4), %edx
+	subl	%edx, %eax
+	movl	%eax, %ebx
+	call	roxy_mqueue_get_pending@PLT
+	movq	%r13, %rsi
+	movl	$1, %edi
+	movl	%eax, %edx
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
 	jmp	.L7
 	.cfi_endproc
 .LFE70:
@@ -411,7 +441,7 @@ compute_task:
 .LFE69:
 	.size	compute_task, .-compute_task
 	.section	.rodata.str1.1
-.LC2:
+.LC3:
 	.string	"Failed at init"
 	.section	.text.startup,"ax",@progbits
 	.p2align 4
@@ -448,21 +478,7 @@ main:
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
 	jne	.L81
-	xorl	%r9d, %r9d
-	xorl	%r8d, %r8d
-	xorl	%edx, %edx
-	movl	$8, %esi
-	leaq	compute_task(%rip), %rcx
-	movl	$101, %edi
-	call	roxy_task_create@PLT
-	testl	%eax, %eax
-	jne	.L81
-	movl	$1, %esi
-	movl	$101, %edi
-	call	roxy_task_start@PLT
-	testl	%eax, %eax
-	jne	.L81
-	movl	$32, %edx
+	movl	$12, %edx
 	movl	$20, %esi
 	movl	$25, %edi
 	call	roxy_mqueue_create@PLT
@@ -471,7 +487,7 @@ main:
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
-	movl	$10, %esi
+	movl	$3, %esi
 	leaq	send_task(%rip), %rcx
 	movl	$102, %edi
 	call	roxy_task_create@PLT
@@ -489,7 +505,7 @@ main:
 	call	roxy_clean@PLT
 	jmp	.L81
 .L85:
-	leaq	.LC2(%rip), %rdi
+	leaq	.LC3(%rip), %rdi
 	call	puts@PLT
 	jmp	.L81
 	.cfi_endproc
