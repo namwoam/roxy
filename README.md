@@ -81,7 +81,7 @@ rtos_status_code rtos_leave_region( void );
 4. Implement the logic for limiting the available CPU core for threads to run (config by `ROXY_CPU_COUNT`).
 5. Implement functions for critical section, not tested.
 
-### 2023-07-15
+### 2023-07-17
 
 1. Done `roxy_task_wait`.
 2. Done `roxy_task_set_priority`, but POSIX interface only provide API to change `NI` priority.
