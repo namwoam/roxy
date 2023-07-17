@@ -1080,7 +1080,7 @@ roxy_mqueue_create:
 	movl	$438, %edx
 	movq	%rax, 24(%r12)
 	movl	%ebp, %eax
-	movl	$66, %esi
+	movl	$192, %esi
 	movq	%rax, 32(%r12)
 	leaq	16+roxy_mqueues(%rip), %rax
 	movq	$0, 16(%r12)

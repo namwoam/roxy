@@ -6267,9 +6267,13 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
 # 408 "src/core.c"
                                                                              | 
 # 408 "src/core.c" 3 4
-                                                                               02
+                                                                               00 
 # 408 "src/core.c"
-                                                                                     , 0666, roxy_mqueues[mqueue_id].mqueue_attribute);
+                                                                                        | 
+# 408 "src/core.c" 3 4
+                                                                                          0200
+# 408 "src/core.c"
+                                                                                                , 0666, roxy_mqueues[mqueue_id].mqueue_attribute);
     if (mqueue_descriptor == -1)
     {
         if (1)
