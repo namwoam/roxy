@@ -4280,6 +4280,51 @@ extern int shm_unlink (const char *__name);
 
 
 # 7 "include/core.h" 2
+# 1 "/usr/include/errno.h" 1 3 4
+# 28 "/usr/include/errno.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/errno.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/errno.h" 3 4
+# 1 "/usr/include/linux/errno.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/asm/errno.h" 1 3 4
+# 1 "/usr/include/asm-generic/errno.h" 1 3 4
+
+
+
+
+# 1 "/usr/include/asm-generic/errno-base.h" 1 3 4
+# 6 "/usr/include/asm-generic/errno.h" 2 3 4
+# 2 "/usr/include/x86_64-linux-gnu/asm/errno.h" 2 3 4
+# 2 "/usr/include/linux/errno.h" 2 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/errno.h" 2 3 4
+# 29 "/usr/include/errno.h" 2 3 4
+
+
+
+
+
+
+
+
+extern int *__errno_location (void) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+
+
+
+
+
+
+
+extern char *program_invocation_name;
+extern char *program_invocation_short_name;
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/error_t.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/types/error_t.h" 3 4
+typedef int error_t;
+# 49 "/usr/include/errno.h" 2 3 4
+
+
+
+
+# 8 "include/core.h" 2
 
 
 
@@ -4303,16 +4348,19 @@ enum roxy_status_code
     RUNTIME_ERROR = 2
 };
 # 7 "include/model.h" 2
+# 15 "include/model.h"
+enum task_status
+{
+    TASK_EMPTY = 0,
+    TASK_LOADED = 1,
+    TASK_EXECUTING = 2,
+    TASK_TERMINATED = 3,
 
-
-
-
-
-
+};
 
 struct roxy_task
 {
-    unsigned task_id;
+    enum task_status status;
     unsigned priority;
     void *constructor_pointer;
     void *function_pointer;
@@ -4323,26 +4371,32 @@ struct roxy_task
 
 enum thread_status
 {
-    EMPTY = 0,
-    EXECUTING = 1,
-    TERMINATED = 2,
+    THREAD_EMPTY = 0,
+    THREAD_EXECUTING = 1,
+    THREAD_TERMINATED = 2,
 };
 
 struct roxy_thread
 {
     pthread_t posix_thread_id;
     enum thread_status status;
+    int os_thread_id;
 };
-# 12 "include/core.h" 2
-# 1 "include/config.h" 1
 # 13 "include/core.h" 2
+# 1 "include/config.h" 1
+# 14 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
+enum roxy_status_code roxy_loop(unsigned task_id);
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr);
-enum roxy_status_code roxy_task_start(unsigned, unsigned);
+enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count);
 enum roxy_status_code roxy_task_suspend(unsigned);
-enum roxy_status_code roxy_task_wake_after(unsigned, unsigned);
-enum roxy_status_code roxy_task_set_priority(unsigned, unsigned);
+
+
+
+
+enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned option);
+enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority);
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id);
 enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
@@ -4361,48 +4415,49 @@ enum roxy_status_code roxy_init()
 
     for (int i = 0; i < 128; i++)
     {
-        struct roxy_task default_task = {-1, -1, 
+        struct roxy_task default_task = {TASK_EMPTY, -1, 
 # 16 "src/core.c" 3 4
-                                                                                              ((void *)0)
+                                                                                ((void *)0)
 # 16 "src/core.c"
-                                                                                                  , 
+                                                                                    , 
 # 16 "src/core.c" 3 4
-                                                                                                    ((void *)0)
+                                                                                      ((void *)0)
 # 16 "src/core.c"
-                                                                                                        , 
+                                                                                          , 
 # 16 "src/core.c" 3 4
-                                                                                                          ((void *)0)
+                                                                                            ((void *)0)
 # 16 "src/core.c"
-                                                                                                              , 
+                                                                                                , 
 # 16 "src/core.c" 3 4
-                                                                                                                ((void *)0)
+                                                                                                  ((void *)0)
 # 16 "src/core.c"
-                                                                                                                    , {[0 ... 8 - 1] = -1}};
+                                                                                                      , {[0 ... 8 - 1] = -1}};
         roxy_tasks[i] = default_task;
     }
 
     for (int i = 0; i < 1024; i++)
     {
-        roxy_threads[i].status = EMPTY;
+        roxy_threads[i].status = THREAD_EMPTY;
+        roxy_threads[i].os_thread_id = -1;
     }
     for (int i = 0; i < 16; i++)
     {
         pthread_mutex_init(&roxy_critical_sections[i], 
-# 26 "src/core.c" 3 4
+# 27 "src/core.c" 3 4
                                                       ((void *)0)
-# 26 "src/core.c"
+# 27 "src/core.c"
                                                           );
     }
 
 
     const int os_priority_level = sched_get_priority_max(
-# 30 "src/core.c" 3 4
+# 31 "src/core.c" 3 4
                                                         2
-# 30 "src/core.c"
+# 31 "src/core.c"
                                                                             ) - sched_get_priority_min(
-# 30 "src/core.c" 3 4
+# 31 "src/core.c" 3 4
                                                                                                        2
-# 30 "src/core.c"
+# 31 "src/core.c"
                                                                                                                            );
     if (1)
     {
@@ -4416,16 +4471,16 @@ enum roxy_status_code roxy_init()
     return SUCCESS;
 }
 
-enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr)
+enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstructor_ptr, void *argument_ptr)
 {
-    if (task_id < 128 && roxy_tasks[task_id].task_id == -1)
+    if (task_id < 128 && roxy_tasks[task_id].status == TASK_EMPTY)
     {
 
-        roxy_tasks[task_id].task_id = task_id;
+        roxy_tasks[task_id].status = TASK_LOADED;
         roxy_tasks[task_id].priority = priority;
         roxy_tasks[task_id].constructor_pointer = constructor_ptr;
         roxy_tasks[task_id].function_pointer = function_ptr;
-        roxy_tasks[task_id].deconstructor_pointer = deconstruct_ptr;
+        roxy_tasks[task_id].deconstructor_pointer = deconstructor_ptr;
         roxy_tasks[task_id].argument_pointer = argument_ptr;
         return SUCCESS;
     }
@@ -4446,20 +4501,52 @@ void *roxy_thread_runner(void *data)
 {
     struct arg_struct *args = (struct arg_struct *)data;
     void (*task_function)();
-    roxy_threads[args->thread_id].status = EXECUTING;
-    task_function = roxy_tasks[args->task_id].function_pointer;
-    task_function();
-    roxy_threads[args->thread_id].status = TERMINATED;
+    void (*constructor)();
+    void (*deconstructor)();
+    roxy_threads[args->thread_id].status = THREAD_EXECUTING;
+    roxy_threads[args->thread_id].os_thread_id = gettid();
+    if (1)
+    {
+        printf("pthread_id:%lu running on os thread:%d\n", roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
+    }
+    if (roxy_tasks[args->task_id].constructor_pointer != 
+# 82 "src/core.c" 3 4
+                                                        ((void *)0)
+# 82 "src/core.c"
+                                                            )
+    {
+        constructor = roxy_tasks[args->task_id].constructor_pointer;
+        constructor();
+    }
+    if (roxy_tasks[args->task_id].function_pointer != 
+# 87 "src/core.c" 3 4
+                                                     ((void *)0)
+# 87 "src/core.c"
+                                                         )
+    {
+        task_function = roxy_tasks[args->task_id].function_pointer;
+        task_function();
+    }
+    if (roxy_tasks[args->task_id].deconstructor_pointer != 
+# 92 "src/core.c" 3 4
+                                                          ((void *)0)
+# 92 "src/core.c"
+                                                              )
+    {
+        deconstructor = roxy_tasks[args->task_id].deconstructor_pointer;
+        deconstructor();
+    }
+    roxy_threads[args->thread_id].status = THREAD_TERMINATED;
     return 
-# 77 "src/core.c" 3 4
+# 98 "src/core.c" 3 4
           ((void *)0)
-# 77 "src/core.c"
+# 98 "src/core.c"
               ;
 }
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
-    if (task_id > 128 || roxy_tasks[task_id].task_id == -1 || thread_count > 8)
+    if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 8)
     {
         if (1)
         {
@@ -4480,48 +4567,34 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     }
     cpu_set_t cpuset;
     
-# 102 "src/core.c" 3 4
+# 123 "src/core.c" 3 4
    do __builtin_memset (
-# 102 "src/core.c"
+# 123 "src/core.c"
    &cpuset
-# 102 "src/core.c" 3 4
+# 123 "src/core.c" 3 4
    , '\0', sizeof (cpu_set_t)); while (0)
-# 102 "src/core.c"
+# 123 "src/core.c"
                     ;
     for (size_t i = 0; i < 2; i++)
+    {
         
-# 104 "src/core.c" 3 4
+# 126 "src/core.c" 3 4
        (__extension__ ({ size_t __cpu = (
-# 104 "src/core.c"
+# 126 "src/core.c"
        i
-# 104 "src/core.c" 3 4
+# 126 "src/core.c" 3 4
        ); __cpu / 8 < (sizeof (cpu_set_t)) ? (((__cpu_mask *) ((
-# 104 "src/core.c"
+# 126 "src/core.c"
        &cpuset
-# 104 "src/core.c" 3 4
+# 126 "src/core.c" 3 4
        )->__bits))[((__cpu) / (8 * sizeof (__cpu_mask)))] |= ((__cpu_mask) 1 << ((__cpu) % (8 * sizeof (__cpu_mask))))) : 0; }))
-# 104 "src/core.c"
+# 126 "src/core.c"
                           ;
+    }
+
     for (unsigned thread_n = 0; thread_n < thread_count; thread_n++)
     {
         int ret;
-
-        if (mlockall(
-# 109 "src/core.c" 3 4
-                    1 
-# 109 "src/core.c"
-                                | 
-# 109 "src/core.c" 3 4
-                                  2
-# 109 "src/core.c"
-                                            ) == -1)
-        {
-            if (1)
-            {
-                printf("mlockall failed: %m\n");
-            }
-            exit(-2);
-        }
         pthread_attr_t thread_attr;
         struct sched_param scheduler_param;
 
@@ -4537,9 +4610,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setstacksize(&thread_attr, 
-# 131 "src/core.c" 3 4
+# 146 "src/core.c" 3 4
                                                      __sysconf (75)
-# 131 "src/core.c"
+# 146 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -4551,9 +4624,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setschedpolicy(&thread_attr, 
-# 141 "src/core.c" 3 4
+# 156 "src/core.c" 3 4
                                                        2
-# 141 "src/core.c"
+# 156 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -4564,9 +4637,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             return RUNTIME_ERROR;
         }
         scheduler_param.
-# 150 "src/core.c" 3 4
+# 165 "src/core.c" 3 4
                        sched_priority 
-# 150 "src/core.c"
+# 165 "src/core.c"
                                       = roxy_tasks[task_id].priority;
         ret = pthread_attr_setschedparam(&thread_attr, &scheduler_param);
         if (ret)
@@ -4579,9 +4652,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setinheritsched(&thread_attr, 
-# 161 "src/core.c" 3 4
+# 176 "src/core.c" 3 4
                                                         PTHREAD_EXPLICIT_SCHED
-# 161 "src/core.c"
+# 176 "src/core.c"
                                                                               );
         if (ret)
         {
@@ -4596,10 +4669,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         for (int i = 0; i < 100; i++)
         {
             search_index = rand() % 1024;
-            if (roxy_threads[search_index].status == EMPTY)
+            if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
                 struct arg_struct arg = {task_id};
-
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -4610,25 +4682,66 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                     return RUNTIME_ERROR;
                 }
                 pthread_setaffinity_np(roxy_threads[search_index].posix_thread_id, sizeof(cpuset), &cpuset);
+                roxy_threads[search_index].status = THREAD_EXECUTING;
+                roxy_tasks[task_id].thread_ids[thread_n] = search_index;
+                break;
             }
-            roxy_threads[search_index].status = EXECUTING;
-            roxy_tasks[task_id].thread_ids[thread_n] = search_index;
         }
     }
-    for (unsigned thread_n = 0; thread_n < thread_count; thread_n++)
-    {
-        pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_n]].posix_thread_id, 
-# 196 "src/core.c" 3 4
-                                                                                            ((void *)0)
-# 196 "src/core.c"
-                                                                                                );
-    }
+    roxy_tasks[task_id].status = TASK_EXECUTING;
     return SUCCESS;
 }
 
 enum roxy_status_code roxy_task_suspend(unsigned task_id)
 {
 
+}
+enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned wait_option)
+{
+    struct timespec req, rem;
+    if (wait_option == 0)
+    {
+        req.tv_nsec = time_interval;
+        req.tv_sec = 0;
+    }
+    else if (wait_option == 1)
+    {
+        req.tv_nsec = 0;
+        req.tv_sec = time_interval;
+    }
+    else
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Invalid wait option\n");
+        }
+        return RUNTIME_ERROR;
+    }
+
+    if (nanosleep(&req, &rem) == -1)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Error occurred during wait (might be integer overflow)\n");
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority)
+{
+    if (task_id < 0 || task_id >= 128 || roxy_tasks[task_id].status == TASK_EMPTY)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    for (int i = 0; i < 8; i++)
+    {
+    }
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -4664,5 +4777,39 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
         }
         return RUNTIME_ERROR;
     }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_loop(unsigned task_id)
+{
+    if (task_id < 0 || task_id >= 128 || roxy_tasks[task_id].status == TASK_EMPTY)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    for (int thread_index = 0; thread_index < 8; thread_index++)
+    {
+        int ret;
+        if (roxy_tasks[task_id].thread_ids[thread_index] != -1)
+        {
+            ret = pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, 
+# 316 "src/core.c" 3 4
+                                                                                                          ((void *)0)
+# 316 "src/core.c"
+                                                                                                              );
+            if (ret)
+            {
+                if (1)
+                {
+                    printf("ROXY-DEBUG: Failed to join the thread: thread_id=%lu, error_code=%d\n", roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, ret);
+                }
+                return RUNTIME_ERROR;
+            }
+        }
+    }
+
     return SUCCESS;
 }

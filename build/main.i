@@ -3474,6 +3474,35 @@ extern int shm_unlink (const char *__name);
 
 
 # 7 "include/core.h" 2
+# 1 "/usr/include/errno.h" 1 3 4
+# 28 "/usr/include/errno.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/errno.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/errno.h" 3 4
+# 1 "/usr/include/linux/errno.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/asm/errno.h" 1 3 4
+# 1 "/usr/include/asm-generic/errno.h" 1 3 4
+
+
+
+
+# 1 "/usr/include/asm-generic/errno-base.h" 1 3 4
+# 6 "/usr/include/asm-generic/errno.h" 2 3 4
+# 2 "/usr/include/x86_64-linux-gnu/asm/errno.h" 2 3 4
+# 2 "/usr/include/linux/errno.h" 2 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/errno.h" 2 3 4
+# 29 "/usr/include/errno.h" 2 3 4
+
+
+
+
+
+
+
+
+extern int *__errno_location (void) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+# 52 "/usr/include/errno.h" 3 4
+
+# 8 "include/core.h" 2
 
 
 
@@ -3497,16 +3526,19 @@ enum roxy_status_code
     RUNTIME_ERROR = 2
 };
 # 7 "include/model.h" 2
+# 15 "include/model.h"
+enum task_status
+{
+    TASK_EMPTY = 0,
+    TASK_LOADED = 1,
+    TASK_EXECUTING = 2,
+    TASK_TERMINATED = 3,
 
-
-
-
-
-
+};
 
 struct roxy_task
 {
-    unsigned task_id;
+    enum task_status status;
     unsigned priority;
     void *constructor_pointer;
     void *function_pointer;
@@ -3517,50 +3549,50 @@ struct roxy_task
 
 enum thread_status
 {
-    EMPTY = 0,
-    EXECUTING = 1,
-    TERMINATED = 2,
+    THREAD_EMPTY = 0,
+    THREAD_EXECUTING = 1,
+    THREAD_TERMINATED = 2,
 };
 
 struct roxy_thread
 {
     pthread_t posix_thread_id;
     enum thread_status status;
+    int os_thread_id;
 };
-# 12 "include/core.h" 2
-# 1 "include/config.h" 1
 # 13 "include/core.h" 2
+# 1 "include/config.h" 1
+# 14 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
+enum roxy_status_code roxy_loop(unsigned task_id);
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr);
-enum roxy_status_code roxy_task_start(unsigned, unsigned);
+enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count);
 enum roxy_status_code roxy_task_suspend(unsigned);
-enum roxy_status_code roxy_task_wake_after(unsigned, unsigned);
-enum roxy_status_code roxy_task_set_priority(unsigned, unsigned);
+
+
+
+
+enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned option);
+enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority);
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id);
 enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 # 7 "include/main.h" 2
 # 2 "src/main.c" 2
 
+
+
 void idle_task()
 {
-    struct timespec req, rem;
-    req.tv_nsec = 500000000;
-    req.tv_sec = 0;
     while (1)
     {
         time_t rawtime;
         struct tm *timeinfo;
         time(&rawtime);
         timeinfo = localtime(&rawtime);
-        printf("roxy idle on thread:%d\n", sched_getcpu());
-        int t = rand() % 10;
-        if (nanosleep(&req, &rem) == -1)
-        {
-            printf("error at nanosleep!\n");
-            exit(1);
-        }
+        printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
+        roxy_task_wait(10, 1);
     }
     return;
 }
@@ -3598,41 +3630,29 @@ int main(int argc, char *argv[])
         printf("Failed at init\n");
         return 0;
     }
-    status = roxy_task_create(0, 5, 
-# 58 "src/main.c" 3 4
-                                   ((void *)0)
-# 58 "src/main.c"
-                                       , idle_task, 
-# 58 "src/main.c" 3 4
+    status = roxy_task_create(100, 10, 
+# 52 "src/main.c" 3 4
                                                     ((void *)0)
-# 58 "src/main.c"
-                                                        , 
-# 58 "src/main.c" 3 4
-                                                          ((void *)0)
-# 58 "src/main.c"
-                                                              );
+# 52 "src/main.c"
+                                                        , idle_task, 
+# 52 "src/main.c" 3 4
+                                                                     ((void *)0)
+# 52 "src/main.c"
+                                                                         , 
+# 52 "src/main.c" 3 4
+                                                                           ((void *)0)
+# 52 "src/main.c"
+                                                                               );
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_create(1, 20, 
-# 63 "src/main.c" 3 4
-                                    ((void *)0)
-# 63 "src/main.c"
-                                        , compute_task, 
-# 63 "src/main.c" 3 4
-                                                        ((void *)0)
-# 63 "src/main.c"
-                                                            , 
-# 63 "src/main.c" 3 4
-                                                              ((void *)0)
-# 63 "src/main.c"
-                                                                  );
+    status = roxy_task_start(100, 1);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_start(1, 2);
+    status = roxy_loop(100);
     if (status != SUCCESS)
     {
         return 0;

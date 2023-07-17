@@ -13,13 +13,14 @@ enum roxy_status_code roxy_init()
     // init tasks and threads
     for (int i = 0; i < ROXY_TASK_COUNT_LIMIT; i++)
     {
-        struct roxy_task default_task = {ROXY_TASK_PREINIT_TASKID, ROXY_TASK_PREINIT_PRIORITY, NULL, NULL, NULL, NULL, {[0 ... ROXY_TASK_THREAD_LIMIT - 1] = ROXY_TASK_PREINIT_THREADID}};
+        struct roxy_task default_task = {TASK_EMPTY, ROXY_TASK_PREINIT_PRIORITY, NULL, NULL, NULL, NULL, {[0 ... ROXY_TASK_THREAD_LIMIT - 1] = ROXY_TASK_PREINIT_THREADID}};
         roxy_tasks[i] = default_task;
     }
 
     for (int i = 0; i < ROXY_THREAD_COUNT_LIMIT; i++)
     {
-        roxy_threads[i].status = EMPTY;
+        roxy_threads[i].status = THREAD_EMPTY;
+        roxy_threads[i].os_thread_id = ROXY_THREAD_PREINIT_OS_THREADID;
     }
     for (int i = 0; i < ROXY_CRITICAL_SECTION_COUNT_LIMIT; i++)
     {
@@ -40,16 +41,16 @@ enum roxy_status_code roxy_init()
     return SUCCESS;
 }
 
-enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr)
+enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstructor_ptr, void *argument_ptr)
 {
-    if (task_id < ROXY_TASK_COUNT_LIMIT && roxy_tasks[task_id].task_id == ROXY_TASK_PREINIT_TASKID)
+    if (task_id < ROXY_TASK_COUNT_LIMIT && roxy_tasks[task_id].status == TASK_EMPTY)
     {
         // means this task haven't been created
-        roxy_tasks[task_id].task_id = task_id;
+        roxy_tasks[task_id].status = TASK_LOADED;
         roxy_tasks[task_id].priority = priority;
         roxy_tasks[task_id].constructor_pointer = constructor_ptr;
         roxy_tasks[task_id].function_pointer = function_ptr;
-        roxy_tasks[task_id].deconstructor_pointer = deconstruct_ptr;
+        roxy_tasks[task_id].deconstructor_pointer = deconstructor_ptr;
         roxy_tasks[task_id].argument_pointer = argument_ptr;
         return SUCCESS;
     }
@@ -70,16 +71,36 @@ void *roxy_thread_runner(void *data)
 {
     struct arg_struct *args = (struct arg_struct *)data;
     void (*task_function)();
-    roxy_threads[args->thread_id].status = EXECUTING;
-    task_function = roxy_tasks[args->task_id].function_pointer;
-    task_function();
-    roxy_threads[args->thread_id].status = TERMINATED;
+    void (*constructor)();
+    void (*deconstructor)();
+    roxy_threads[args->thread_id].status = THREAD_EXECUTING;
+    roxy_threads[args->thread_id].os_thread_id = gettid();
+    if (ROXY_DEBUG)
+    {
+        printf("pthread_id:%lu running on os thread:%d\n", roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
+    }
+    if (roxy_tasks[args->task_id].constructor_pointer != NULL)
+    {
+        constructor = roxy_tasks[args->task_id].constructor_pointer;
+        constructor();
+    }
+    if (roxy_tasks[args->task_id].function_pointer != NULL)
+    {
+        task_function = roxy_tasks[args->task_id].function_pointer;
+        task_function();
+    }
+    if (roxy_tasks[args->task_id].deconstructor_pointer != NULL)
+    {
+        deconstructor = roxy_tasks[args->task_id].deconstructor_pointer;
+        deconstructor();
+    }
+    roxy_threads[args->thread_id].status = THREAD_TERMINATED;
     return NULL;
 }
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
-    if (task_id > ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].task_id == ROXY_TASK_PREINIT_TASKID || thread_count > ROXY_TASK_THREAD_LIMIT)
+    if (task_id > ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > ROXY_TASK_THREAD_LIMIT)
     {
         if (ROXY_DEBUG)
         {
@@ -101,19 +122,13 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
     for (size_t i = 0; i < ROXY_CPU_COUNT; i++)
+    {
         CPU_SET(i, &cpuset);
+    }
+
     for (unsigned thread_n = 0; thread_n < thread_count; thread_n++)
     {
         int ret;
-        /* Lock memory */
-        if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
-        {
-            if (ROXY_DEBUG)
-            {
-                printf("mlockall failed: %m\n");
-            }
-            exit(-2);
-        }
         pthread_attr_t thread_attr;
         struct sched_param scheduler_param;
         /* Initialize pthread attributes (default values) */
@@ -172,10 +187,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         for (int i = 0; i < MAX_SEARCH_ITERATION; i++)
         {
             search_index = rand() % ROXY_THREAD_COUNT_LIMIT;
-            if (roxy_threads[search_index].status == EMPTY)
+            if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
                 struct arg_struct arg = {task_id};
-                
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &arg);
                 if (ret)
                 {
@@ -186,21 +200,66 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                     return RUNTIME_ERROR;
                 }
                 pthread_setaffinity_np(roxy_threads[search_index].posix_thread_id, sizeof(cpuset), &cpuset);
+                roxy_threads[search_index].status = THREAD_EXECUTING;
+                roxy_tasks[task_id].thread_ids[thread_n] = search_index;
+                break;
             }
-            roxy_threads[search_index].status = EXECUTING;
-            roxy_tasks[task_id].thread_ids[thread_n] = search_index;
         }
     }
-    for (unsigned thread_n = 0; thread_n < thread_count; thread_n++)
-    {
-        pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_n]].posix_thread_id, NULL);
-    }
+    roxy_tasks[task_id].status = TASK_EXECUTING;
     return SUCCESS;
 }
 
 enum roxy_status_code roxy_task_suspend(unsigned task_id)
 {
     // no need to implement yeah!
+}
+enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned wait_option)
+{
+    struct timespec req, rem;
+    if (wait_option == ROXY_WAIT_NANOSECOND)
+    {
+        req.tv_nsec = time_interval;
+        req.tv_sec = 0;
+    }
+    else if (wait_option == ROXY_WAIT_SECOND)
+    {
+        req.tv_nsec = 0;
+        req.tv_sec = time_interval;
+    }
+    else
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Invalid wait option\n");
+        }
+        return RUNTIME_ERROR;
+    }
+
+    if (nanosleep(&req, &rem) == -1)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Error occurred during wait (might be integer overflow)\n");
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority)
+{
+    if (task_id < 0 || task_id >= ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    for (int i = 0; i < ROXY_TASK_THREAD_LIMIT; i++)
+    {
+    }
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -236,5 +295,35 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
         }
         return RUNTIME_ERROR;
     }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_loop(unsigned task_id)
+{
+    if (task_id < 0 || task_id >= ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    for (int thread_index = 0; thread_index < ROXY_TASK_THREAD_LIMIT; thread_index++)
+    {
+        int ret;
+        if (roxy_tasks[task_id].thread_ids[thread_index] != ROXY_TASK_PREINIT_THREADID)
+        {
+            ret = pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, NULL);
+            if (ret)
+            {
+                if (ROXY_DEBUG)
+                {
+                    printf("ROXY-DEBUG: Failed to join the thread: thread_id=%lu, error_code=%d\n", roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, ret);
+                }
+                return RUNTIME_ERROR;
+            }
+        }
+    }
+
     return SUCCESS;
 }

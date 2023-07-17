@@ -80,3 +80,6 @@ rtos_status_code rtos_leave_region( void );
 3. Better project structure.
 4. Implement the logic for limiting the available CPU core for threads to run (config by `ROXY_CPU_COUNT`).
 5. Implement functions for critical section, not tested.
+
+### 2023-07-15
+
