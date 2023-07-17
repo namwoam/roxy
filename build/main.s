@@ -8,7 +8,7 @@
 	.globl	idle_task
 	.type	idle_task, @function
 idle_task:
-.LFB40:
+.LFB55:
 	.cfi_startproc
 	endbr64
 	pushq	%r12
@@ -50,13 +50,13 @@ idle_task:
 	call	roxy_task_wait@PLT
 	jmp	.L2
 	.cfi_endproc
-.LFE40:
+.LFE55:
 	.size	idle_task, .-idle_task
 	.p2align 4
 	.globl	fib
 	.type	fib, @function
 fib:
-.LFB41:
+.LFB56:
 	.cfi_startproc
 	endbr64
 	pushq	%r15
@@ -321,7 +321,7 @@ fib:
 	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
-.LFE41:
+.LFE56:
 	.size	fib, .-fib
 	.section	.rodata.str1.1
 .LC1:
@@ -331,7 +331,7 @@ fib:
 	.globl	compute_task
 	.type	compute_task, @function
 compute_task:
-.LFB42:
+.LFB57:
 	.cfi_startproc
 	endbr64
 	pushq	%r15
@@ -407,7 +407,7 @@ compute_task:
 	movl	$1, %edx
 	jmp	.L71
 	.cfi_endproc
-.LFE42:
+.LFE57:
 	.size	compute_task, .-compute_task
 	.section	.rodata.str1.1
 .LC2:
@@ -417,7 +417,7 @@ compute_task:
 	.globl	main
 	.type	main, @function
 main:
-.LFB43:
+.LFB58:
 	.cfi_startproc
 	endbr64
 	subq	$8, %rsp
@@ -449,13 +449,16 @@ main:
 	jne	.L82
 	movl	$100, %edi
 	call	roxy_loop@PLT
+	testl	%eax, %eax
+	jne	.L82
+	call	roxy_clean@PLT
 	jmp	.L82
 .L86:
 	leaq	.LC2(%rip), %rdi
 	call	puts@PLT
 	jmp	.L82
 	.cfi_endproc
-.LFE43:
+.LFE58:
 	.size	main, .-main
 	.ident	"GCC: (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0"
 	.section	.note.GNU-stack,"",@progbits

@@ -407,7 +407,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
     roxy_mqueues[mqueue_id].mqueue_attribute = mqueue_attr;
 }
 
-enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_buffer, unsigned *message_length)
+enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length)
 {
     if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
@@ -418,12 +418,12 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_b
         return RUNTIME_ERROR;
     }
     mqd_t mqueue_descriptor;
-    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_WRONLY | O_CREAT);
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_WRONLY | O_CREAT, S_IRWXO, roxy_mqueues[mqueue_id].mqueue_attribute);
     if (mqueue_descriptor == -1)
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return RUNTIME_ERROR;
     }
@@ -433,7 +433,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_b
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_threads[mqueue_id], ret);
+            printf("ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
         }
         return RUNTIME_ERROR;
     }
@@ -442,14 +442,14 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_b
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return RUNTIME_ERROR;
     }
     return SUCCESS;
 }
 
-enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *message_buffer, unsigned *message_length, int blocking)
+enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buffer, unsigned message_length, int blocking)
 {
     if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
@@ -462,11 +462,11 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *messag
     mqd_t mqueue_descriptor;
     if (blocking == ROXY_MQUEUE_BLOCKING)
     {
-        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY | O_CREAT);
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY);
     }
     else if (blocking == ROXY_MQUEUE_NONBLOCKING)
     {
-        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY | O_CREAT | O_NONBLOCK);
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY | O_NONBLOCK);
     }
     else
     {
@@ -480,7 +480,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *messag
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return RUNTIME_ERROR;
     }
@@ -490,7 +490,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *messag
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_threads[mqueue_id], ret);
+            printf("ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
         }
         return RUNTIME_ERROR;
     }
@@ -499,7 +499,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *messag
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return RUNTIME_ERROR;
     }
@@ -517,12 +517,12 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
         return -1;
     }
     mqd_t mqueue_descriptor;
-    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_WRONLY | O_CREAT);
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, O_RDONLY);
     if (mqueue_descriptor == -1)
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return -1;
     }
@@ -533,7 +533,7 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
     {
         if (ROXY_DEBUG)
         {
-            printf("ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_threads[mqueue_id]);
+            printf("ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
         return -1;
     }

@@ -30,10 +30,10 @@ enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned option);
 enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority);
 
 enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_size);
-enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const void *message_buffer, unsigned *message_length);
+enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length);
 #define ROXY_MQUEUE_BLOCKING 1
 #define ROXY_MQUEUE_NONBLOCKING 0
-enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, const void *message_buffer, unsigned *message_length, int blocking);
+enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buffer, unsigned message_length, int blocking);
 int roxy_mqueue_get_pending(unsigned mqueue_id);
 enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id);
 

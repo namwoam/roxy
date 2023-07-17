@@ -4643,6 +4643,1062 @@ extern int setpriority (__priority_which_t __which, id_t __who, int __prio)
 
 
 # 9 "include/core.h" 2
+# 1 "/usr/include/fcntl.h" 1 3 4
+# 28 "/usr/include/fcntl.h" 3 4
+
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/fcntl.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/fcntl.h" 3 4
+struct flock
+  {
+    short int l_type;
+    short int l_whence;
+
+    __off_t l_start;
+    __off_t l_len;
+
+
+
+
+    __pid_t l_pid;
+  };
+
+
+struct flock64
+  {
+    short int l_type;
+    short int l_whence;
+    __off64_t l_start;
+    __off64_t l_len;
+    __pid_t l_pid;
+  };
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 1 3 4
+# 38 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h" 2 3 4
+
+
+struct iovec
+  {
+    void *iov_base;
+    size_t iov_len;
+  };
+# 39 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 2 3 4
+# 265 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 3 4
+enum __pid_type
+  {
+    F_OWNER_TID = 0,
+    F_OWNER_PID,
+    F_OWNER_PGRP,
+    F_OWNER_GID = F_OWNER_PGRP
+  };
+
+
+struct f_owner_ex
+  {
+    enum __pid_type type;
+    __pid_t pid;
+  };
+# 354 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 3 4
+# 1 "/usr/include/linux/falloc.h" 1 3 4
+# 355 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 2 3 4
+
+
+
+struct file_handle
+{
+  unsigned int handle_bytes;
+  int handle_type;
+
+  unsigned char f_handle[0];
+};
+# 393 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 3 4
+
+
+
+
+
+extern __ssize_t readahead (int __fd, __off64_t __offset, size_t __count)
+    __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+
+
+extern int sync_file_range (int __fd, __off64_t __offset, __off64_t __count,
+       unsigned int __flags);
+
+
+
+
+
+
+extern __ssize_t vmsplice (int __fdout, const struct iovec *__iov,
+      size_t __count, unsigned int __flags);
+
+
+
+
+
+extern __ssize_t splice (int __fdin, __off64_t *__offin, int __fdout,
+    __off64_t *__offout, size_t __len,
+    unsigned int __flags);
+
+
+
+
+
+extern __ssize_t tee (int __fdin, int __fdout, size_t __len,
+        unsigned int __flags);
+
+
+
+
+
+
+extern int fallocate (int __fd, int __mode, __off_t __offset, __off_t __len);
+# 448 "/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h" 3 4
+extern int fallocate64 (int __fd, int __mode, __off64_t __offset,
+   __off64_t __len);
+
+
+
+
+extern int name_to_handle_at (int __dfd, const char *__name,
+         struct file_handle *__handle, int *__mnt_id,
+         int __flags) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+
+extern int open_by_handle_at (int __mountdirfd, struct file_handle *__handle,
+         int __flags);
+
+
+
+
+# 62 "/usr/include/x86_64-linux-gnu/bits/fcntl.h" 2 3 4
+# 36 "/usr/include/fcntl.h" 2 3 4
+# 78 "/usr/include/fcntl.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stat.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/stat.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 3 4
+struct stat
+  {
+
+
+
+    __dev_t st_dev;
+
+
+
+
+    __ino_t st_ino;
+
+
+
+
+
+
+
+    __nlink_t st_nlink;
+    __mode_t st_mode;
+
+    __uid_t st_uid;
+    __gid_t st_gid;
+
+    int __pad0;
+
+    __dev_t st_rdev;
+
+
+
+
+    __off_t st_size;
+
+
+
+    __blksize_t st_blksize;
+
+    __blkcnt_t st_blocks;
+# 74 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 3 4
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+# 89 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 3 4
+    __syscall_slong_t __glibc_reserved[3];
+# 99 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 3 4
+  };
+
+
+
+struct stat64
+  {
+
+
+
+    __dev_t st_dev;
+
+    __ino64_t st_ino;
+    __nlink_t st_nlink;
+    __mode_t st_mode;
+
+
+
+
+
+
+    __uid_t st_uid;
+    __gid_t st_gid;
+
+    int __pad0;
+    __dev_t st_rdev;
+    __off_t st_size;
+
+
+
+
+
+    __blksize_t st_blksize;
+    __blkcnt64_t st_blocks;
+
+
+
+
+
+
+
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+# 151 "/usr/include/x86_64-linux-gnu/bits/struct_stat.h" 3 4
+    __syscall_slong_t __glibc_reserved[3];
+
+
+
+
+  };
+# 26 "/usr/include/x86_64-linux-gnu/bits/stat.h" 2 3 4
+# 79 "/usr/include/fcntl.h" 2 3 4
+# 149 "/usr/include/fcntl.h" 3 4
+extern int fcntl (int __fd, int __cmd, ...);
+# 158 "/usr/include/fcntl.h" 3 4
+extern int fcntl64 (int __fd, int __cmd, ...);
+# 181 "/usr/include/fcntl.h" 3 4
+extern int open (const char *__file, int __oflag, ...) __attribute__ ((__nonnull__ (1)));
+# 191 "/usr/include/fcntl.h" 3 4
+extern int open64 (const char *__file, int __oflag, ...) __attribute__ ((__nonnull__ (1)));
+# 205 "/usr/include/fcntl.h" 3 4
+extern int openat (int __fd, const char *__file, int __oflag, ...)
+     __attribute__ ((__nonnull__ (2)));
+# 216 "/usr/include/fcntl.h" 3 4
+extern int openat64 (int __fd, const char *__file, int __oflag, ...)
+     __attribute__ ((__nonnull__ (2)));
+# 227 "/usr/include/fcntl.h" 3 4
+extern int creat (const char *__file, mode_t __mode) __attribute__ ((__nonnull__ (1)));
+# 237 "/usr/include/fcntl.h" 3 4
+extern int creat64 (const char *__file, mode_t __mode) __attribute__ ((__nonnull__ (1)));
+# 256 "/usr/include/fcntl.h" 3 4
+extern int lockf (int __fd, int __cmd, off_t __len);
+# 265 "/usr/include/fcntl.h" 3 4
+extern int lockf64 (int __fd, int __cmd, off64_t __len);
+
+
+
+
+
+
+
+extern int posix_fadvise (int __fd, off_t __offset, off_t __len,
+     int __advise) __attribute__ ((__nothrow__ , __leaf__));
+# 285 "/usr/include/fcntl.h" 3 4
+extern int posix_fadvise64 (int __fd, off64_t __offset, off64_t __len,
+       int __advise) __attribute__ ((__nothrow__ , __leaf__));
+# 295 "/usr/include/fcntl.h" 3 4
+extern int posix_fallocate (int __fd, off_t __offset, off_t __len);
+# 306 "/usr/include/fcntl.h" 3 4
+extern int posix_fallocate64 (int __fd, off64_t __offset, off64_t __len);
+
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/fcntl2.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/fcntl2.h" 3 4
+extern int __open_2 (const char *__path, int __oflag) __attribute__ ((__nonnull__ (1)));
+extern int __open_alias (const char *__path, int __oflag, ...) __asm__ ("" "open")
+               __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern void __open_too_many_args (void) __attribute__((__error__ ("open can be called either with 2 or 3 arguments, not more")))
+                                                                  ;
+extern void __open_missing_mode (void) __attribute__((__error__ ("open with O_CREAT or O_TMPFILE in second argument needs 3 arguments")))
+                                                                            ;
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) int
+open (const char *__path, int __oflag, ...)
+{
+  if (__builtin_va_arg_pack_len () > 1)
+    __open_too_many_args ();
+
+  if (__builtin_constant_p (__oflag))
+    {
+      if ((((__oflag) & 0100) != 0 || ((__oflag) & (020000000 | 0200000)) == (020000000 | 0200000)) && __builtin_va_arg_pack_len () < 1)
+ {
+   __open_missing_mode ();
+   return __open_2 (__path, __oflag);
+ }
+      return __open_alias (__path, __oflag, __builtin_va_arg_pack ());
+    }
+
+  if (__builtin_va_arg_pack_len () < 1)
+    return __open_2 (__path, __oflag);
+
+  return __open_alias (__path, __oflag, __builtin_va_arg_pack ());
+}
+
+
+
+extern int __open64_2 (const char *__path, int __oflag) __attribute__ ((__nonnull__ (1)));
+extern int __open64_alias (const char *__path, int __oflag, ...) __asm__ ("" "open64")
+                   __attribute__ ((__nonnull__ (1)));
+extern void __open64_too_many_args (void) __attribute__((__error__ ("open64 can be called either with 2 or 3 arguments, not more")))
+                                                                    ;
+extern void __open64_missing_mode (void) __attribute__((__error__ ("open64 with O_CREAT or O_TMPFILE in second argument needs 3 arguments")))
+                                                                              ;
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) int
+open64 (const char *__path, int __oflag, ...)
+{
+  if (__builtin_va_arg_pack_len () > 1)
+    __open64_too_many_args ();
+
+  if (__builtin_constant_p (__oflag))
+    {
+      if ((((__oflag) & 0100) != 0 || ((__oflag) & (020000000 | 0200000)) == (020000000 | 0200000)) && __builtin_va_arg_pack_len () < 1)
+ {
+   __open64_missing_mode ();
+   return __open64_2 (__path, __oflag);
+ }
+      return __open64_alias (__path, __oflag, __builtin_va_arg_pack ());
+    }
+
+  if (__builtin_va_arg_pack_len () < 1)
+    return __open64_2 (__path, __oflag);
+
+  return __open64_alias (__path, __oflag, __builtin_va_arg_pack ());
+}
+
+
+
+
+
+extern int __openat_2 (int __fd, const char *__path, int __oflag)
+     __attribute__ ((__nonnull__ (2)));
+extern int __openat_alias (int __fd, const char *__path, int __oflag, ...) __asm__ ("" "openat")
+
+     __attribute__ ((__nonnull__ (2)));
+# 111 "/usr/include/x86_64-linux-gnu/bits/fcntl2.h" 3 4
+extern void __openat_too_many_args (void) __attribute__((__error__ ("openat can be called either with 3 or 4 arguments, not more")))
+                                                                    ;
+extern void __openat_missing_mode (void) __attribute__((__error__ ("openat with O_CREAT or O_TMPFILE in third argument needs 4 arguments")))
+                                                                             ;
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) int
+openat (int __fd, const char *__path, int __oflag, ...)
+{
+  if (__builtin_va_arg_pack_len () > 1)
+    __openat_too_many_args ();
+
+  if (__builtin_constant_p (__oflag))
+    {
+      if ((((__oflag) & 0100) != 0 || ((__oflag) & (020000000 | 0200000)) == (020000000 | 0200000)) && __builtin_va_arg_pack_len () < 1)
+ {
+   __openat_missing_mode ();
+   return __openat_2 (__fd, __path, __oflag);
+ }
+      return __openat_alias (__fd, __path, __oflag, __builtin_va_arg_pack ());
+    }
+
+  if (__builtin_va_arg_pack_len () < 1)
+    return __openat_2 (__fd, __path, __oflag);
+
+  return __openat_alias (__fd, __path, __oflag, __builtin_va_arg_pack ());
+}
+
+
+
+extern int __openat64_2 (int __fd, const char *__path, int __oflag)
+     __attribute__ ((__nonnull__ (2)));
+extern int __openat64_alias (int __fd, const char *__path, int __oflag, ...) __asm__ ("" "openat64")
+
+     __attribute__ ((__nonnull__ (2)));
+extern void __openat64_too_many_args (void) __attribute__((__error__ ("openat64 can be called either with 3 or 4 arguments, not more")))
+                                                                      ;
+extern void __openat64_missing_mode (void) __attribute__((__error__ ("openat64 with O_CREAT or O_TMPFILE in third argument needs 4 arguments")))
+                                                                               ;
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) int
+openat64 (int __fd, const char *__path, int __oflag, ...)
+{
+  if (__builtin_va_arg_pack_len () > 1)
+    __openat64_too_many_args ();
+
+  if (__builtin_constant_p (__oflag))
+    {
+      if ((((__oflag) & 0100) != 0 || ((__oflag) & (020000000 | 0200000)) == (020000000 | 0200000)) && __builtin_va_arg_pack_len () < 1)
+ {
+   __openat64_missing_mode ();
+   return __openat64_2 (__fd, __path, __oflag);
+ }
+      return __openat64_alias (__fd, __path, __oflag, __builtin_va_arg_pack ());
+    }
+
+  if (__builtin_va_arg_pack_len () < 1)
+    return __openat64_2 (__fd, __path, __oflag);
+
+  return __openat64_alias (__fd, __path, __oflag, __builtin_va_arg_pack ());
+}
+# 315 "/usr/include/fcntl.h" 2 3 4
+
+
+
+# 10 "include/core.h" 2
+# 1 "/usr/include/mqueue.h" 1 3 4
+# 24 "/usr/include/mqueue.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h" 1 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 5 "/usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h" 3 4
+union sigval
+{
+  int sival_int;
+  void *sival_ptr;
+};
+
+typedef union sigval __sigval_t;
+# 7 "/usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h" 2 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h" 3 4
+typedef struct sigevent
+  {
+    __sigval_t sigev_value;
+    int sigev_signo;
+    int sigev_notify;
+
+    union
+      {
+ int _pad[((64 / sizeof (int)) - 4)];
+
+
+
+ __pid_t _tid;
+
+ struct
+   {
+     void (*_function) (__sigval_t);
+     pthread_attr_t *_attribute;
+   } _sigev_thread;
+      } _sigev_un;
+  } sigevent_t;
+# 25 "/usr/include/mqueue.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/mqueue.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/mqueue.h" 3 4
+typedef int mqd_t;
+
+struct mq_attr
+{
+  __syscall_slong_t mq_flags;
+  __syscall_slong_t mq_maxmsg;
+  __syscall_slong_t mq_msgsize;
+  __syscall_slong_t mq_curmsgs;
+  __syscall_slong_t __pad[4];
+};
+# 28 "/usr/include/mqueue.h" 2 3 4
+
+
+# 38 "/usr/include/mqueue.h" 3 4
+extern mqd_t mq_open (const char *__name, int __oflag, ...)
+  __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int mq_close (mqd_t __mqdes) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern int mq_getattr (mqd_t __mqdes, struct mq_attr *__mqstat)
+  __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+
+
+extern int mq_setattr (mqd_t __mqdes,
+         const struct mq_attr *__restrict __mqstat,
+         struct mq_attr *__restrict __omqstat)
+  __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+
+extern int mq_unlink (const char *__name) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int mq_notify (mqd_t __mqdes, const struct sigevent *__notification)
+     __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern ssize_t mq_receive (mqd_t __mqdes, char *__msg_ptr, size_t __msg_len,
+      unsigned int *__msg_prio) __attribute__ ((__nonnull__ (2)));
+
+
+extern int mq_send (mqd_t __mqdes, const char *__msg_ptr, size_t __msg_len,
+      unsigned int __msg_prio) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+
+extern ssize_t mq_timedreceive (mqd_t __mqdes, char *__restrict __msg_ptr,
+    size_t __msg_len,
+    unsigned int *__restrict __msg_prio,
+    const struct timespec *__restrict __abs_timeout)
+  __attribute__ ((__nonnull__ (2, 5)));
+
+
+
+extern int mq_timedsend (mqd_t __mqdes, const char *__msg_ptr,
+    size_t __msg_len, unsigned int __msg_prio,
+    const struct timespec *__abs_timeout)
+  __attribute__ ((__nonnull__ (2, 5)));
+# 115 "/usr/include/mqueue.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/mqueue2.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/mqueue2.h" 3 4
+extern mqd_t mq_open (const char *__name, int __oflag, ...)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+extern mqd_t __mq_open_2 (const char *__name, int __oflag)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+extern mqd_t __mq_open_alias (const char *__name, int __oflag, ...) __asm__ ("" "mq_open") __attribute__ ((__nothrow__ , __leaf__))
+
+     __attribute__ ((__nonnull__ (1)));
+extern void __mq_open_wrong_number_of_args (void) __attribute__((__error__ ("mq_open can be called either with 2 or 4 arguments")))
+                                                           ;
+extern void __mq_open_missing_mode_and_attr (void) __attribute__((__error__ ("mq_open with O_CREAT in second argument needs 4 arguments")))
+                                                                  ;
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) mqd_t
+__attribute__ ((__nothrow__ , __leaf__)) mq_open (const char *__name, int __oflag, ...)
+{
+  if (__builtin_va_arg_pack_len () != 0 && __builtin_va_arg_pack_len () != 2)
+    __mq_open_wrong_number_of_args ();
+
+  if (__builtin_constant_p (__oflag))
+    {
+      if ((__oflag & 0100) != 0 && __builtin_va_arg_pack_len () == 0)
+ {
+   __mq_open_missing_mode_and_attr ();
+   return __mq_open_2 (__name, __oflag);
+ }
+      return __mq_open_alias (__name, __oflag, __builtin_va_arg_pack ());
+    }
+
+  if (__builtin_va_arg_pack_len () == 0)
+    return __mq_open_2 (__name, __oflag);
+
+  return __mq_open_alias (__name, __oflag, __builtin_va_arg_pack ());
+}
+# 116 "/usr/include/mqueue.h" 2 3 4
+
+
+
+# 11 "include/core.h" 2
+# 1 "/usr/include/string.h" 1 3 4
+# 26 "/usr/include/string.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 27 "/usr/include/string.h" 2 3 4
+
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 34 "/usr/include/string.h" 2 3 4
+# 43 "/usr/include/string.h" 3 4
+extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+       size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void *memmove (void *__dest, const void *__src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern void *memccpy (void *__restrict __dest, const void *__restrict __src,
+        int __c, size_t __n)
+    __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2))) __attribute__ ((__access__ (__write_only__, 1, 4)));
+
+
+
+
+extern void *memset (void *__s, int __c, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+extern int memcmp (const void *__s1, const void *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 80 "/usr/include/string.h" 3 4
+extern int __memcmpeq (const void *__s1, const void *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 107 "/usr/include/string.h" 3 4
+extern void *memchr (const void *__s, int __c, size_t __n)
+      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 120 "/usr/include/string.h" 3 4
+extern void *rawmemchr (const void *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 133 "/usr/include/string.h" 3 4
+extern void *memrchr (const void *__s, int __c, size_t __n)
+      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)))
+      __attribute__ ((__access__ (__read_only__, 1, 3)));
+
+
+
+
+
+extern char *strcpy (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncat (char *__restrict __dest, const char *__restrict __src,
+        size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcmp (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int strncmp (const char *__s1, const char *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcoll (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern size_t strxfrm (char *__restrict __dest,
+         const char *__restrict __src, size_t __n)
+    __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2))) __attribute__ ((__access__ (__write_only__, 1, 3)));
+
+
+
+
+
+
+extern int strcoll_l (const char *__s1, const char *__s2, locale_t __l)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+
+extern size_t strxfrm_l (char *__dest, const char *__src, size_t __n,
+    locale_t __l) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2, 4)))
+     __attribute__ ((__access__ (__write_only__, 1, 3)));
+
+
+
+
+
+extern char *strdup (const char *__s)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern char *strndup (const char *__string, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+# 246 "/usr/include/string.h" 3 4
+extern char *strchr (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 273 "/usr/include/string.h" 3 4
+extern char *strrchr (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 286 "/usr/include/string.h" 3 4
+extern char *strchrnul (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern size_t strcspn (const char *__s, const char *__reject)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern size_t strspn (const char *__s, const char *__accept)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 323 "/usr/include/string.h" 3 4
+extern char *strpbrk (const char *__s, const char *__accept)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 350 "/usr/include/string.h" 3 4
+extern char *strstr (const char *__haystack, const char *__needle)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern char *strtok (char *__restrict __s, const char *__restrict __delim)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+
+
+extern char *__strtok_r (char *__restrict __s,
+    const char *__restrict __delim,
+    char **__restrict __save_ptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2, 3)));
+
+extern char *strtok_r (char *__restrict __s, const char *__restrict __delim,
+         char **__restrict __save_ptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2, 3)));
+# 380 "/usr/include/string.h" 3 4
+extern char *strcasestr (const char *__haystack, const char *__needle)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+
+
+extern void *memmem (const void *__haystack, size_t __haystacklen,
+       const void *__needle, size_t __needlelen)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 3)))
+    __attribute__ ((__access__ (__read_only__, 1, 2)))
+    __attribute__ ((__access__ (__read_only__, 3, 4)));
+
+
+
+extern void *__mempcpy (void *__restrict __dest,
+   const void *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+extern void *mempcpy (void *__restrict __dest,
+        const void *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern size_t strlen (const char *__s)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern size_t strnlen (const char *__string, size_t __maxlen)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern char *strerror (int __errnum) __attribute__ ((__nothrow__ , __leaf__));
+# 444 "/usr/include/string.h" 3 4
+extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2))) __attribute__ ((__warn_unused_result__)) __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+extern const char *strerrordesc_np (int __err) __attribute__ ((__nothrow__ , __leaf__));
+
+extern const char *strerrorname_np (int __err) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+
+extern char *strerror_l (int __errnum, locale_t __l) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+# 1 "/usr/include/strings.h" 1 3 4
+# 23 "/usr/include/strings.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 24 "/usr/include/strings.h" 2 3 4
+
+
+
+
+
+
+
+
+
+
+extern int bcmp (const void *__s1, const void *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void bcopy (const void *__src, void *__dest, size_t __n)
+  __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void bzero (void *__s, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+# 68 "/usr/include/strings.h" 3 4
+extern char *index (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 96 "/usr/include/strings.h" 3 4
+extern char *rindex (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern int ffs (int __i) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+
+
+
+
+
+extern int ffsl (long int __l) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+__extension__ extern int ffsll (long long int __ll)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
+
+
+
+extern int strcasecmp (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strncasecmp (const char *__s1, const char *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+
+extern int strcasecmp_l (const char *__s1, const char *__s2, locale_t __loc)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+
+
+extern int strncasecmp_l (const char *__s1, const char *__s2,
+     size_t __n, locale_t __loc)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 4)));
+
+
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/strings_fortified.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/strings_fortified.h" 3 4
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void
+__attribute__ ((__nothrow__ , __leaf__)) bcopy (const void *__src, void *__dest, size_t __len)
+{
+  (void) __builtin___memmove_chk (__dest, __src, __len,
+      __builtin_object_size (__dest, 0));
+}
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void
+__attribute__ ((__nothrow__ , __leaf__)) bzero (void *__dest, size_t __len)
+{
+  (void) __builtin___memset_chk (__dest, '\0', __len,
+     __builtin_object_size (__dest, 0));
+}
+# 145 "/usr/include/strings.h" 2 3 4
+# 463 "/usr/include/string.h" 2 3 4
+
+
+
+extern void explicit_bzero (void *__s, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+
+
+
+extern char *strsep (char **__restrict __stringp,
+       const char *__restrict __delim)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern char *strsignal (int __sig) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern const char *sigabbrev_np (int __sig) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern const char *sigdescr_np (int __sig) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern char *__stpcpy (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpcpy (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern char *__stpncpy (char *__restrict __dest,
+   const char *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int strverscmp (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strfry (char *__string) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+extern void *memfrob (void *__s, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__read_write__, 1, 2)));
+# 527 "/usr/include/string.h" 3 4
+extern char *basename (const char *__filename) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h" 3 4
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void *
+__attribute__ ((__nothrow__ , __leaf__)) memcpy (void *__restrict __dest, const void *__restrict __src, size_t __len)
+
+{
+  return __builtin___memcpy_chk (__dest, __src, __len,
+     __builtin_object_size (__dest, 0));
+}
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void *
+__attribute__ ((__nothrow__ , __leaf__)) memmove (void *__dest, const void *__src, size_t __len)
+{
+  return __builtin___memmove_chk (__dest, __src, __len,
+      __builtin_object_size (__dest, 0));
+}
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void *
+__attribute__ ((__nothrow__ , __leaf__)) mempcpy (void *__restrict __dest, const void *__restrict __src, size_t __len)
+
+{
+  return __builtin___mempcpy_chk (__dest, __src, __len,
+      __builtin_object_size (__dest, 0));
+}
+# 56 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h" 3 4
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void *
+__attribute__ ((__nothrow__ , __leaf__)) memset (void *__dest, int __ch, size_t __len)
+{
+  return __builtin___memset_chk (__dest, __ch, __len,
+     __builtin_object_size (__dest, 0));
+}
+
+
+
+
+void __explicit_bzero_chk (void *__dest, size_t __len, size_t __destlen)
+  __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1))) __attribute__ ((__access__ (__write_only__, 1, 2)));
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) void
+__attribute__ ((__nothrow__ , __leaf__)) explicit_bzero (void *__dest, size_t __len)
+{
+  __explicit_bzero_chk (__dest, __len, __builtin_object_size (__dest, 0));
+}
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) strcpy (char *__restrict __dest, const char *__restrict __src)
+{
+  return __builtin___strcpy_chk (__dest, __src, __builtin_object_size (__dest, 2 > 1));
+}
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) stpcpy (char *__restrict __dest, const char *__restrict __src)
+{
+  return __builtin___stpcpy_chk (__dest, __src, __builtin_object_size (__dest, 2 > 1));
+}
+
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) strncpy (char *__restrict __dest, const char *__restrict __src, size_t __len)
+
+{
+  return __builtin___strncpy_chk (__dest, __src, __len,
+      __builtin_object_size (__dest, 2 > 1));
+}
+
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) stpncpy (char *__dest, const char *__src, size_t __n)
+{
+  return __builtin___stpncpy_chk (__dest, __src, __n,
+      __builtin_object_size (__dest, 2 > 1));
+}
+# 127 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h" 3 4
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) strcat (char *__restrict __dest, const char *__restrict __src)
+{
+  return __builtin___strcat_chk (__dest, __src, __builtin_object_size (__dest, 2 > 1));
+}
+
+
+extern __inline __attribute__ ((__always_inline__)) __attribute__ ((__gnu_inline__)) __attribute__ ((__artificial__)) char *
+__attribute__ ((__nothrow__ , __leaf__)) strncat (char *__restrict __dest, const char *__restrict __src, size_t __len)
+
+{
+  return __builtin___strncat_chk (__dest, __src, __len,
+      __builtin_object_size (__dest, 2 > 1));
+}
+# 536 "/usr/include/string.h" 2 3 4
+
+
+
+
+# 12 "include/core.h" 2
 
 
 
@@ -4700,21 +5756,36 @@ struct roxy_thread
     enum thread_status status;
     int os_thread_id;
 };
-# 14 "include/core.h" 2
+
+struct roxy_mqueue
+{
+    char channel_name[8 + 3];
+    struct mq_attr mqueue_attribute;
+};
+# 17 "include/core.h" 2
 # 1 "include/config.h" 1
-# 15 "include/core.h" 2
+# 18 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_loop(unsigned task_id);
+enum roxy_status_code roxy_clean(void);
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstruct_ptr, void *argument_ptr);
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count);
-enum roxy_status_code roxy_task_suspend(unsigned);
+enum roxy_status_code roxy_task_suspend(unsigned task_id);
 
 
 
 
 enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned option);
 enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority);
+
+enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_size);
+enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length);
+
+
+enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buffer, unsigned message_length, int blocking);
+int roxy_mqueue_get_pending(unsigned mqueue_id);
+enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id);
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id);
 enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
@@ -4725,6 +5796,7 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 static struct roxy_task roxy_tasks[128];
 static struct roxy_thread roxy_threads[1024];
 static pthread_mutex_t roxy_critical_sections[16];
+static struct roxy_mqueue roxy_mqueues[128];
 
 enum roxy_status_code roxy_init()
 {
@@ -4734,21 +5806,21 @@ enum roxy_status_code roxy_init()
     for (int i = 0; i < 128; i++)
     {
         struct roxy_task default_task = {TASK_EMPTY, -1, 
-# 16 "src/core.c" 3 4
+# 17 "src/core.c" 3 4
                                                                                 ((void *)0)
-# 16 "src/core.c"
+# 17 "src/core.c"
                                                                                     , 
-# 16 "src/core.c" 3 4
+# 17 "src/core.c" 3 4
                                                                                       ((void *)0)
-# 16 "src/core.c"
+# 17 "src/core.c"
                                                                                           , 
-# 16 "src/core.c" 3 4
+# 17 "src/core.c" 3 4
                                                                                             ((void *)0)
-# 16 "src/core.c"
+# 17 "src/core.c"
                                                                                                 , 
-# 16 "src/core.c" 3 4
+# 17 "src/core.c" 3 4
                                                                                                   ((void *)0)
-# 16 "src/core.c"
+# 17 "src/core.c"
                                                                                                       , {[0 ... 8 - 1] = -1}};
         roxy_tasks[i] = default_task;
     }
@@ -4761,21 +5833,25 @@ enum roxy_status_code roxy_init()
     for (int i = 0; i < 16; i++)
     {
         pthread_mutex_init(&roxy_critical_sections[i], 
-# 27 "src/core.c" 3 4
+# 28 "src/core.c" 3 4
                                                       ((void *)0)
-# 27 "src/core.c"
+# 28 "src/core.c"
                                                           );
+    }
+    for (int i = 0; i < 128; i++)
+    {
+        strcpy(roxy_mqueues[i].channel_name, "");
     }
 
 
     const int os_priority_level = sched_get_priority_max(
-# 31 "src/core.c" 3 4
+# 36 "src/core.c" 3 4
                                                         2
-# 31 "src/core.c"
+# 36 "src/core.c"
                                                                             ) - sched_get_priority_min(
-# 31 "src/core.c" 3 4
+# 36 "src/core.c" 3 4
                                                                                                        2
-# 31 "src/core.c"
+# 36 "src/core.c"
                                                                                                                            );
     if (1)
     {
@@ -4787,6 +5863,28 @@ enum roxy_status_code roxy_init()
         return CONFIG_ERROR;
     }
     return SUCCESS;
+}
+
+enum roxy_status_code roxy_clean()
+{
+    int ret;
+    for (int mqueue_id = 0; mqueue_id < 128; mqueue_id++)
+    {
+        if (strcmp(roxy_mqueues[mqueue_id].channel_name, " ") != 0)
+        {
+            ret = mq_unlink(roxy_mqueues[mqueue_id].channel_name);
+            if (ret)
+            {
+                if (1)
+                {
+                    printf("ROXY-DEBUG: Failed to unlink the mqueue (mqueue_id=%d , channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
+                }
+                return RUNTIME_ERROR;
+            }
+            printf("Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+            strcpy(roxy_mqueues[mqueue_id].channel_name, "");
+        }
+    }
 }
 
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstructor_ptr, void *argument_ptr)
@@ -4804,7 +5902,7 @@ enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void
     }
     if (1)
     {
-        printf("ROXY-DEBUG: Task id out-of-bound or task already existed\n");
+        printf("ROXY-DEBUG: task_id out-of-bound or task already existed\n");
     }
     return RUNTIME_ERROR;
 }
@@ -4828,27 +5926,27 @@ void *roxy_thread_runner(void *data)
         printf("thread_id:%d pthread_id:%lu running on os thread:%d\n", args->thread_id, roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
     }
     if (roxy_tasks[args->task_id].constructor_pointer != 
-# 82 "src/core.c" 3 4
+# 109 "src/core.c" 3 4
                                                         ((void *)0)
-# 82 "src/core.c"
+# 109 "src/core.c"
                                                             )
     {
         constructor = roxy_tasks[args->task_id].constructor_pointer;
         constructor();
     }
     if (roxy_tasks[args->task_id].function_pointer != 
-# 87 "src/core.c" 3 4
+# 114 "src/core.c" 3 4
                                                      ((void *)0)
-# 87 "src/core.c"
+# 114 "src/core.c"
                                                          )
     {
         task_function = roxy_tasks[args->task_id].function_pointer;
         task_function();
     }
     if (roxy_tasks[args->task_id].deconstructor_pointer != 
-# 92 "src/core.c" 3 4
+# 119 "src/core.c" 3 4
                                                           ((void *)0)
-# 92 "src/core.c"
+# 119 "src/core.c"
                                                               )
     {
         deconstructor = roxy_tasks[args->task_id].deconstructor_pointer;
@@ -4856,9 +5954,9 @@ void *roxy_thread_runner(void *data)
     }
     roxy_threads[args->thread_id].status = THREAD_TERMINATED;
     return 
-# 98 "src/core.c" 3 4
+# 125 "src/core.c" 3 4
           ((void *)0)
-# 98 "src/core.c"
+# 125 "src/core.c"
               ;
 }
 
@@ -4885,28 +5983,28 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     }
     cpu_set_t cpuset;
     
-# 123 "src/core.c" 3 4
+# 150 "src/core.c" 3 4
    do __builtin_memset (
-# 123 "src/core.c"
+# 150 "src/core.c"
    &cpuset
-# 123 "src/core.c" 3 4
+# 150 "src/core.c" 3 4
    , '\0', sizeof (cpu_set_t)); while (0)
-# 123 "src/core.c"
+# 150 "src/core.c"
                     ;
     for (size_t i = 0; i < 2; i++)
     {
         
-# 126 "src/core.c" 3 4
+# 153 "src/core.c" 3 4
        (__extension__ ({ size_t __cpu = (
-# 126 "src/core.c"
+# 153 "src/core.c"
        i
-# 126 "src/core.c" 3 4
+# 153 "src/core.c" 3 4
        ); __cpu / 8 < (sizeof (cpu_set_t)) ? (((__cpu_mask *) ((
-# 126 "src/core.c"
+# 153 "src/core.c"
        &cpuset
-# 126 "src/core.c" 3 4
+# 153 "src/core.c" 3 4
        )->__bits))[((__cpu) / (8 * sizeof (__cpu_mask)))] |= ((__cpu_mask) 1 << ((__cpu) % (8 * sizeof (__cpu_mask))))) : 0; }))
-# 126 "src/core.c"
+# 153 "src/core.c"
                           ;
     }
 
@@ -4928,9 +6026,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setstacksize(&thread_attr, 
-# 146 "src/core.c" 3 4
+# 173 "src/core.c" 3 4
                                                      __sysconf (75)
-# 146 "src/core.c"
+# 173 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -4942,9 +6040,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setschedpolicy(&thread_attr, 
-# 156 "src/core.c" 3 4
+# 183 "src/core.c" 3 4
                                                        2
-# 156 "src/core.c"
+# 183 "src/core.c"
                                                                            );
         if (ret)
         {
@@ -4955,9 +6053,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
             return RUNTIME_ERROR;
         }
         scheduler_param.
-# 165 "src/core.c" 3 4
+# 192 "src/core.c" 3 4
                        sched_priority 
-# 165 "src/core.c"
+# 192 "src/core.c"
                                       = roxy_tasks[task_id].priority;
         ret = pthread_attr_setschedparam(&thread_attr, &scheduler_param);
         if (ret)
@@ -4970,9 +6068,9 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
 
         ret = pthread_attr_setinheritsched(&thread_attr, 
-# 176 "src/core.c" 3 4
+# 203 "src/core.c" 3 4
                                                         PTHREAD_EXPLICIT_SCHED
-# 176 "src/core.c"
+# 203 "src/core.c"
                                                                               );
         if (ret)
         {
@@ -5066,7 +6164,7 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
         return RUNTIME_ERROR;
     }
     roxy_tasks[task_id].priority = new_priority;
-# 289 "src/core.c"
+# 316 "src/core.c"
 }
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
@@ -5121,9 +6219,9 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         if (roxy_tasks[task_id].thread_ids[thread_index] != -1)
         {
             ret = pthread_join(roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, 
-# 342 "src/core.c" 3 4
+# 369 "src/core.c" 3 4
                                                                                                           ((void *)0)
-# 342 "src/core.c"
+# 369 "src/core.c"
                                                                                                               );
             if (ret)
             {
@@ -5137,4 +6235,191 @@ enum roxy_status_code roxy_loop(unsigned task_id)
     }
 
     return SUCCESS;
+}
+
+enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_size)
+{
+    if (mqueue_id < 0 || mqueue_id >= 128)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to start the message queue (mqueue_id=%d)\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    if (strcmp(roxy_mqueues[mqueue_id].channel_name, "") != 0)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    sprintf(roxy_mqueues[mqueue_id].channel_name, "/%x", mqueue_id);
+    struct mq_attr mqueue_attr;
+    mqueue_attr.mq_maxmsg = queue_capacity;
+    mqueue_attr.mq_msgsize = message_size;
+    mqueue_attr.mq_flags = 0;
+    roxy_mqueues[mqueue_id].mqueue_attribute = mqueue_attr;
+}
+
+enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length)
+{
+    if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    mqd_t mqueue_descriptor;
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
+# 421 "src/core.c" 3 4
+                                                                     01 
+# 421 "src/core.c"
+                                                                              | 
+# 421 "src/core.c" 3 4
+                                                                                0100
+# 421 "src/core.c"
+                                                                                       , 
+# 421 "src/core.c" 3 4
+                                                                                         (((0400|0200|0100) >> 3) >> 3)
+# 421 "src/core.c"
+                                                                                                , roxy_mqueues[mqueue_id].mqueue_attribute);
+    if (mqueue_descriptor == -1)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return RUNTIME_ERROR;
+    }
+    int ret;
+    ret = mq_send(mqueue_descriptor, message_buffer, message_length, 0);
+    if (ret)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
+        }
+        return RUNTIME_ERROR;
+    }
+    ret = mq_close(mqueue_descriptor);
+    if (ret)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buffer, unsigned message_length, int blocking)
+{
+    if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    mqd_t mqueue_descriptor;
+    if (blocking == 1)
+    {
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
+# 465 "src/core.c" 3 4
+                                                                         00
+# 465 "src/core.c"
+                                                                                 );
+    }
+    else if (blocking == 0)
+    {
+        mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
+# 469 "src/core.c" 3 4
+                                                                         00 
+# 469 "src/core.c"
+                                                                                  | 
+# 469 "src/core.c" 3 4
+                                                                                    04000
+# 469 "src/core.c"
+                                                                                              );
+    }
+    else
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Invalid blocking option at roxy_mqueue_receive\n");
+        }
+        return RUNTIME_ERROR;
+    }
+    if (mqueue_descriptor == -1)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return RUNTIME_ERROR;
+    }
+    int ret;
+    ret = mq_receive(mqueue_descriptor, message_buffer, message_length, 0);
+    if (ret)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
+        }
+        return RUNTIME_ERROR;
+    }
+    ret = mq_close(mqueue_descriptor);
+    if (ret)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return RUNTIME_ERROR;
+    }
+    return SUCCESS;
+}
+
+int roxy_mqueue_get_pending(unsigned mqueue_id)
+{
+    if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
+        }
+        return -1;
+    }
+    mqd_t mqueue_descriptor;
+    mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
+# 520 "src/core.c" 3 4
+                                                                     00
+# 520 "src/core.c"
+                                                                             );
+    if (mqueue_descriptor == -1)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return -1;
+    }
+    int ret;
+    struct mq_attr mqueue_attr;
+    ret = mq_getattr(mqueue_descriptor, &mqueue_attr);
+    if (ret)
+    {
+        if (1)
+        {
+            printf("ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
+        }
+        return -1;
+    }
+    return mqueue_attr.mq_curmsgs;
 }
