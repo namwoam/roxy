@@ -25,4 +25,6 @@ enum roxy_status_code
 #define ROXY_DEBUG 1 // 1 for active
 #define ROXY_RANDOM_SEED 8080
 
+#define ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH 256
+#define ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY 512
 #endif

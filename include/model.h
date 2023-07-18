@@ -38,12 +38,17 @@ enum thread_status
     THREAD_EXECUTING = 1,
     THREAD_TERMINATED = 2,
 };
-
+struct thread_arg
+{
+    unsigned task_id;
+    unsigned thread_id;
+};
 struct roxy_thread
 {
     pthread_t posix_thread_id;
     enum thread_status status;
     int os_thread_id;
+    struct thread_arg arg;
 };
 
 struct roxy_mqueue

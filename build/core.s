@@ -3,7 +3,7 @@
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
 .LC0:
-	.string	"thread_id:%d pthread_id:%lu running on os thread:%d\n"
+	.string	"ROXY-SYSTEM: thread_id:%d pthread_id:%lu running on os thread:%d\n"
 	.text
 	.p2align 4
 	.globl	roxy_thread_runner
@@ -16,32 +16,34 @@ roxy_thread_runner:
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
 	xorl	%eax, %eax
+	leaq	roxy_threads(%rip), %r12
 	pushq	%rbp
 	.cfi_def_cfa_offset 24
 	.cfi_offset 6, -24
-	leaq	roxy_threads(%rip), %rbp
 	pushq	%rbx
 	.cfi_def_cfa_offset 32
 	.cfi_offset 3, -32
-	movl	4(%rdi), %r12d
+	movl	4(%rdi), %ebp
 	movq	%rdi, %rbx
-	salq	$4, %r12
 	call	gettid@PLT
 	leaq	.LC0(%rip), %rsi
 	movl	$1, %edi
-	movl	%eax, 12(%rbp,%r12)
+	movl	%eax, %r8d
+	movl	%ebp, %eax
+	leaq	roxy_tasks(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
+	movl	%r8d, 12(%r12,%rax,8)
 	movl	4(%rbx), %eax
-	leaq	roxy_tasks(%rip), %r12
 	movq	%rax, %rdx
-	salq	$4, %rax
-	addq	%rbp, %rax
+	leaq	(%rax,%rax,2), %rax
+	leaq	(%r12,%rax,8), %rax
 	movl	12(%rax), %r8d
 	movq	(%rax), %rcx
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	(%rbx), %eax
 	leaq	(%rax,%rax,8), %rdx
-	movq	8(%r12,%rdx,8), %rdx
+	movq	8(%rbp,%rdx,8), %rdx
 	testq	%rdx, %rdx
 	je	.L2
 	xorl	%eax, %eax
@@ -49,7 +51,7 @@ roxy_thread_runner:
 	movl	(%rbx), %eax
 .L2:
 	leaq	(%rax,%rax,8), %rdx
-	movq	16(%r12,%rdx,8), %rdx
+	movq	16(%rbp,%rdx,8), %rdx
 	testq	%rdx, %rdx
 	je	.L3
 	xorl	%eax, %eax
@@ -57,7 +59,7 @@ roxy_thread_runner:
 	movl	(%rbx), %eax
 .L3:
 	leaq	(%rax,%rax,8), %rax
-	movq	32(%r12,%rax,8), %rdx
+	movq	32(%rbp,%rax,8), %rdx
 	testq	%rdx, %rdx
 	je	.L4
 	xorl	%eax, %eax
@@ -66,11 +68,11 @@ roxy_thread_runner:
 	movl	4(%rbx), %eax
 	popq	%rbx
 	.cfi_def_cfa_offset 24
-	salq	$4, %rax
-	movl	$2, 8(%rbp,%rax)
-	xorl	%eax, %eax
 	popq	%rbp
 	.cfi_def_cfa_offset 16
+	leaq	(%rax,%rax,2), %rax
+	movl	$2, 8(%r12,%rax,8)
+	xorl	%eax, %eax
 	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
@@ -119,13 +121,13 @@ roxy_init:
 	cmpq	%rdx, %rax
 	jne	.L17
 	leaq	8+roxy_threads(%rip), %rax
-	leaq	16384(%rax), %rdx
+	leaq	24576(%rax), %rdx
 	.p2align 4,,10
 	.p2align 3
 .L18:
 	movl	$0, (%rax)
-	addq	$16, %rax
-	movl	$-1, -12(%rax)
+	addq	$24, %rax
+	movl	$-1, -20(%rax)
 	cmpq	%rax, %rdx
 	jne	.L18
 	leaq	roxy_critical_sections(%rip), %rbx
@@ -183,7 +185,7 @@ roxy_init:
 	.string	"ROXY-DEBUG: Failed to unlink the mqueue (mqueue_id=%d , channel_name=%s) error_code=%d\n"
 	.align 8
 .LC4:
-	.string	"Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n"
+	.string	"ROXY-SYSTEM: Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n"
 	.text
 	.p2align 4
 	.globl	roxy_clean
@@ -323,13 +325,7 @@ roxy_task_create:
 	.string	"ROXY-DEBUG: pthread setinheritsched failed"
 	.align 8
 .LC13:
-	.string	"ROXY-DEBUG: Failed to lock the critical section mutex (section_id=%d)\n"
-	.align 8
-.LC14:
 	.string	"ROXY-DEBUG: create compute pthread failed"
-	.align 8
-.LC15:
-	.string	"ROXY-DEBUG: Failed to unlock the critical section mutex (section_id=%d)\n"
 	.text
 	.p2align 4
 	.globl	roxy_task_start
@@ -357,20 +353,20 @@ roxy_task_start:
 	pushq	%rbx
 	.cfi_def_cfa_offset 56
 	.cfi_offset 3, -56
-	subq	$280, %rsp
-	.cfi_def_cfa_offset 336
+	subq	$264, %rsp
+	.cfi_def_cfa_offset 320
 	movq	%fs:40, %rax
-	movq	%rax, 264(%rsp)
+	movq	%rax, 248(%rsp)
 	xorl	%eax, %eax
 	cmpl	$128, %edi
 	ja	.L46
 	movl	%edi, %eax
 	leaq	roxy_tasks(%rip), %rcx
-	movq	%rax, 40(%rsp)
+	movq	%rax, 24(%rsp)
 	leaq	(%rax,%rax,8), %rax
 	leaq	(%rcx,%rax,8), %rax
-	movl	(%rax), %edx
-	testl	%edx, %edx
+	movl	(%rax), %ecx
+	testl	%ecx, %ecx
 	je	.L46
 	movl	%esi, %edx
 	cmpl	$8, %esi
@@ -389,118 +385,108 @@ roxy_task_start:
 	jne	.L50
 	cmpl	$-1, 64(%rax)
 	jne	.L50
-	movq	40(%rsp), %rax
+	movq	24(%rsp), %rax
 	leaq	(%rax,%rax,8), %rsi
 	leaq	roxy_tasks(%rip), %rax
 	leaq	(%rax,%rsi,8), %r13
 	cmpl	$-1, 68(%r13)
 	jne	.L50
-	leaq	136(%rsp), %r8
-	xorl	%eax, %eax
+	leaq	120(%rsp), %r8
 	movl	$15, %ecx
-	movq	$3, 128(%rsp)
+	xorl	%eax, %eax
+	movq	$3, 112(%rsp)
 	movq	%r8, %rdi
 	rep stosq
 	testl	%edx, %edx
 	je	.L52
 	leal	-1(%rdx), %eax
-	movq	%r13, 24(%rsp)
-	leaq	64(%rsp), %r12
+	leaq	48(%rsp), %r12
+	movq	%r13, %r15
 	leaq	(%rax,%rsi,2), %rdx
 	leaq	4+roxy_tasks(%rip), %rax
 	leaq	(%rax,%rdx,4), %rax
-	movq	%rax, 32(%rsp)
+	movq	%rax, 16(%rsp)
 	.p2align 4,,10
 	.p2align 3
-.L66:
+.L62:
 	movq	%r12, %rdi
 	call	pthread_attr_init@PLT
 	testl	%eax, %eax
-	jne	.L76
+	jne	.L71
 	movl	$75, %edi
 	call	__sysconf@PLT
 	movq	%r12, %rdi
 	movq	%rax, %rsi
 	call	pthread_attr_setstacksize@PLT
 	testl	%eax, %eax
-	jne	.L77
+	jne	.L72
 	movl	$2, %esi
 	movq	%r12, %rdi
 	call	pthread_attr_setschedpolicy@PLT
 	testl	%eax, %eax
-	jne	.L78
-	movq	24(%rsp), %rax
-	leaq	52(%rsp), %rsi
+	jne	.L73
+	movl	4(%r15), %eax
+	leaq	44(%rsp), %rsi
 	movq	%r12, %rdi
-	movl	4(%rax), %eax
-	movl	%eax, 52(%rsp)
+	movl	%eax, 44(%rsp)
 	call	pthread_attr_setschedparam@PLT
 	testl	%eax, %eax
-	jne	.L79
+	jne	.L74
 	movl	$1, %esi
 	movq	%r12, %rdi
 	call	pthread_attr_setinheritsched@PLT
 	testl	%eax, %eax
-	jne	.L80
-	leaq	roxy_critical_sections(%rip), %r15
-	movq	%r15, %rdi
-	call	pthread_mutex_lock@PLT
-	testl	%eax, %eax
-	jne	.L81
-.L59:
+	jne	.L75
 	movl	$100, %ebx
 	leaq	roxy_threads(%rip), %rbp
-	jmp	.L63
+	jmp	.L58
 	.p2align 4,,10
 	.p2align 3
-.L60:
+.L59:
 	subl	$1, %ebx
-	je	.L62
-.L63:
+	je	.L61
+.L58:
 	call	rand@PLT
 	cltd
 	shrl	$22, %edx
 	leal	(%rax,%rdx), %r8d
 	andl	$1023, %r8d
 	subl	%edx, %r8d
-	movslq	%r8d, %rdi
-	salq	$4, %rdi
-	addq	%rbp, %rdi
-	movl	8(%rdi), %eax
-	testl	%eax, %eax
-	jne	.L60
+	movslq	%r8d, %rax
+	leaq	(%rax,%rax,2), %rax
+	salq	$3, %rax
+	leaq	0(%rbp,%rax), %rdi
+	movl	8(%rdi), %edx
+	testl	%edx, %edx
+	jne	.L59
 	movl	$1, 8(%rdi)
 	movd	%r8d, %xmm1
 	movq	%r12, %rsi
 	movd	%r14d, %xmm0
 	punpckldq	%xmm1, %xmm0
-	leaq	56(%rsp), %rcx
-	movl	%r8d, 20(%rsp)
+	leaq	16(%rbp,%rax), %rcx
 	leaq	roxy_thread_runner(%rip), %rdx
-	movq	%rdi, 8(%rsp)
-	movq	%xmm0, 56(%rsp)
+	movl	%r8d, 12(%rsp)
+	movq	%rdi, (%rsp)
+	movq	%xmm0, 16(%rbp,%rax)
 	call	pthread_create@PLT
-	movq	8(%rsp), %rdi
-	movl	20(%rsp), %r8d
+	movq	(%rsp), %rdi
+	movl	12(%rsp), %r8d
 	testl	%eax, %eax
-	jne	.L82
+	jne	.L76
 	movq	(%rdi), %rdi
+	leaq	112(%rsp), %rdx
 	movl	$128, %esi
-	movl	%r8d, 8(%rsp)
-	leaq	128(%rsp), %rdx
+	movl	%r8d, (%rsp)
 	call	pthread_setaffinity_np@PLT
-	movl	8(%rsp), %r8d
+	movl	(%rsp), %r8d
 	movl	%r8d, 40(%r13)
-.L62:
-	movq	%r15, %rdi
-	call	pthread_mutex_unlock@PLT
-	testl	%eax, %eax
-	jne	.L83
+.L61:
 	addq	$4, %r13
-	cmpq	32(%rsp), %r13
-	jne	.L66
+	cmpq	16(%rsp), %r13
+	jne	.L62
 .L52:
-	movq	40(%rsp), %rax
+	movq	24(%rsp), %rax
 	leaq	roxy_tasks(%rip), %rcx
 	leaq	(%rax,%rax,8), %rax
 	movl	$2, (%rcx,%rax,8)
@@ -516,10 +502,10 @@ roxy_task_start:
 	call	__printf_chk@PLT
 	movl	$2, %eax
 .L45:
-	movq	264(%rsp), %rdx
+	movq	248(%rsp), %rdx
 	subq	%fs:40, %rdx
-	jne	.L84
-	addq	$280, %rsp
+	jne	.L77
+	addq	$264, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 56
 	popq	%rbx
@@ -535,27 +521,8 @@ roxy_task_start:
 	popq	%r15
 	.cfi_def_cfa_offset 8
 	ret
-.L81:
-	.cfi_restore_state
-	xorl	%edx, %edx
-	leaq	.LC13(%rip), %rsi
-	movl	$1, %edi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	jmp	.L59
-.L83:
-	xorl	%edx, %edx
-	leaq	.LC15(%rip), %rsi
-	movl	$1, %edi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	addq	$4, %r13
-	cmpq	32(%rsp), %r13
-	jne	.L66
-	jmp	.L52
-	.p2align 4,,10
-	.p2align 3
 .L50:
+	.cfi_restore_state
 	movl	%r14d, %edx
 	leaq	.LC7(%rip), %rsi
 	movl	$1, %edi
@@ -563,33 +530,33 @@ roxy_task_start:
 	call	__printf_chk@PLT
 	movl	$2, %eax
 	jmp	.L45
-.L78:
+.L73:
 	leaq	.LC10(%rip), %rdi
 	call	puts@PLT
 .L54:
 	movl	$2, %eax
 	jmp	.L45
-.L77:
+.L72:
 	leaq	.LC9(%rip), %rdi
 	call	puts@PLT
 	jmp	.L54
-.L76:
+.L71:
 	leaq	.LC8(%rip), %rdi
 	call	puts@PLT
 	jmp	.L54
-.L80:
+.L75:
 	leaq	.LC12(%rip), %rdi
 	call	puts@PLT
 	jmp	.L54
-.L79:
+.L74:
 	leaq	.LC11(%rip), %rdi
 	call	puts@PLT
 	jmp	.L54
-.L82:
-	leaq	.LC14(%rip), %rdi
+.L76:
+	leaq	.LC13(%rip), %rdi
 	call	puts@PLT
 	jmp	.L54
-.L84:
+.L77:
 	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE69:
@@ -607,10 +574,10 @@ roxy_task_suspend:
 	.size	roxy_task_suspend, .-roxy_task_suspend
 	.section	.rodata.str1.8
 	.align 8
-.LC16:
+.LC14:
 	.string	"ROXY-DEBUG: Invalid wait option"
 	.align 8
-.LC17:
+.LC15:
 	.string	"ROXY-DEBUG: Error occurred during wait (might be integer overflow)"
 	.text
 	.p2align 4
@@ -626,11 +593,11 @@ roxy_task_wait:
 	movq	%rax, 56(%rsp)
 	xorl	%eax, %eax
 	testl	%esi, %esi
-	jne	.L87
+	jne	.L80
 	movl	%edi, %eax
 	pxor	%xmm0, %xmm0
 	movq	%rax, 8(%rsp)
-.L88:
+.L81:
 	movhps	8(%rsp), %xmm0
 	leaq	32(%rsp), %rsi
 	leaq	16(%rsp), %rdi
@@ -639,49 +606,49 @@ roxy_task_wait:
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	cmpl	$-1, %r8d
-	je	.L94
-.L86:
+	je	.L87
+.L79:
 	movq	56(%rsp), %rdx
 	subq	%fs:40, %rdx
-	jne	.L95
+	jne	.L88
 	addq	$72, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L87:
+.L80:
 	.cfi_restore_state
 	cmpl	$1, %esi
-	jne	.L89
+	jne	.L82
 	movq	$0, 8(%rsp)
 	movd	%edi, %xmm0
-	jmp	.L88
+	jmp	.L81
 	.p2align 4,,10
 	.p2align 3
-.L89:
-	leaq	.LC16(%rip), %rdi
+.L82:
+	leaq	.LC14(%rip), %rdi
 	call	puts@PLT
 	movl	$2, %eax
-	jmp	.L86
+	jmp	.L79
 	.p2align 4,,10
 	.p2align 3
-.L94:
-	leaq	.LC17(%rip), %rdi
+.L87:
+	leaq	.LC15(%rip), %rdi
 	call	puts@PLT
 	movl	$2, %eax
-	jmp	.L86
-.L95:
+	jmp	.L79
+.L88:
 	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE71:
 	.size	roxy_task_wait, .-roxy_task_wait
 	.section	.rodata.str1.8
 	.align 8
-.LC18:
+.LC16:
 	.string	"ROXY-DEBUG: Failed to find the task (task_id=%d)\n"
 	.align 8
-.LC19:
+.LC17:
 	.string	"ROXY-DEBUG: Task must be in the loaded state to set priority, task_id=%d\n"
 	.text
 	.p2align 4
@@ -695,16 +662,16 @@ roxy_task_set_priority:
 	.cfi_def_cfa_offset 16
 	movl	%edi, %edx
 	cmpl	$127, %edi
-	ja	.L97
+	ja	.L90
 	movl	%edi, %eax
 	leaq	(%rax,%rax,8), %rcx
 	leaq	roxy_tasks(%rip), %rax
 	leaq	(%rax,%rcx,8), %rcx
 	movl	(%rcx), %eax
 	testl	%eax, %eax
-	je	.L97
+	je	.L90
 	cmpl	$1, %eax
-	jne	.L102
+	jne	.L95
 	movl	%esi, 4(%rcx)
 	addq	$8, %rsp
 	.cfi_remember_state
@@ -712,13 +679,13 @@ roxy_task_set_priority:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L97:
+.L90:
 	.cfi_restore_state
-	leaq	.LC18(%rip), %rsi
+	leaq	.LC16(%rip), %rsi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-.L99:
+.L92:
 	movl	$2, %eax
 	addq	$8, %rsp
 	.cfi_remember_state
@@ -726,16 +693,21 @@ roxy_task_set_priority:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L102:
+.L95:
 	.cfi_restore_state
-	leaq	.LC19(%rip), %rsi
+	leaq	.LC17(%rip), %rsi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	jmp	.L99
+	jmp	.L92
 	.cfi_endproc
 .LFE72:
 	.size	roxy_task_set_priority, .-roxy_task_set_priority
+	.section	.rodata.str1.8
+	.align 8
+.LC18:
+	.string	"ROXY-DEBUG: Failed to lock the critical section mutex (section_id=%d)\n"
+	.text
 	.p2align 4
 	.globl	roxy_critical_section_enter
 	.type	roxy_critical_section_enter, @function
@@ -745,7 +717,7 @@ roxy_critical_section_enter:
 	endbr64
 	movl	$2, %eax
 	cmpl	$15, %edi
-	ja	.L109
+	ja	.L102
 	movl	%edi, %eax
 	pushq	%r12
 	.cfi_def_cfa_offset 16
@@ -758,30 +730,35 @@ roxy_critical_section_enter:
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L112
-.L103:
+	jne	.L105
+.L96:
 	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L109:
+.L102:
 	.cfi_restore 12
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L112:
+.L105:
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
 	movl	%r12d, %edx
-	leaq	.LC13(%rip), %rsi
+	leaq	.LC18(%rip), %rsi
 	movl	$1, %edi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L103
+	jmp	.L96
 	.cfi_endproc
 .LFE73:
 	.size	roxy_critical_section_enter, .-roxy_critical_section_enter
+	.section	.rodata.str1.8
+	.align 8
+.LC19:
+	.string	"ROXY-DEBUG: Failed to unlock the critical section mutex (section_id=%d)\n"
+	.text
 	.p2align 4
 	.globl	roxy_critical_section_leave
 	.type	roxy_critical_section_leave, @function
@@ -791,7 +768,7 @@ roxy_critical_section_leave:
 	endbr64
 	movl	$2, %eax
 	cmpl	$15, %edi
-	ja	.L119
+	ja	.L112
 	movl	%edi, %eax
 	pushq	%r12
 	.cfi_def_cfa_offset 16
@@ -804,27 +781,27 @@ roxy_critical_section_leave:
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L122
-.L113:
+	jne	.L115
+.L106:
 	popq	%r12
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L119:
+.L112:
 	.cfi_restore 12
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L122:
+.L115:
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
 	movl	%r12d, %edx
-	leaq	.LC15(%rip), %rsi
+	leaq	.LC19(%rip), %rsi
 	movl	$1, %edi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L113
+	jmp	.L106
 	.cfi_endproc
 .LFE74:
 	.size	roxy_critical_section_leave, .-roxy_critical_section_leave
@@ -850,53 +827,53 @@ roxy_loop:
 	.cfi_def_cfa_offset 32
 	.cfi_offset 3, -32
 	cmpl	$127, %edi
-	ja	.L124
+	ja	.L117
 	movl	%edi, %ebx
 	leaq	roxy_tasks(%rip), %r12
 	leaq	(%rbx,%rbx,8), %rax
 	leaq	(%r12,%rax,8), %rax
 	movl	(%rax), %edx
 	testl	%edx, %edx
-	je	.L124
+	je	.L117
 	movl	40(%rax), %eax
 	cmpl	$-1, %eax
-	jne	.L171
-.L127:
+	jne	.L164
+.L120:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	44(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L172
-.L129:
+	jne	.L165
+.L122:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	48(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L173
-.L130:
+	jne	.L166
+.L123:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	52(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L174
-.L131:
+	jne	.L167
+.L124:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	56(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L175
-.L132:
+	jne	.L168
+.L125:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	60(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L176
-.L133:
+	jne	.L169
+.L126:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	64(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L177
-.L134:
+	jne	.L170
+.L127:
 	leaq	(%rbx,%rbx,8), %rax
 	movl	68(%r12,%rax,8), %eax
 	cmpl	$-1, %eax
-	jne	.L178
-.L135:
+	jne	.L171
+.L128:
 	popq	%rbx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -908,17 +885,17 @@ roxy_loop:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L171:
+.L164:
 	.cfi_restore_state
-	salq	$4, %rax
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L127
+	je	.L120
 	xorl	%edx, %edx
-.L128:
+.L121:
 	leaq	(%rbx,%rbx,8), %rcx
 	leaq	.LC20(%rip), %rsi
 	movl	$1, %edi
@@ -926,8 +903,8 @@ roxy_loop:
 	movl	%eax, %ecx
 	xorl	%eax, %eax
 	movl	8(%r12,%rdx,4), %edx
-	salq	$4, %rdx
-	movq	0(%rbp,%rdx), %rdx
+	leaq	(%rdx,%rdx,2), %rdx
+	movq	0(%rbp,%rdx,8), %rdx
 	call	__printf_chk@PLT
 	popq	%rbx
 	.cfi_remember_state
@@ -940,94 +917,94 @@ roxy_loop:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L172:
+.L165:
 	.cfi_restore_state
-	salq	$4, %rax
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L129
+	je	.L122
 	movl	$1, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L173:
-	salq	$4, %rax
+.L166:
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L130
+	je	.L123
 	movl	$2, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L174:
-	salq	$4, %rax
+.L167:
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L131
+	je	.L124
 	movl	$3, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L175:
-	salq	$4, %rax
+.L168:
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L132
+	je	.L125
 	movl	$4, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L176:
-	salq	$4, %rax
+.L169:
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L133
+	je	.L126
 	movl	$5, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L177:
-	salq	$4, %rax
+.L170:
 	leaq	roxy_threads(%rip), %rbp
+	leaq	(%rax,%rax,2), %rax
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	testl	%eax, %eax
-	je	.L134
+	je	.L127
 	movl	$6, %edx
-	jmp	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L178:
-	salq	$4, %rax
+.L171:
+	leaq	(%rax,%rax,2), %rax
 	leaq	roxy_threads(%rip), %rbp
 	xorl	%esi, %esi
-	movq	0(%rbp,%rax), %rdi
+	movq	0(%rbp,%rax,8), %rdi
 	call	pthread_join@PLT
 	movl	$7, %edx
 	testl	%eax, %eax
-	je	.L135
-	jmp	.L128
+	je	.L128
+	jmp	.L121
 	.p2align 4,,10
 	.p2align 3
-.L124:
+.L117:
 	movl	%edi, %edx
-	leaq	.LC18(%rip), %rsi
+	leaq	.LC16(%rip), %rsi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
@@ -1067,144 +1044,138 @@ roxy_mqueue_create:
 .LFB76:
 	.cfi_startproc
 	endbr64
-	pushq	%r13
+	pushq	%r14
 	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
-	movl	%edi, %r13d
-	pushq	%r12
+	.cfi_offset 14, -16
+	pushq	%r13
 	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
-	pushq	%rbp
+	.cfi_offset 13, -24
+	pushq	%r12
 	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
-	pushq	%rbx
+	.cfi_offset 12, -32
+	movl	%edi, %r12d
+	pushq	%rbp
 	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
-	subq	$8, %rsp
+	.cfi_offset 6, -40
+	pushq	%rbx
 	.cfi_def_cfa_offset 48
+	.cfi_offset 3, -48
+	subq	$80, %rsp
+	.cfi_def_cfa_offset 128
+	movq	%fs:40, %rax
+	movq	%rax, 72(%rsp)
+	xorl	%eax, %eax
 	cmpl	$127, %edi
-	ja	.L187
+	ja	.L181
 	movl	%edi, %eax
-	leaq	(%rax,%rax,4), %r12
-	leaq	roxy_mqueues(%rip), %rax
-	salq	$4, %r12
-	addq	%rax, %r12
-	cmpb	$0, (%r12)
-	jne	.L188
+	leaq	roxy_mqueues(%rip), %r13
+	leaq	(%rax,%rax,4), %rbx
+	salq	$4, %rbx
+	addq	%rbx, %r13
+	cmpb	$0, 0(%r13)
+	jne	.L182
 	movl	%edi, %r8d
-	movl	%esi, %ebp
-	movl	%edx, %ebx
+	movl	%esi, %r14d
+	movl	%edx, %ebp
 	movl	$1, %esi
 	leaq	.LC23(%rip), %rcx
 	movl	$11, %edx
-	movq	%r12, %rdi
+	movq	%r13, %rdi
 	xorl	%eax, %eax
 	call	__sprintf_chk@PLT
+	movl	%r14d, %eax
+	movq	%r13, %rdi
+	movq	%rsp, %rcx
+	movq	%rax, 8(%rsp)
 	movl	%ebp, %eax
-	movq	%r12, %rdi
-	xorl	%ecx, %ecx
-	movq	%rax, 24(%r12)
-	movl	%ebx, %eax
 	movl	$420, %edx
-	movl	$66, %esi
-	movq	%rax, 32(%r12)
+	movdqa	32(%rsp), %xmm2
+	movq	%rax, 16(%rsp)
+	movdqa	48(%rsp), %xmm3
+	movl	$524480, %esi
+	leaq	16+roxy_mqueues(%rip), %rax
+	movq	$0, (%rsp)
+	movdqa	(%rsp), %xmm0
+	addq	%rbx, %rax
+	movq	$-1, 24(%rsp)
+	movdqa	16(%rsp), %xmm1
+	movaps	%xmm0, (%rax)
+	movaps	%xmm1, 16(%rax)
+	movaps	%xmm2, 32(%rax)
+	movaps	%xmm3, 48(%rax)
 	xorl	%eax, %eax
-	movq	$0, 16(%r12)
-	movq	$0, 40(%r12)
-	movq	$0, 48(%r12)
-	movq	$0, 56(%r12)
-	movq	$0, 64(%r12)
-	movq	$0, 72(%r12)
 	call	mq_open@PLT
 	movl	%eax, %edi
 	cmpl	$-1, %eax
-	je	.L189
+	je	.L183
 	call	mq_close@PLT
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L190
-.L179:
-	addq	$8, %rsp
+	jne	.L184
+.L172:
+	movq	72(%rsp), %rdx
+	subq	%fs:40, %rdx
+	jne	.L185
+	addq	$80, %rsp
 	.cfi_remember_state
-	.cfi_def_cfa_offset 40
+	.cfi_def_cfa_offset 48
 	popq	%rbx
-	.cfi_def_cfa_offset 32
+	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 24
+	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 16
+	.cfi_def_cfa_offset 24
 	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L188:
+.L182:
 	.cfi_restore_state
 	movl	%edi, %edx
 	leaq	.LC22(%rip), %rsi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movl	$2, %eax
-	popq	%rbx
-	.cfi_def_cfa_offset 32
-	popq	%rbp
-	.cfi_def_cfa_offset 24
-	popq	%r12
-	.cfi_def_cfa_offset 16
-	popq	%r13
-	.cfi_def_cfa_offset 8
-	ret
+	jmp	.L172
 	.p2align 4,,10
 	.p2align 3
-.L187:
-	.cfi_restore_state
+.L181:
 	movl	%edi, %edx
 	leaq	.LC21(%rip), %rsi
 	movl	$1, %edi
-	xorl	%eax, %eax
 	call	__printf_chk@PLT
-	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movl	$2, %eax
-	popq	%rbx
-	.cfi_def_cfa_offset 32
-	popq	%rbp
-	.cfi_def_cfa_offset 24
-	popq	%r12
-	.cfi_def_cfa_offset 16
-	popq	%r13
-	.cfi_def_cfa_offset 8
-	ret
+	jmp	.L172
 	.p2align 4,,10
 	.p2align 3
-.L189:
-	.cfi_restore_state
+.L183:
 	call	__errno_location@PLT
-	movq	%r12, %rcx
-	movl	%r13d, %edx
+	movq	%r13, %rcx
+	movl	%r12d, %edx
 	movl	$1, %edi
 	movl	(%rax), %r8d
 	leaq	.LC24(%rip), %rsi
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L179
+	jmp	.L172
 	.p2align 4,,10
 	.p2align 3
-.L190:
-	movq	%r12, %rcx
-	movl	%r13d, %edx
+.L184:
+	movq	%r13, %rcx
+	movl	%r12d, %edx
 	movl	$1, %edi
 	leaq	.LC25(%rip), %rsi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L179
+	jmp	.L172
+.L185:
+	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE76:
 	.size	roxy_mqueue_create, .-roxy_mqueue_create
@@ -1243,37 +1214,37 @@ roxy_mqueue_send:
 	.cfi_def_cfa_offset 48
 	.cfi_offset 3, -48
 	cmpl	$127, %edi
-	ja	.L192
+	ja	.L187
 	movl	%edi, %eax
 	leaq	(%rax,%rax,4), %r12
 	leaq	roxy_mqueues(%rip), %rax
 	salq	$4, %r12
 	addq	%rax, %r12
 	cmpb	$0, (%r12)
-	je	.L192
+	je	.L187
 	movq	%rsi, %rbp
 	movq	%r12, %rdi
-	movl	$1, %esi
+	movl	$524289, %esi
 	xorl	%eax, %eax
 	movl	%edx, %ebx
 	call	mq_open@PLT
 	movl	%eax, %r14d
 	cmpl	$-1, %eax
-	je	.L200
+	je	.L195
 	xorl	%ecx, %ecx
 	movl	%ebx, %edx
 	movq	%rbp, %rsi
 	movl	%eax, %edi
 	call	mq_send@PLT
 	testl	%eax, %eax
-	jne	.L201
+	jne	.L196
 	movl	%r14d, %edi
 	call	mq_close@PLT
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L202
-.L191:
+	jne	.L197
+.L186:
 	popq	%rbx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
@@ -1288,7 +1259,7 @@ roxy_mqueue_send:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L192:
+.L187:
 	.cfi_restore_state
 	movl	%r13d, %edx
 	leaq	.LC26(%rip), %rsi
@@ -1310,7 +1281,7 @@ roxy_mqueue_send:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L200:
+.L195:
 	.cfi_restore_state
 	call	__errno_location@PLT
 	movq	%r12, %rcx
@@ -1321,10 +1292,10 @@ roxy_mqueue_send:
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L191
+	jmp	.L186
 	.p2align 4,,10
 	.p2align 3
-.L201:
+.L196:
 	movl	%eax, %r8d
 	movq	%r12, %rcx
 	movl	%r13d, %edx
@@ -1347,7 +1318,7 @@ roxy_mqueue_send:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L202:
+.L197:
 	.cfi_restore_state
 	movq	%r12, %rcx
 	movl	%r13d, %edx
@@ -1355,7 +1326,7 @@ roxy_mqueue_send:
 	leaq	.LC25(%rip), %rsi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L191
+	jmp	.L186
 	.cfi_endproc
 .LFE77:
 	.size	roxy_mqueue_send, .-roxy_mqueue_send
@@ -1366,9 +1337,6 @@ roxy_mqueue_send:
 	.align 8
 .LC30:
 	.string	"ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n"
-	.align 8
-.LC31:
-	.string	"ROXY-DEBUG: Failed to receive data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n"
 	.text
 	.p2align 4
 	.globl	roxy_mqueue_receive
@@ -1394,42 +1362,40 @@ roxy_mqueue_receive:
 	.cfi_def_cfa_offset 48
 	.cfi_offset 3, -48
 	cmpl	$127, %edi
-	ja	.L204
+	ja	.L199
 	movl	%edi, %eax
 	leaq	(%rax,%rax,4), %r12
 	leaq	roxy_mqueues(%rip), %rax
 	salq	$4, %r12
 	addq	%rax, %r12
 	cmpb	$0, (%r12)
-	je	.L204
+	je	.L199
 	movq	%rsi, %rbp
 	movl	%edx, %ebx
 	cmpl	$1, %ecx
-	je	.L215
+	je	.L209
 	testl	%ecx, %ecx
-	jne	.L209
-	movl	$2048, %esi
+	jne	.L204
+	movl	$526336, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r14d
-.L208:
+.L203:
 	cmpl	$-1, %r14d
-	je	.L216
-	xorl	%ecx, %ecx
+	je	.L210
 	movl	%ebx, %edx
+	xorl	%ecx, %ecx
 	movq	%rbp, %rsi
 	movl	%r14d, %edi
 	call	mq_receive@PLT
-	testl	%eax, %eax
-	jne	.L217
 	movl	%r14d, %edi
 	call	mq_close@PLT
 	movl	%eax, %r8d
 	xorl	%eax, %eax
 	testl	%r8d, %r8d
-	jne	.L218
-.L203:
+	jne	.L211
+.L198:
 	popq	%rbx
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
@@ -1444,7 +1410,7 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L204:
+.L199:
 	.cfi_restore_state
 	movl	%r13d, %edx
 	leaq	.LC26(%rip), %rsi
@@ -1466,7 +1432,7 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L209:
+.L204:
 	.cfi_restore_state
 	leaq	.LC29(%rip), %rdi
 	call	puts@PLT
@@ -1485,41 +1451,17 @@ roxy_mqueue_receive:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L215:
+.L209:
 	.cfi_restore_state
-	xorl	%esi, %esi
+	movl	$524288, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r14d
-	jmp	.L208
+	jmp	.L203
 	.p2align 4,,10
 	.p2align 3
-.L217:
-	movl	%eax, %r8d
-	movq	%r12, %rcx
-	movl	%r13d, %edx
-	movl	$1, %edi
-	leaq	.LC31(%rip), %rsi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
-	movl	$2, %eax
-	popq	%rbp
-	.cfi_def_cfa_offset 32
-	popq	%r12
-	.cfi_def_cfa_offset 24
-	popq	%r13
-	.cfi_def_cfa_offset 16
-	popq	%r14
-	.cfi_def_cfa_offset 8
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L216:
-	.cfi_restore_state
+.L210:
 	movq	%r12, %rcx
 	movl	%r13d, %edx
 	leaq	.LC30(%rip), %rsi
@@ -1527,23 +1469,23 @@ roxy_mqueue_receive:
 	movl	$1, %edi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L203
+	jmp	.L198
 	.p2align 4,,10
 	.p2align 3
-.L218:
+.L211:
 	movq	%r12, %rcx
 	movl	%r13d, %edx
 	movl	$1, %edi
 	leaq	.LC25(%rip), %rsi
 	call	__printf_chk@PLT
 	movl	$2, %eax
-	jmp	.L203
+	jmp	.L198
 	.cfi_endproc
 .LFE78:
 	.size	roxy_mqueue_receive, .-roxy_mqueue_receive
 	.section	.rodata.str1.8
 	.align 8
-.LC32:
+.LC31:
 	.string	"ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n"
 	.text
 	.p2align 4
@@ -1569,31 +1511,31 @@ roxy_mqueue_get_pending:
 	movq	%rax, 72(%rsp)
 	xorl	%eax, %eax
 	cmpl	$127, %edi
-	ja	.L220
+	ja	.L213
 	movl	%edi, %eax
 	leaq	(%rax,%rax,4), %r12
 	leaq	roxy_mqueues(%rip), %rax
 	salq	$4, %r12
 	addq	%rax, %r12
 	cmpb	$0, (%r12)
-	je	.L220
-	xorl	%esi, %esi
+	je	.L213
+	movl	$524288, %esi
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	call	mq_open@PLT
 	movl	%eax, %r13d
 	cmpl	$-1, %eax
-	je	.L227
+	je	.L220
 	movq	%rsp, %rsi
 	movl	%eax, %edi
 	call	mq_getattr@PLT
 	testl	%eax, %eax
-	jne	.L228
+	jne	.L221
 	movl	24(%rsp), %r13d
-.L219:
+.L212:
 	movq	72(%rsp), %rax
 	subq	%fs:40, %rax
-	jne	.L229
+	jne	.L222
 	addq	$80, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 32
@@ -1607,7 +1549,7 @@ roxy_mqueue_get_pending:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L220:
+.L213:
 	.cfi_restore_state
 	movl	%r14d, %edx
 	movl	$1, %edi
@@ -1615,35 +1557,101 @@ roxy_mqueue_get_pending:
 	movl	$-1, %r13d
 	leaq	.LC26(%rip), %rsi
 	call	__printf_chk@PLT
-	jmp	.L219
-.L227:
+	jmp	.L212
+.L220:
 	movq	%r12, %rcx
 	movl	%r14d, %edx
 	leaq	.LC30(%rip), %rsi
 	xorl	%eax, %eax
 	movl	$1, %edi
 	call	__printf_chk@PLT
-	jmp	.L219
-.L228:
+	jmp	.L212
+.L221:
 	movq	%r12, %rcx
 	movl	%r14d, %edx
-	leaq	.LC32(%rip), %rsi
+	leaq	.LC31(%rip), %rsi
 	xorl	%eax, %eax
 	movl	$1, %edi
 	movl	$-1, %r13d
 	call	__printf_chk@PLT
-	jmp	.L219
-.L229:
+	jmp	.L212
+.L222:
 	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE79:
 	.size	roxy_mqueue_get_pending, .-roxy_mqueue_get_pending
+	.p2align 4
+	.globl	roxy_mqueue_flush
+	.type	roxy_mqueue_flush, @function
+roxy_mqueue_flush:
+.LFB80:
+	.cfi_startproc
+	endbr64
+	pushq	%r13
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
+	movl	%edi, %r8d
+	movl	$8, %edx
+	movl	$1, %esi
+	pushq	%r12
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
+	leaq	.LC23(%rip), %rcx
+	movl	%edi, %r12d
+	subq	$24, %rsp
+	.cfi_def_cfa_offset 48
+	movq	%fs:40, %rax
+	movq	%rax, 8(%rsp)
+	xorl	%eax, %eax
+	movq	%rsp, %r13
+	movq	%r13, %rdi
+	call	__sprintf_chk@PLT
+	movq	%r13, %rdi
+	call	mq_unlink@PLT
+	testl	%eax, %eax
+	jne	.L227
+	movq	%r13, %rcx
+	movl	%r12d, %edx
+	leaq	.LC4(%rip), %rsi
+	xorl	%eax, %eax
+	movl	$1, %edi
+	call	__printf_chk@PLT
+.L223:
+	movq	8(%rsp), %rdx
+	subq	%fs:40, %rdx
+	jne	.L228
+	addq	$24, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 24
+	popq	%r12
+	.cfi_def_cfa_offset 16
+	popq	%r13
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L227:
+	.cfi_restore_state
+	movl	%eax, %r8d
+	movq	%r13, %rcx
+	movl	%r12d, %edx
+	movl	$1, %edi
+	leaq	.LC3(%rip), %rsi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	movl	$2, %eax
+	jmp	.L223
+.L228:
+	call	__stack_chk_fail@PLT
+	.cfi_endproc
+.LFE80:
+	.size	roxy_mqueue_flush, .-roxy_mqueue_flush
 	.local	roxy_mqueues
 	.comm	roxy_mqueues,10240,32
 	.local	roxy_critical_sections
 	.comm	roxy_critical_sections,640,32
 	.local	roxy_threads
-	.comm	roxy_threads,16384,32
+	.comm	roxy_threads,24576,32
 	.local	roxy_tasks
 	.comm	roxy_tasks,9216,32
 	.ident	"GCC: (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0"

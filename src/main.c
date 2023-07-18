@@ -3,8 +3,8 @@
 #define ROXY_IDLE_TASK_ID 100
 #define ROXY_COMPUTE_TASK_ID 101
 #define ROXY_SENDER_TASK_ID 102
-#define MQUEUE_ID 30
-#define MESSAGE_LENGTH 12
+#define ROXY_RECEIVER_TASK_ID 103
+#define MQUEUE_ID 100
 void idle_task()
 {
     int p = 0;
@@ -47,13 +47,29 @@ void compute_task()
 void send_task()
 {
     int p = 0;
-    char message_buffer[MESSAGE_LENGTH];
+#define RANDOM_NAME_SIZE 5
+    char random_names[RANDOM_NAME_SIZE][ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH] = {"anakin", "yoda", "ahsoka", "jabba", "luke"};
     while (1)
     {
-        roxy_mqueue_send(MQUEUE_ID, "0", 3);
+        p = rand() % RANDOM_NAME_SIZE;
+        printf("Sender: sending name->%s \n", random_names[p]);
+        roxy_mqueue_send(MQUEUE_ID, random_names[p], ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
         roxy_task_wait(1, ROXY_WAIT_SECOND);
-        p = (p + 1) % 5;
-        printf("Hello!!!!\n");
+    }
+}
+
+void receive_task()
+{
+    char receive_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
+    while (1)
+    {
+        enum roxy_status_code status;
+        status = roxy_mqueue_receive(MQUEUE_ID, receive_buffer, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH, ROXY_MQUEUE_BLOCKING);
+        if (status == RUNTIME_ERROR)
+        {
+            continue;
+        }
+        printf("Receiver: received->%s \n", receive_buffer);
     }
 }
 
@@ -71,22 +87,43 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_start(ROXY_IDLE_TASK_ID, 1);
+    status = roxy_task_create(ROXY_COMPUTE_TASK_ID, 10, NULL, compute_task, NULL, NULL);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_mqueue_create(MQUEUE_ID, 20, MESSAGE_LENGTH);
+    status = roxy_task_create(ROXY_SENDER_TASK_ID, 10, NULL, send_task, NULL, NULL);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_create(ROXY_SENDER_TASK_ID, 3, NULL, send_task, NULL, NULL);
+    status = roxy_task_create(ROXY_RECEIVER_TASK_ID, 10, NULL, receive_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    roxy_mqueue_flush(MQUEUE_ID);
+    status = roxy_mqueue_create(MQUEUE_ID, ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_IDLE_TASK_ID, 2);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_COMPUTE_TASK_ID, 2);
     if (status != SUCCESS)
     {
         return 0;
     }
     status = roxy_task_start(ROXY_SENDER_TASK_ID, 1);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_RECEIVER_TASK_ID, 1);
     if (status != SUCCESS)
     {
         return 0;
