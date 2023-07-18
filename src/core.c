@@ -6,9 +6,22 @@ static struct roxy_task roxy_tasks[ROXY_TASK_COUNT_LIMIT];
 static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT_LIMIT];
 static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT_LIMIT];
 static struct roxy_mqueue roxy_mqueues[ROXY_MQUEUE_COUNT_LIMIT];
+static struct roxy_event roxy_events[ROXY_EVENT_COUNT_LIMIT];
+/*
+abandom event signal implementation
+void roxy_signal_handler(int signal_vector)
+{
+    printf("Get signal:%d\n", signal_vector);
+    roxy_critical_section_enter(ROXY_SYSTEM_CRITICAL_SECTION_ID);
+    roxy_event_gates[signal_vector - ROXY_EVENT_SIGDISPLACEMENT] = 0;
+    roxy_critical_section_leave(ROXY_SYSTEM_CRITICAL_SECTION_ID);
+    return;
+}
+*/
 
 enum roxy_status_code roxy_init()
 {
+    // must single thread!!
     // init random generator
     srand(ROXY_RANDOM_SEED);
     // init tasks and threads
@@ -30,6 +43,42 @@ enum roxy_status_code roxy_init()
     for (int i = 0; i < ROXY_MQUEUE_COUNT_LIMIT; i++)
     {
         strcpy(roxy_mqueues[i].channel_name, "");
+    }
+    /*
+    abandom event signal implementation
+
+    printf("ROXY-SYSTEM: maximum signal id:%d\n", SIGRTMAX);
+    if (ROXY_EVENT_SIGDISPLACEMENT + ROXY_EVENT_COUNT_LIMIT >= SIGRTMAX)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("Roxy-DEBUG: Invalid event count, check SIGRTMAX of system kernel.");
+        }
+        return CONFIG_ERROR;
+    }
+    struct sigaction signal_action;
+    signal_action.sa_handler = &roxy_signal_handler;
+    sigfillset(&signal_action.sa_mask);
+    signal_action.sa_flags = SA_RESTART;
+    int ret;
+    for (int event_id = 0; event_id < ROXY_EVENT_COUNT_LIMIT; event_id++)
+    {
+        ret = sigaction(event_id + ROXY_EVENT_SIGDISPLACEMENT, &signal_action, NULL);
+        if (ret)
+        {
+            if (ROXY_DEBUG)
+            {
+                printf("ROXY-DEBUG: Error setting up signal handler at event_id=%d\n", event_id);
+            }
+            return CONFIG_ERROR;
+        }
+    }
+    */
+    for (int event_id = 0; event_id < ROXY_EVENT_COUNT_LIMIT; event_id++)
+    {
+        pthread_mutex_init(&roxy_events[event_id].protect_mutex, NULL);
+        pthread_cond_init(&roxy_events[event_id].waiting_condition, NULL);
+        roxy_events[event_id].gate = ROXY_EVENT_GATEOPEN;
     }
 
     // check config
@@ -573,4 +622,80 @@ enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id)
     {
         printf("ROXY-SYSTEM: Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n", mqueue_id, channel_name);
     }
+}
+
+enum roxy_status_code roxy_event_send(unsigned event_id)
+{
+    if (event_id >= ROXY_EVENT_COUNT_LIMIT)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Invalid event (event_id=%d)\n", event_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    /*
+    int ret;
+    ret = kill(0, ROXY_EVENT_SIGDISPLACEMENT + event_id); // send to all thread
+    if (ret)
+    {
+
+        extern int errno;
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to send event (event_id=%d , SID_id=%d) error_code=%d\n", event_id, ROXY_EVENT_SIGDISPLACEMENT + event_id, errno);
+        }
+        return RUNTIME_ERROR;
+    }
+    */
+    pthread_mutex_lock(&roxy_events[event_id].protect_mutex);
+    roxy_events[event_id].gate = ROXY_EVENT_GATEOPEN;
+    pthread_cond_broadcast(&roxy_events[event_id].waiting_condition);
+    pthread_mutex_unlock(&roxy_events[event_id].protect_mutex);
+    return SUCCESS;
+}
+
+enum roxy_status_code roxy_event_receive(unsigned event_id)
+{
+    if (event_id >= ROXY_EVENT_COUNT_LIMIT)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Invalid event (event_id=%d)\n", event_id);
+        }
+        return RUNTIME_ERROR;
+    }
+    /*
+    sigset_t sigset;
+    sigemptyset(&sigset);
+    sigaddset(&sigset, event_id + ROXY_EVENT_SIGDISPLACEMENT);
+    int sig, ret;
+    ret = sigwait(&sigset, &sig);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Failed to receive event (event_id=%d , SID_id=%d) error_code=%d\n", event_id, ROXY_EVENT_SIGDISPLACEMENT + event_id, ret);
+        }
+        return RUNTIME_ERROR;
+    }
+    */
+    /*
+     roxy_critical_section_enter(ROXY_SYSTEM_CRITICAL_SECTION_ID);
+     roxy_event_gates[event_id] = 1;
+     roxy_critical_section_leave(ROXY_SYSTEM_CRITICAL_SECTION_ID);
+     while (roxy_event_gates[event_id] != 0)
+     {
+         roxy_task_wait(1000, ROXY_WAIT_NANOSECOND);
+     }
+     */
+    // lock the gate
+    pthread_mutex_lock(&roxy_events[event_id].protect_mutex);
+    roxy_events[event_id].gate = ROXY_EVENT_GATECLOSE;
+    while (roxy_events[event_id].gate == ROXY_EVENT_GATECLOSE)
+    {
+        pthread_cond_wait(&roxy_events[event_id].waiting_condition, &roxy_events[event_id].protect_mutex);
+    }
+    pthread_mutex_unlock(&roxy_events[event_id].protect_mutex);
+    return SUCCESS;
 }

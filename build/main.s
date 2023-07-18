@@ -1,12 +1,8 @@
 	.file	"main.c"
 	.text
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.LC1:
+.LC0:
 	.string	"roxy idle on cpu:%d %s"
-	.section	.rodata.str1.8,"aMS",@progbits,1
-	.align 8
-.LC2:
-	.string	"message queue pending message:%d\n"
 	.text
 	.p2align 4
 	.globl	idle_task
@@ -15,22 +11,18 @@ idle_task:
 .LFB67:
 	.cfi_startproc
 	endbr64
-	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
-	leaq	.LC1(%rip), %r12
+	.cfi_def_cfa_offset 16
+	.cfi_offset 12, -16
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
-	leaq	.LC2(%rip), %rbp
+	.cfi_def_cfa_offset 24
+	.cfi_offset 6, -24
+	leaq	.LC0(%rip), %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
-	subq	$24, %rsp
-	.cfi_def_cfa_offset 64
+	.cfi_def_cfa_offset 32
+	.cfi_offset 3, -32
+	subq	$16, %rsp
+	.cfi_def_cfa_offset 48
 	movq	%fs:40, %rax
 	movq	%rax, 8(%rsp)
 	xorl	%eax, %eax
@@ -44,147 +36,77 @@ idle_task:
 	call	localtime@PLT
 	movq	%rax, %rdi
 	call	asctime@PLT
-	movq	%rax, %r13
+	movq	%rax, %r12
 	xorl	%eax, %eax
 	call	sched_getcpu@PLT
-	movq	%r13, %rcx
-	movq	%r12, %rsi
-	movl	$1, %edi
-	movl	%eax, %edx
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	movl	$100, %edi
-	call	roxy_mqueue_get_pending@PLT
 	movq	%rbp, %rsi
+	movq	%r12, %rcx
 	movl	$1, %edi
 	movl	%eax, %edx
 	xorl	%eax, %eax
 	call	__printf_chk@PLT
 	movl	$1, %esi
-	movl	$3, %edi
+	movl	$10, %edi
 	call	roxy_task_wait@PLT
 	jmp	.L2
 	.cfi_endproc
 .LFE67:
 	.size	idle_task, .-idle_task
 	.section	.rodata.str1.1
-.LC3:
-	.string	"Sender: sending name->%s \n"
-	.section	.rodata
-	.align 32
-.LC0:
-	.string	"anakin"
-	.zero	249
-	.string	"yoda"
-	.zero	251
-	.string	"ahsoka"
-	.zero	249
-	.string	"jabba"
-	.zero	250
-	.string	"luke"
-	.zero	251
+.LC1:
+	.string	"Clock: Clock ticking"
 	.text
 	.p2align 4
-	.globl	send_task
-	.type	send_task, @function
-send_task:
-.LFB70:
+	.globl	clock_task
+	.type	clock_task, @function
+clock_task:
+.LFB69:
 	.cfi_startproc
 	endbr64
-	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
-	leaq	.LC0(%rip), %rsi
-	movl	$160, %ecx
-	leaq	.LC3(%rip), %r12
-	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
-	subq	$1296, %rsp
-	.cfi_def_cfa_offset 1328
-	movq	%fs:40, %rax
-	movq	%rax, 1288(%rsp)
-	xorl	%eax, %eax
-	movq	%rsp, %rbx
-	movq	%rbx, %rdi
-	rep movsq
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	leaq	.LC1(%rip), %rbx
 	.p2align 4,,10
 	.p2align 3
 .L7:
-	call	rand@PLT
-	movq	%r12, %rsi
-	movl	$1, %edi
-	movslq	%eax, %rdx
-	movl	%eax, %ecx
-	imulq	$1717986919, %rdx, %rdx
-	sarl	$31, %ecx
-	sarq	$33, %rdx
-	subl	%ecx, %edx
-	leal	(%rdx,%rdx,4), %edx
-	subl	%edx, %eax
-	movslq	%eax, %rbp
-	xorl	%eax, %eax
-	salq	$8, %rbp
-	addq	%rbx, %rbp
-	movq	%rbp, %rdx
-	call	__printf_chk@PLT
-	movq	%rbp, %rsi
-	movl	$256, %edx
-	movl	$100, %edi
-	call	roxy_mqueue_send@PLT
+	movq	%rbx, %rdi
+	call	puts@PLT
+	xorl	%edi, %edi
+	call	roxy_event_send@PLT
 	movl	$1, %esi
-	movl	$1, %edi
+	movl	$4, %edi
 	call	roxy_task_wait@PLT
 	jmp	.L7
 	.cfi_endproc
-.LFE70:
-	.size	send_task, .-send_task
+.LFE69:
+	.size	clock_task, .-clock_task
 	.section	.rodata.str1.1
-.LC4:
-	.string	"Receiver: received->%s \n"
+.LC2:
+	.string	"Display: Clock ticked!"
 	.text
 	.p2align 4
-	.globl	receive_task
-	.type	receive_task, @function
-receive_task:
-.LFB71:
+	.globl	display_clock
+	.type	display_clock, @function
+display_clock:
+.LFB70:
 	.cfi_startproc
 	endbr64
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	leaq	.LC4(%rip), %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
-	subq	$280, %rsp
-	.cfi_def_cfa_offset 304
-	movq	%fs:40, %rax
-	movq	%rax, 264(%rsp)
-	xorl	%eax, %eax
-	movq	%rsp, %rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	leaq	.LC2(%rip), %rbx
 	.p2align 4,,10
 	.p2align 3
-.L11:
-	movl	$1, %ecx
-	movl	$256, %edx
-	movq	%rbx, %rsi
-	movl	$100, %edi
-	call	roxy_mqueue_receive@PLT
-	cmpl	$2, %eax
-	je	.L11
-	movq	%rbx, %rdx
-	movq	%rbp, %rsi
-	movl	$1, %edi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	jmp	.L11
+.L10:
+	xorl	%edi, %edi
+	call	roxy_event_receive@PLT
+	movq	%rbx, %rdi
+	call	puts@PLT
+	jmp	.L10
 	.cfi_endproc
-.LFE71:
-	.size	receive_task, .-receive_task
+.LFE70:
+	.size	display_clock, .-display_clock
 	.p2align 4
 	.globl	fib
 	.type	fib, @function
@@ -217,63 +139,63 @@ fib:
 	movl	%edi, 8(%rsp)
 	movl	$0, 20(%rsp)
 	cmpl	$1, %eax
-	jbe	.L60
+	jbe	.L55
 	cmpl	$1, 8(%rsp)
-	jbe	.L61
-.L19:
+	jbe	.L56
+.L14:
 	movl	8(%rsp), %eax
 	movl	$0, 24(%rsp)
 	subl	$1, %eax
 	movl	%eax, 12(%rsp)
 	cmpl	$1, 12(%rsp)
 	movl	%eax, 36(%rsp)
-	je	.L62
-.L22:
+	je	.L57
+.L17:
 	movl	12(%rsp), %eax
 	movl	$0, 28(%rsp)
 	subl	$1, %eax
 	movl	%eax, 16(%rsp)
 	cmpl	$1, 16(%rsp)
 	movl	%eax, 40(%rsp)
-	je	.L63
-.L25:
+	je	.L58
+.L20:
 	movl	16(%rsp), %eax
 	movl	$0, 32(%rsp)
 	subl	$1, %eax
 	movl	%eax, 48(%rsp)
 	movl	%eax, %r11d
-.L29:
+.L24:
 	cmpl	$1, %r11d
-	je	.L64
+	je	.L59
 	leal	-1(%r11), %eax
 	xorl	%ecx, %ecx
 	movl	%eax, 44(%rsp)
 	movl	%eax, %ebp
-.L32:
+.L27:
 	cmpl	$1, %ebp
-	je	.L65
+	je	.L60
 	leal	-1(%rbp), %esi
 	xorl	%r12d, %r12d
 	movl	%esi, %edx
-.L35:
+.L30:
 	cmpl	$1, %edx
-	je	.L66
+	je	.L61
 	leal	-2(%rdx), %r8d
 	xorl	%r15d, %r15d
 	movl	%r8d, %r9d
-.L38:
+.L33:
 	leal	1(%r9), %eax
 	movl	%r9d, %ebx
 	xorl	%r13d, %r13d
 	cmpl	$1, %eax
-	jbe	.L67
+	jbe	.L62
 	movl	%ebx, %r10d
 	xorl	%r14d, %r14d
 	cmpl	$1, %ebx
-	je	.L68
+	je	.L63
 	.p2align 4,,10
 	.p2align 3
-.L40:
+.L35:
 	leal	-1(%r10), %edi
 	movl	%r8d, 76(%rsp)
 	movl	%esi, 72(%rsp)
@@ -293,130 +215,130 @@ fib:
 	movl	72(%rsp), %esi
 	cmpl	$1, %r10d
 	movl	76(%rsp), %r8d
-	ja	.L40
+	ja	.L35
 	addl	$1, %r14d
 	leal	-2(%rbx), %eax
 	subl	$1, %ebx
 	addl	%r14d, %r13d
 	cmpl	$1, %ebx
-	jbe	.L69
-.L52:
+	jbe	.L64
+.L47:
 	movl	%eax, %ebx
 	xorl	%r14d, %r14d
 	movl	%ebx, %r10d
 	cmpl	$1, %ebx
-	jne	.L40
-.L68:
+	jne	.L35
+.L63:
 	movl	$1, %r14d
 	leal	-2(%rbx), %eax
 	subl	$1, %ebx
 	addl	%r14d, %r13d
 	cmpl	$1, %ebx
-	ja	.L52
-.L69:
+	ja	.L47
+.L64:
 	addl	$1, %r13d
 	leal	-2(%r9), %eax
 	addl	%r13d, %r15d
 	cmpl	$1, %r9d
-	ja	.L50
-.L72:
+	ja	.L45
+.L67:
 	addl	$1, %r15d
 	subl	$1, %edx
 	addl	%r15d, %r12d
 	cmpl	$1, %edx
-	ja	.L48
-.L71:
+	ja	.L43
+.L66:
 	addl	$1, %r12d
-.L36:
+.L31:
 	addl	%r12d, %ecx
 	subl	$2, %ebp
 	cmpl	$1, %esi
-	ja	.L32
+	ja	.L27
 	addl	$1, %ecx
-.L33:
+.L28:
 	addl	%ecx, 32(%rsp)
 	subl	$2, %r11d
 	cmpl	$1, 44(%rsp)
-	ja	.L29
+	ja	.L24
 	movl	32(%rsp), %eax
 	addl	$1, %eax
-.L30:
+.L25:
 	addl	%eax, 28(%rsp)
 	movl	16(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 48(%rsp)
-	jbe	.L70
+	jbe	.L65
 	movl	%eax, 16(%rsp)
 	cmpl	$1, 16(%rsp)
-	jne	.L25
-.L63:
+	jne	.L20
+.L58:
 	movl	$0, 48(%rsp)
 	movl	$1, %eax
-	jmp	.L30
-.L66:
+	jmp	.L25
+.L61:
 	movl	$1, %r15d
 	subl	$1, %edx
 	movl	$-1, %r8d
 	addl	%r15d, %r12d
 	cmpl	$1, %edx
-	jbe	.L71
-.L48:
+	jbe	.L66
+.L43:
 	movl	%r8d, %edx
-	jmp	.L35
+	jmp	.L30
 	.p2align 4,,10
 	.p2align 3
-.L67:
+.L62:
 	movl	$1, %r13d
 	leal	-2(%r9), %eax
 	addl	%r13d, %r15d
 	cmpl	$1, %r9d
-	jbe	.L72
-.L50:
+	jbe	.L67
+.L45:
 	movl	%eax, %r9d
-	jmp	.L38
-.L65:
+	jmp	.L33
+.L60:
 	movl	$1, %r12d
 	xorl	%esi, %esi
-	jmp	.L36
-.L64:
+	jmp	.L31
+.L59:
 	movl	$0, 44(%rsp)
 	movl	$1, %ecx
-	jmp	.L33
-.L70:
+	jmp	.L28
+.L65:
 	movl	28(%rsp), %eax
 	addl	$1, %eax
-.L27:
+.L22:
 	addl	%eax, 24(%rsp)
 	movl	12(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 40(%rsp)
-	jbe	.L73
+	jbe	.L68
 	movl	%eax, 12(%rsp)
 	cmpl	$1, 12(%rsp)
-	jne	.L22
-.L62:
+	jne	.L17
+.L57:
 	movl	$0, 40(%rsp)
 	movl	$1, %eax
-	jmp	.L27
-.L73:
+	jmp	.L22
+.L68:
 	movl	24(%rsp), %eax
 	addl	$1, %eax
-.L24:
+.L19:
 	addl	%eax, 20(%rsp)
 	movl	8(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 36(%rsp)
-	jbe	.L74
+	jbe	.L69
 	movl	%eax, 8(%rsp)
 	cmpl	$1, 8(%rsp)
-	ja	.L19
-.L61:
+	ja	.L14
+.L56:
 	movl	8(%rsp), %edi
 	movl	$1, %eax
 	subl	$1, %edi
 	movl	%edi, 36(%rsp)
-	jmp	.L24
-.L74:
+	jmp	.L19
+.L69:
 	movl	20(%rsp), %eax
 	addq	$88, %rsp
 	.cfi_remember_state
@@ -435,7 +357,7 @@ fib:
 	popq	%r15
 	.cfi_def_cfa_offset 8
 	ret
-.L60:
+.L55:
 	.cfi_restore_state
 	addq	$88, %rsp
 	.cfi_def_cfa_offset 56
@@ -456,64 +378,22 @@ fib:
 	.cfi_endproc
 .LFE68:
 	.size	fib, .-fib
-	.p2align 4
-	.globl	compute_task
-	.type	compute_task, @function
-compute_task:
-.LFB69:
-	.cfi_startproc
-	endbr64
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
-	.p2align 4,,10
-	.p2align 3
-.L77:
-	movl	$39, %ebp
-.L78:
-	movl	%ebp, %ebx
-	cmpl	$1, %ebp
-	jbe	.L85
-	.p2align 4,,10
-	.p2align 3
-.L76:
-	leal	-1(%rbx), %edi
-	subl	$2, %ebx
-	call	fib
-	cmpl	$1, %ebx
-	ja	.L76
-	subl	$2, %ebp
-	movl	%ebp, %ebx
-	cmpl	$1, %ebp
-	ja	.L76
-.L85:
-	je	.L77
-	movl	$-2, %ebp
-	jmp	.L78
-	.cfi_endproc
-.LFE69:
-	.size	compute_task, .-compute_task
 	.section	.rodata.str1.1
-.LC5:
+.LC3:
 	.string	"Failed at init"
 	.section	.text.startup,"ax",@progbits
 	.p2align 4
 	.globl	main
 	.type	main, @function
 main:
-.LFB72:
+.LFB71:
 	.cfi_startproc
 	endbr64
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
 	call	roxy_init@PLT
 	testl	%eax, %eax
-	jne	.L92
+	jne	.L76
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
@@ -522,82 +402,60 @@ main:
 	movl	$100, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	je	.L93
-.L88:
+	je	.L77
+.L72:
 	xorl	%eax, %eax
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
 	ret
-.L93:
+.L77:
 	.cfi_restore_state
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
 	movl	$10, %esi
-	leaq	compute_task(%rip), %rcx
-	movl	$101, %edi
+	leaq	clock_task(%rip), %rcx
+	movl	$104, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	jne	.L88
+	jne	.L72
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
 	movl	$10, %esi
-	leaq	send_task(%rip), %rcx
-	movl	$102, %edi
+	leaq	display_clock(%rip), %rcx
+	movl	$105, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	jne	.L88
-	xorl	%r9d, %r9d
-	xorl	%r8d, %r8d
-	xorl	%edx, %edx
-	movl	$10, %esi
-	leaq	receive_task(%rip), %rcx
-	movl	$103, %edi
-	call	roxy_task_create@PLT
-	testl	%eax, %eax
-	jne	.L88
-	movl	$100, %edi
-	call	roxy_mqueue_flush@PLT
-	movl	$256, %edx
-	movl	$512, %esi
-	movl	$100, %edi
-	call	roxy_mqueue_create@PLT
-	testl	%eax, %eax
-	jne	.L88
-	movl	$2, %esi
-	movl	$100, %edi
-	call	roxy_task_start@PLT
-	testl	%eax, %eax
-	jne	.L88
-	movl	$2, %esi
-	movl	$101, %edi
-	call	roxy_task_start@PLT
-	testl	%eax, %eax
-	jne	.L88
+	jne	.L72
 	movl	$1, %esi
-	movl	$102, %edi
+	movl	$100, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L88
+	jne	.L72
 	movl	$1, %esi
-	movl	$103, %edi
+	movl	$104, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L88
+	jne	.L72
+	movl	$1, %esi
+	movl	$105, %edi
+	call	roxy_task_start@PLT
+	testl	%eax, %eax
+	jne	.L72
 	movl	$100, %edi
 	call	roxy_loop@PLT
 	testl	%eax, %eax
-	jne	.L88
+	jne	.L72
 	call	roxy_clean@PLT
-	jmp	.L88
-.L92:
-	leaq	.LC5(%rip), %rdi
+	jmp	.L72
+.L76:
+	leaq	.LC3(%rip), %rdi
 	call	puts@PLT
-	jmp	.L88
+	jmp	.L72
 	.cfi_endproc
-.LFE72:
+.LFE71:
 	.size	main, .-main
 	.ident	"GCC: (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0"
 	.section	.note.GNU-stack,"",@progbits

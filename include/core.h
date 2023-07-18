@@ -9,6 +9,8 @@
 #include <fcntl.h>
 #include <mqueue.h>
 #include <string.h>
+#include <signal.h>
+#include <unistd.h>
 
 #ifndef CORE_H
 #define CORE_H
@@ -39,5 +41,8 @@ enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id);
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id);
 enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
+
+enum roxy_status_code roxy_event_send(unsigned event_id);
+enum roxy_status_code roxy_event_receive(unsigned event_id);
 
 #endif

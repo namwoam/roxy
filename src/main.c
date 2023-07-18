@@ -4,6 +4,9 @@
 #define ROXY_COMPUTE_TASK_ID 101
 #define ROXY_SENDER_TASK_ID 102
 #define ROXY_RECEIVER_TASK_ID 103
+#define ROXY_CLOCK_TASK_ID 104
+#define ROXY_DISPLAY_TASK_ID 105
+#define CLOCK_EVENT_ID 0
 #define MQUEUE_ID 100
 void idle_task()
 {
@@ -15,10 +18,10 @@ void idle_task()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         printf("roxy idle on cpu:%d %s", sched_getcpu(), asctime(timeinfo));
-        printf("message queue pending message:%d\n", roxy_mqueue_get_pending(MQUEUE_ID));
-        roxy_task_wait(3, ROXY_WAIT_SECOND);
+        // printf("message queue pending message:%d\n", roxy_mqueue_get_pending(MQUEUE_ID));
+        roxy_task_wait(10, ROXY_WAIT_SECOND);
         // roxy_task_set_priority(ROXY_IDLE_TASK_ID, p);
-        p = (p + 1) % 10;
+        // p = (p + 1) % 10;
     }
     return;
 }
@@ -34,16 +37,21 @@ int fib(int n)
         return fib(n - 1) + fib(n - 2);
     }
 }
-
+/*
 void compute_task()
 {
     while (1)
     {
-        fib(40);
+        for (int i = 5; i >= 1; i--)
+        {
+            printf("computing, 20/%d=%d\n", i, 20 / i);
+            roxy_task_wait(1, ROXY_WAIT_SECOND);
+        }
     }
     return;
 }
-
+*/
+/*
 void send_task()
 {
     int p = 0;
@@ -57,7 +65,8 @@ void send_task()
         roxy_task_wait(1, ROXY_WAIT_SECOND);
     }
 }
-
+*/
+/*
 void receive_task()
 {
     char receive_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
@@ -70,6 +79,26 @@ void receive_task()
             continue;
         }
         printf("Receiver: received->%s \n", receive_buffer);
+    }
+}
+*/
+
+void clock_task()
+{
+    while (1)
+    {
+        printf("Clock: Clock ticking\n");
+        roxy_event_send(CLOCK_EVENT_ID);
+        roxy_task_wait(4, ROXY_WAIT_SECOND);
+    }
+}
+
+void display_clock()
+{
+    while (1)
+    {
+        roxy_event_receive(CLOCK_EVENT_ID);
+        printf("Display: Clock ticked!\n");
     }
 }
 
@@ -87,43 +116,27 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_create(ROXY_COMPUTE_TASK_ID, 10, NULL, compute_task, NULL, NULL);
+    status = roxy_task_create(ROXY_CLOCK_TASK_ID, 10, NULL, clock_task, NULL, NULL);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_create(ROXY_SENDER_TASK_ID, 10, NULL, send_task, NULL, NULL);
+    status = roxy_task_create(ROXY_DISPLAY_TASK_ID, 10, NULL, display_clock, NULL, NULL);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_create(ROXY_RECEIVER_TASK_ID, 10, NULL, receive_task, NULL, NULL);
+    status = roxy_task_start(ROXY_IDLE_TASK_ID, 1);
     if (status != SUCCESS)
     {
         return 0;
     }
-    roxy_mqueue_flush(MQUEUE_ID);
-    status = roxy_mqueue_create(MQUEUE_ID, ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
+    status = roxy_task_start(ROXY_CLOCK_TASK_ID, 1);
     if (status != SUCCESS)
     {
         return 0;
     }
-    status = roxy_task_start(ROXY_IDLE_TASK_ID, 2);
-    if (status != SUCCESS)
-    {
-        return 0;
-    }
-    status = roxy_task_start(ROXY_COMPUTE_TASK_ID, 2);
-    if (status != SUCCESS)
-    {
-        return 0;
-    }
-    status = roxy_task_start(ROXY_SENDER_TASK_ID, 1);
-    if (status != SUCCESS)
-    {
-        return 0;
-    }
-    status = roxy_task_start(ROXY_RECEIVER_TASK_ID, 1);
+    status = roxy_task_start(ROXY_DISPLAY_TASK_ID, 1);
     if (status != SUCCESS)
     {
         return 0;

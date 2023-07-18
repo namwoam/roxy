@@ -57,4 +57,11 @@ struct roxy_mqueue
     struct mq_attr mqueue_attribute;
 };
 
+struct roxy_event
+{
+    pthread_mutex_t protect_mutex;
+    pthread_cond_t waiting_condition;
+    int gate;
+};
+
 #endif
