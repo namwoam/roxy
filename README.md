@@ -87,3 +87,8 @@ rtos_status_code rtos_leave_region( void );
 2. Done `roxy_task_set_priority`, but POSIX interface only provide API to change `NI` priority.
 3. Done `roxy_mqueue_xxx` but still testing, some bugs to be solved.
 
+### 2023-07-18
+
+1. Tested `roxy_mqueue` , fix some bugs.
+2. Fix bugs in `roxy_init` (sometimes thread slot will collide).
+3. Done `roxy_event` with `pthread_cond`, which only support one listener at a time, `signal()` implementation can theoretically support multiple listener at the same time, but I encounter some issues with `sigwait()`.
