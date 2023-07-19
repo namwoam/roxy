@@ -6743,7 +6743,7 @@ struct roxy_task
     void *function_pointer;
     void *argument_pointer;
     void *deconstructor_pointer;
-    unsigned thread_ids[8];
+    unsigned thread_ids[128];
 };
 
 enum thread_status
@@ -6932,7 +6932,7 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_start(100, 1);
+    status = roxy_task_start(100, 100);
     if (status != SUCCESS)
     {
         return 0;

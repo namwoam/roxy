@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_start(ROXY_IDLE_TASK_ID, 1);
+    status = roxy_task_start(ROXY_IDLE_TASK_ID, 100);
     if (status != SUCCESS)
     {
         return 0;

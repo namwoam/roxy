@@ -8297,7 +8297,7 @@ struct roxy_task
     void *function_pointer;
     void *argument_pointer;
     void *deconstructor_pointer;
-    unsigned thread_ids[8];
+    unsigned thread_ids[128];
 };
 
 enum thread_status
@@ -8399,7 +8399,7 @@ roxy_init()
 # 32 "src/core.c" 3 4
                                                                                                   ((void *)0)
 # 32 "src/core.c"
-                                                                                                      , {[0 ... 8 - 1] = -1}};
+                                                                                                      , {[0 ... 128 - 1] = -1}};
         roxy_tasks[i] = default_task;
     }
 
@@ -8558,7 +8558,7 @@ void *roxy_thread_runner(void *data)
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
-    if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 8)
+    if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 128)
     {
         if (1)
         {
@@ -8566,7 +8566,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
         return RUNTIME_ERROR;
     }
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 128; i++)
     {
         if (roxy_tasks[task_id].thread_ids[i] != -1)
         {
@@ -8811,7 +8811,7 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         }
         return RUNTIME_ERROR;
     }
-    for (int thread_index = 0; thread_index < 8; thread_index++)
+    for (int thread_index = 0; thread_index < 128; thread_index++)
     {
         int ret;
         if (roxy_tasks[task_id].thread_ids[thread_index] != -1)

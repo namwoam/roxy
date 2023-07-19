@@ -93,4 +93,6 @@ rtos_status_code rtos_leave_region( void );
 2. Fix bugs in `roxy_init` (sometimes thread slot will collide).
 3. Done `roxy_event` with `pthread_cond`, which only support one listener at a time, `signal()` implementation can theoretically support multiple listener at the same time, but I encounter some issues with `sigwait()`.
 
-### 
+### 2023-07-19
+
+1. Done `roxy_interrupt_catch`.

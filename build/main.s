@@ -455,7 +455,7 @@ main:
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
 	jne	.L74
-	movl	$1, %esi
+	movl	$100, %esi
 	movl	$100, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
