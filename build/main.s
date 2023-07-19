@@ -107,6 +107,32 @@ display_clock:
 	.cfi_endproc
 .LFE70:
 	.size	display_clock, .-display_clock
+	.section	.rodata.str1.1
+.LC3:
+	.string	"Peace out!"
+	.text
+	.p2align 4
+	.globl	exit_handler
+	.type	exit_handler, @function
+exit_handler:
+.LFB71:
+	.cfi_startproc
+	endbr64
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	popq	%rax
+	.cfi_def_cfa_offset 8
+	leaq	.LC3(%rip), %rdi
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	call	puts@PLT
+	movq	stdout(%rip), %rdi
+	call	fflush@PLT
+	xorl	%edi, %edi
+	call	exit@PLT
+	.cfi_endproc
+.LFE71:
+	.size	exit_handler, .-exit_handler
 	.p2align 4
 	.globl	fib
 	.type	fib, @function
@@ -139,63 +165,63 @@ fib:
 	movl	%edi, 8(%rsp)
 	movl	$0, 20(%rsp)
 	cmpl	$1, %eax
-	jbe	.L55
+	jbe	.L57
 	cmpl	$1, 8(%rsp)
-	jbe	.L56
-.L14:
+	jbe	.L58
+.L16:
 	movl	8(%rsp), %eax
 	movl	$0, 24(%rsp)
 	subl	$1, %eax
 	movl	%eax, 12(%rsp)
 	cmpl	$1, 12(%rsp)
 	movl	%eax, 36(%rsp)
-	je	.L57
-.L17:
+	je	.L59
+.L19:
 	movl	12(%rsp), %eax
 	movl	$0, 28(%rsp)
 	subl	$1, %eax
 	movl	%eax, 16(%rsp)
 	cmpl	$1, 16(%rsp)
 	movl	%eax, 40(%rsp)
-	je	.L58
-.L20:
+	je	.L60
+.L22:
 	movl	16(%rsp), %eax
 	movl	$0, 32(%rsp)
 	subl	$1, %eax
 	movl	%eax, 48(%rsp)
 	movl	%eax, %r11d
-.L24:
+.L26:
 	cmpl	$1, %r11d
-	je	.L59
+	je	.L61
 	leal	-1(%r11), %eax
 	xorl	%ecx, %ecx
 	movl	%eax, 44(%rsp)
 	movl	%eax, %ebp
-.L27:
+.L29:
 	cmpl	$1, %ebp
-	je	.L60
+	je	.L62
 	leal	-1(%rbp), %esi
 	xorl	%r12d, %r12d
 	movl	%esi, %edx
-.L30:
+.L32:
 	cmpl	$1, %edx
-	je	.L61
+	je	.L63
 	leal	-2(%rdx), %r8d
 	xorl	%r15d, %r15d
 	movl	%r8d, %r9d
-.L33:
+.L35:
 	leal	1(%r9), %eax
 	movl	%r9d, %ebx
 	xorl	%r13d, %r13d
 	cmpl	$1, %eax
-	jbe	.L62
+	jbe	.L64
 	movl	%ebx, %r10d
 	xorl	%r14d, %r14d
 	cmpl	$1, %ebx
-	je	.L63
+	je	.L65
 	.p2align 4,,10
 	.p2align 3
-.L35:
+.L37:
 	leal	-1(%r10), %edi
 	movl	%r8d, 76(%rsp)
 	movl	%esi, 72(%rsp)
@@ -215,130 +241,130 @@ fib:
 	movl	72(%rsp), %esi
 	cmpl	$1, %r10d
 	movl	76(%rsp), %r8d
-	ja	.L35
+	ja	.L37
 	addl	$1, %r14d
 	leal	-2(%rbx), %eax
 	subl	$1, %ebx
 	addl	%r14d, %r13d
 	cmpl	$1, %ebx
-	jbe	.L64
-.L47:
+	jbe	.L66
+.L49:
 	movl	%eax, %ebx
 	xorl	%r14d, %r14d
 	movl	%ebx, %r10d
 	cmpl	$1, %ebx
-	jne	.L35
-.L63:
+	jne	.L37
+.L65:
 	movl	$1, %r14d
 	leal	-2(%rbx), %eax
 	subl	$1, %ebx
 	addl	%r14d, %r13d
 	cmpl	$1, %ebx
-	ja	.L47
-.L64:
+	ja	.L49
+.L66:
 	addl	$1, %r13d
 	leal	-2(%r9), %eax
 	addl	%r13d, %r15d
 	cmpl	$1, %r9d
-	ja	.L45
-.L67:
+	ja	.L47
+.L69:
 	addl	$1, %r15d
 	subl	$1, %edx
 	addl	%r15d, %r12d
 	cmpl	$1, %edx
-	ja	.L43
-.L66:
+	ja	.L45
+.L68:
 	addl	$1, %r12d
-.L31:
+.L33:
 	addl	%r12d, %ecx
 	subl	$2, %ebp
 	cmpl	$1, %esi
-	ja	.L27
+	ja	.L29
 	addl	$1, %ecx
-.L28:
+.L30:
 	addl	%ecx, 32(%rsp)
 	subl	$2, %r11d
 	cmpl	$1, 44(%rsp)
-	ja	.L24
+	ja	.L26
 	movl	32(%rsp), %eax
 	addl	$1, %eax
-.L25:
+.L27:
 	addl	%eax, 28(%rsp)
 	movl	16(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 48(%rsp)
-	jbe	.L65
+	jbe	.L67
 	movl	%eax, 16(%rsp)
 	cmpl	$1, 16(%rsp)
-	jne	.L20
-.L58:
+	jne	.L22
+.L60:
 	movl	$0, 48(%rsp)
 	movl	$1, %eax
-	jmp	.L25
-.L61:
+	jmp	.L27
+.L63:
 	movl	$1, %r15d
 	subl	$1, %edx
 	movl	$-1, %r8d
 	addl	%r15d, %r12d
 	cmpl	$1, %edx
-	jbe	.L66
-.L43:
+	jbe	.L68
+.L45:
 	movl	%r8d, %edx
-	jmp	.L30
+	jmp	.L32
 	.p2align 4,,10
 	.p2align 3
-.L62:
+.L64:
 	movl	$1, %r13d
 	leal	-2(%r9), %eax
 	addl	%r13d, %r15d
 	cmpl	$1, %r9d
-	jbe	.L67
-.L45:
+	jbe	.L69
+.L47:
 	movl	%eax, %r9d
-	jmp	.L33
-.L60:
+	jmp	.L35
+.L62:
 	movl	$1, %r12d
 	xorl	%esi, %esi
-	jmp	.L31
-.L59:
+	jmp	.L33
+.L61:
 	movl	$0, 44(%rsp)
 	movl	$1, %ecx
-	jmp	.L28
-.L65:
+	jmp	.L30
+.L67:
 	movl	28(%rsp), %eax
 	addl	$1, %eax
-.L22:
+.L24:
 	addl	%eax, 24(%rsp)
 	movl	12(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 40(%rsp)
-	jbe	.L68
+	jbe	.L70
 	movl	%eax, 12(%rsp)
 	cmpl	$1, 12(%rsp)
-	jne	.L17
-.L57:
+	jne	.L19
+.L59:
 	movl	$0, 40(%rsp)
 	movl	$1, %eax
-	jmp	.L22
-.L68:
+	jmp	.L24
+.L70:
 	movl	24(%rsp), %eax
 	addl	$1, %eax
-.L19:
+.L21:
 	addl	%eax, 20(%rsp)
 	movl	8(%rsp), %eax
 	subl	$2, %eax
 	cmpl	$1, 36(%rsp)
-	jbe	.L69
+	jbe	.L71
 	movl	%eax, 8(%rsp)
 	cmpl	$1, 8(%rsp)
-	ja	.L14
-.L56:
+	ja	.L16
+.L58:
 	movl	8(%rsp), %edi
 	movl	$1, %eax
 	subl	$1, %edi
 	movl	%edi, 36(%rsp)
-	jmp	.L19
-.L69:
+	jmp	.L21
+.L71:
 	movl	20(%rsp), %eax
 	addq	$88, %rsp
 	.cfi_remember_state
@@ -357,7 +383,7 @@ fib:
 	popq	%r15
 	.cfi_def_cfa_offset 8
 	ret
-.L55:
+.L57:
 	.cfi_restore_state
 	addq	$88, %rsp
 	.cfi_def_cfa_offset 56
@@ -379,21 +405,21 @@ fib:
 .LFE68:
 	.size	fib, .-fib
 	.section	.rodata.str1.1
-.LC3:
+.LC4:
 	.string	"Failed at init"
 	.section	.text.startup,"ax",@progbits
 	.p2align 4
 	.globl	main
 	.type	main, @function
 main:
-.LFB71:
+.LFB72:
 	.cfi_startproc
 	endbr64
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
 	call	roxy_init@PLT
 	testl	%eax, %eax
-	jne	.L76
+	jne	.L78
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
@@ -402,14 +428,14 @@ main:
 	movl	$100, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	je	.L77
-.L72:
+	je	.L79
+.L74:
 	xorl	%eax, %eax
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 8
 	ret
-.L77:
+.L79:
 	.cfi_restore_state
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
@@ -419,7 +445,7 @@ main:
 	movl	$104, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
 	xorl	%r9d, %r9d
 	xorl	%r8d, %r8d
 	xorl	%edx, %edx
@@ -428,34 +454,39 @@ main:
 	movl	$105, %edi
 	call	roxy_task_create@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
 	movl	$1, %esi
 	movl	$100, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
 	movl	$1, %esi
 	movl	$104, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
 	movl	$1, %esi
 	movl	$105, %edi
 	call	roxy_task_start@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
+	leaq	exit_handler(%rip), %rsi
+	movl	$2, %edi
+	call	roxy_interrupt_catch@PLT
+	testl	%eax, %eax
+	jne	.L74
 	movl	$100, %edi
 	call	roxy_loop@PLT
 	testl	%eax, %eax
-	jne	.L72
+	jne	.L74
 	call	roxy_clean@PLT
-	jmp	.L72
-.L76:
-	leaq	.LC3(%rip), %rdi
+	jmp	.L74
+.L78:
+	leaq	.LC4(%rip), %rdi
 	call	puts@PLT
-	jmp	.L72
+	jmp	.L74
 	.cfi_endproc
-.LFE71:
+.LFE72:
 	.size	main, .-main
 	.ident	"GCC: (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0"
 	.section	.note.GNU-stack,"",@progbits

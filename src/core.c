@@ -7,6 +7,7 @@ static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT_LIMIT];
 static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT_LIMIT];
 static struct roxy_mqueue roxy_mqueues[ROXY_MQUEUE_COUNT_LIMIT];
 static struct roxy_event roxy_events[ROXY_EVENT_COUNT_LIMIT];
+static void *roxy_interrupts[ROXY_INTERRUPT_COUNT];
 /*
 abandom event signal implementation
 void roxy_signal_handler(int signal_vector)
@@ -19,7 +20,8 @@ void roxy_signal_handler(int signal_vector)
 }
 */
 
-enum roxy_status_code roxy_init()
+enum roxy_status_code
+roxy_init()
 {
     // must single thread!!
     // init random generator
@@ -80,7 +82,10 @@ enum roxy_status_code roxy_init()
         pthread_cond_init(&roxy_events[event_id].waiting_condition, NULL);
         roxy_events[event_id].gate = ROXY_EVENT_GATEOPEN;
     }
-
+    for (int interrupt_id = 0; interrupt_id < ROXY_INTERRUPT_COUNT; interrupt_id++)
+    {
+        roxy_interrupts[interrupt_id] = NULL;
+    }
     // check config
     const int os_priority_level = sched_get_priority_max(ROXY_SCHEDULE_POLICY) - sched_get_priority_min(ROXY_SCHEDULE_POLICY);
     if (ROXY_DEBUG)
@@ -697,5 +702,43 @@ enum roxy_status_code roxy_event_receive(unsigned event_id)
         pthread_cond_wait(&roxy_events[event_id].waiting_condition, &roxy_events[event_id].protect_mutex);
     }
     pthread_mutex_unlock(&roxy_events[event_id].protect_mutex);
+    return SUCCESS;
+}
+
+void roxy_signal_handler(int signal_vector)
+{
+    if (roxy_interrupts[signal_vector] == NULL)
+    {
+        return;
+    }
+    void (*signal_callback_function)();
+    signal_callback_function = roxy_interrupts[signal_vector];
+    signal_callback_function();
+    return;
+}
+
+enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr)
+{
+    struct sigaction signal_action;
+    signal_action.sa_handler = function_ptr;
+    sigemptyset(&signal_action.sa_mask);
+    sigaddset(&signal_action.sa_mask, signal_id);
+    if (signal_id >= ROXY_INTERRUPT_COUNT)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Interrupt signal out of bound (signal_id=%d)\n", signal_id);
+        }
+    }
+    int ret;
+    ret = sigaction(signal_id, &signal_action, NULL);
+    if (ret)
+    {
+        if (ROXY_DEBUG)
+        {
+            printf("ROXY-DEBUG: Error setting up signal handler at signal_id=%d\n", signal_id);
+        }
+        return RUNTIME_ERROR;
+    }
     return SUCCESS;
 }

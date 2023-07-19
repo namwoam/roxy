@@ -12,7 +12,6 @@ enum roxy_status_code
 #define ROXY_THREAD_COUNT_LIMIT 1024
 #define ROXY_TASK_COUNT_LIMIT 128
 #define ROXY_MQUEUE_COUNT_LIMIT 128
-#define ROXY_INTERRUPT_COUNT_LIMIT 128
 #define ROXY_EVENT_COUNT_LIMIT 1024 // linux kernel SIGRTMAX=64<-legacy
 #define ROXY_CRITICAL_SECTION_COUNT_LIMIT 16
 #define ROXY_TASK_THREAD_LIMIT 8
@@ -32,4 +31,7 @@ enum roxy_status_code
 // #define ROXY_EVENT_SIGDISPLACEMENT SIGRTMIN// most cpu instruction set won't use signal beyond 31, don't touch it :)<-legacy
 #define ROXY_EVENT_GATEOPEN 0
 #define ROXY_EVENT_GATECLOSE 1
+
+#define ROXY_INTERRUPT_COUNT 64 // SIGRTMAX
+
 #endif

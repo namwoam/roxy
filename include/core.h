@@ -45,4 +45,6 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 enum roxy_status_code roxy_event_send(unsigned event_id);
 enum roxy_status_code roxy_event_receive(unsigned event_id);
 
+enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr);
+
 #endif

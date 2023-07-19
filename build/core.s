@@ -164,6 +164,11 @@ roxy_init:
 	movl	$0, -8(%rbx)
 	cmpq	%rbp, %rbx
 	jne	.L21
+	leaq	roxy_interrupts(%rip), %rdx
+	xorl	%eax, %eax
+	movl	$64, %ecx
+	movq	%rdx, %rdi
+	rep stosq
 	movl	$2, %edi
 	call	sched_get_priority_max@PLT
 	movl	$2, %edi
@@ -1803,6 +1808,110 @@ roxy_event_receive:
 	.cfi_endproc
 .LFE95:
 	.size	roxy_event_receive, .-roxy_event_receive
+	.p2align 4
+	.globl	roxy_signal_handler
+	.type	roxy_signal_handler, @function
+roxy_signal_handler:
+.LFB96:
+	.cfi_startproc
+	endbr64
+	movslq	%edi, %rdi
+	leaq	roxy_interrupts(%rip), %rax
+	movq	(%rax,%rdi,8), %rdx
+	testq	%rdx, %rdx
+	je	.L243
+	xorl	%eax, %eax
+	jmp	*%rdx
+	.p2align 4,,10
+	.p2align 3
+.L243:
+	ret
+	.cfi_endproc
+.LFE96:
+	.size	roxy_signal_handler, .-roxy_signal_handler
+	.section	.rodata.str1.8
+	.align 8
+.LC33:
+	.string	"ROXY-DEBUG: Interrupt signal out of bound (signal_id=%d)\n"
+	.align 8
+.LC34:
+	.string	"ROXY-DEBUG: Error setting up signal handler at signal_id=%d\n"
+	.text
+	.p2align 4
+	.globl	roxy_interrupt_catch
+	.type	roxy_interrupt_catch, @function
+roxy_interrupt_catch:
+.LFB97:
+	.cfi_startproc
+	endbr64
+	pushq	%r12
+	.cfi_def_cfa_offset 16
+	.cfi_offset 12, -16
+	movl	%edi, %r12d
+	pushq	%rbp
+	.cfi_def_cfa_offset 24
+	.cfi_offset 6, -24
+	subq	$168, %rsp
+	.cfi_def_cfa_offset 192
+	movq	%fs:40, %rax
+	movq	%rax, 152(%rsp)
+	xorl	%eax, %eax
+	leaq	8(%rsp), %rbp
+	movq	%rsi, (%rsp)
+	movq	%rbp, %rdi
+	call	sigemptyset@PLT
+	movl	%r12d, %esi
+	movq	%rbp, %rdi
+	call	sigaddset@PLT
+	cmpl	$63, %r12d
+	ja	.L252
+.L246:
+	movq	%rsp, %rsi
+	xorl	%edx, %edx
+	movl	%r12d, %edi
+	call	sigaction@PLT
+	movl	%eax, %r8d
+	xorl	%eax, %eax
+	testl	%r8d, %r8d
+	jne	.L253
+.L245:
+	movq	152(%rsp), %rdx
+	subq	%fs:40, %rdx
+	jne	.L254
+	addq	$168, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 24
+	popq	%rbp
+	.cfi_def_cfa_offset 16
+	popq	%r12
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L252:
+	.cfi_restore_state
+	movl	%r12d, %edx
+	leaq	.LC33(%rip), %rsi
+	movl	$1, %edi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	jmp	.L246
+	.p2align 4,,10
+	.p2align 3
+.L253:
+	movl	%r12d, %edx
+	leaq	.LC34(%rip), %rsi
+	movl	$1, %edi
+	call	__printf_chk@PLT
+	movl	$2, %eax
+	jmp	.L245
+.L254:
+	call	__stack_chk_fail@PLT
+	.cfi_endproc
+.LFE97:
+	.size	roxy_interrupt_catch, .-roxy_interrupt_catch
+	.local	roxy_interrupts
+	.comm	roxy_interrupts,512,32
 	.local	roxy_events
 	.comm	roxy_events,98304,32
 	.local	roxy_mqueues

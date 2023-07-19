@@ -6807,6 +6807,8 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id);
 
 enum roxy_status_code roxy_event_send(unsigned event_id);
 enum roxy_status_code roxy_event_receive(unsigned event_id);
+
+enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr);
 # 7 "include/main.h" 2
 # 2 "src/main.c" 2
 # 11 "src/main.c"
@@ -6859,6 +6861,17 @@ void display_clock()
     }
 }
 
+void exit_handler()
+{
+    printf("Peace out!\n");
+    fflush(
+# 108 "src/main.c" 3 4
+          stdout
+# 108 "src/main.c"
+                );
+    exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     enum roxy_status_code status;
@@ -6869,51 +6882,51 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_create(100, 10, 
-# 114 "src/main.c" 3 4
+# 121 "src/main.c" 3 4
                                                     ((void *)0)
-# 114 "src/main.c"
+# 121 "src/main.c"
                                                         , idle_task, 
-# 114 "src/main.c" 3 4
+# 121 "src/main.c" 3 4
                                                                      ((void *)0)
-# 114 "src/main.c"
+# 121 "src/main.c"
                                                                          , 
-# 114 "src/main.c" 3 4
+# 121 "src/main.c" 3 4
                                                                            ((void *)0)
-# 114 "src/main.c"
+# 121 "src/main.c"
                                                                                );
     if (status != SUCCESS)
     {
         return 0;
     }
     status = roxy_task_create(104, 10, 
-# 119 "src/main.c" 3 4
+# 126 "src/main.c" 3 4
                                                      ((void *)0)
-# 119 "src/main.c"
+# 126 "src/main.c"
                                                          , clock_task, 
-# 119 "src/main.c" 3 4
+# 126 "src/main.c" 3 4
                                                                        ((void *)0)
-# 119 "src/main.c"
+# 126 "src/main.c"
                                                                            , 
-# 119 "src/main.c" 3 4
+# 126 "src/main.c" 3 4
                                                                              ((void *)0)
-# 119 "src/main.c"
+# 126 "src/main.c"
                                                                                  );
     if (status != SUCCESS)
     {
         return 0;
     }
     status = roxy_task_create(105, 10, 
-# 124 "src/main.c" 3 4
+# 131 "src/main.c" 3 4
                                                        ((void *)0)
-# 124 "src/main.c"
+# 131 "src/main.c"
                                                            , display_clock, 
-# 124 "src/main.c" 3 4
+# 131 "src/main.c" 3 4
                                                                             ((void *)0)
-# 124 "src/main.c"
+# 131 "src/main.c"
                                                                                 , 
-# 124 "src/main.c" 3 4
+# 131 "src/main.c" 3 4
                                                                                   ((void *)0)
-# 124 "src/main.c"
+# 131 "src/main.c"
                                                                                       );
     if (status != SUCCESS)
     {
@@ -6930,6 +6943,15 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_start(105, 1);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_interrupt_catch(
+# 151 "src/main.c" 3 4
+                                 2
+# 151 "src/main.c"
+                                       , exit_handler);
     if (status != SUCCESS)
     {
         return 0;

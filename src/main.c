@@ -102,6 +102,13 @@ void display_clock()
     }
 }
 
+void exit_handler()
+{
+    printf("Peace out!\n");
+    fflush(stdout);
+    exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     enum roxy_status_code status;
@@ -137,6 +144,11 @@ int main(int argc, char *argv[])
         return 0;
     }
     status = roxy_task_start(ROXY_DISPLAY_TASK_ID, 1);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_interrupt_catch(SIGINT, exit_handler);
     if (status != SUCCESS)
     {
         return 0;
