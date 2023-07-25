@@ -37,21 +37,19 @@ int fib(int n)
         return fib(n - 1) + fib(n - 2);
     }
 }
-/*
+
 void compute_task()
 {
     while (1)
     {
-        for (int i = 5; i >= 1; i--)
+        for (int i = 0; i < 30; i++)
         {
-            printf("computing, 20/%d=%d\n", i, 20 / i);
+            printf("fib(%d)=%d\n", i, fib(i));
             roxy_task_wait(1, ROXY_WAIT_SECOND);
         }
     }
     return;
 }
-*/
-/*
 void send_task()
 {
     int p = 0;
@@ -65,8 +63,6 @@ void send_task()
         roxy_task_wait(1, ROXY_WAIT_SECOND);
     }
 }
-*/
-/*
 void receive_task()
 {
     char receive_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
@@ -81,7 +77,6 @@ void receive_task()
         printf("Receiver: received->%s \n", receive_buffer);
     }
 }
-*/
 
 void clock_task()
 {
@@ -118,7 +113,28 @@ int main(int argc, char *argv[])
         printf("Failed at init\n");
         return 0;
     }
+    roxy_mqueue_flush(MQUEUE_ID);
+    status = roxy_mqueue_create(MQUEUE_ID, ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
     status = roxy_task_create(ROXY_IDLE_TASK_ID, 10, NULL, idle_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_create(ROXY_COMPUTE_TASK_ID, 11, NULL, compute_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_create(ROXY_SENDER_TASK_ID, 10, NULL, send_task, NULL, NULL);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_create(ROXY_RECEIVER_TASK_ID, 10, NULL, receive_task, NULL, NULL);
     if (status != SUCCESS)
     {
         return 0;
@@ -133,7 +149,22 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-    status = roxy_task_start(ROXY_IDLE_TASK_ID, 100);
+    status = roxy_task_start(ROXY_IDLE_TASK_ID, 5);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_COMPUTE_TASK_ID, 2);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_SENDER_TASK_ID, 2);
+    if (status != SUCCESS)
+    {
+        return 0;
+    }
+    status = roxy_task_start(ROXY_RECEIVER_TASK_ID, 2);
     if (status != SUCCESS)
     {
         return 0;
