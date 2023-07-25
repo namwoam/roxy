@@ -1,5 +1,5 @@
 # Roxy
-## RTOS(RTEMS)-like realtime application SDK using pure POSIX interface ontop of preempt-rt linux
+## RTOS(RTEMS)-like realtime application SDK using pure POSIX interface on top of preempt-rt linux
 
 ## Spec
 
