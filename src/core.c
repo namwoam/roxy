@@ -2,11 +2,11 @@
 
 #define MAX_SEARCH_ITERATION 100
 
-static struct roxy_task roxy_tasks[ROXY_TASK_COUNT_LIMIT];
-static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT_LIMIT];
-static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT_LIMIT];
-static struct roxy_mqueue roxy_mqueues[ROXY_MQUEUE_COUNT_LIMIT];
-static struct roxy_event roxy_events[ROXY_EVENT_COUNT_LIMIT];
+static struct roxy_task roxy_tasks[ROXY_TASK_COUNT];
+static struct roxy_thread roxy_threads[ROXY_THREAD_COUNT];
+static pthread_mutex_t roxy_critical_sections[ROXY_CRITICAL_SECTION_COUNT];
+static struct roxy_mqueue roxy_mqueues[ROXY_MQUEUE_COUNT];
+static struct roxy_event roxy_events[ROXY_EVENT_COUNT];
 static void *roxy_interrupts[ROXY_INTERRUPT_COUNT];
 /*
 abandom event signal implementation
@@ -27,22 +27,22 @@ roxy_init()
     // init random generator
     srand(ROXY_RANDOM_SEED);
     // init tasks and threads
-    for (int i = 0; i < ROXY_TASK_COUNT_LIMIT; i++)
+    for (int i = 0; i < ROXY_TASK_COUNT; i++)
     {
         struct roxy_task default_task = {TASK_EMPTY, ROXY_TASK_PREINIT_PRIORITY, NULL, NULL, NULL, NULL, {[0 ... ROXY_TASK_THREAD_LIMIT - 1] = ROXY_TASK_PREINIT_THREADID}};
         roxy_tasks[i] = default_task;
     }
 
-    for (int i = 0; i < ROXY_THREAD_COUNT_LIMIT; i++)
+    for (int i = 0; i < ROXY_THREAD_COUNT; i++)
     {
         roxy_threads[i].status = THREAD_EMPTY;
         roxy_threads[i].os_thread_id = ROXY_THREAD_PREINIT_OS_THREADID;
     }
-    for (int i = 0; i < ROXY_CRITICAL_SECTION_COUNT_LIMIT; i++)
+    for (int i = 0; i < ROXY_CRITICAL_SECTION_COUNT; i++)
     {
         pthread_mutex_init(&roxy_critical_sections[i], NULL);
     }
-    for (int i = 0; i < ROXY_MQUEUE_COUNT_LIMIT; i++)
+    for (int i = 0; i < ROXY_MQUEUE_COUNT; i++)
     {
         strcpy(roxy_mqueues[i].channel_name, "");
     }
@@ -50,7 +50,7 @@ roxy_init()
     abandom event signal implementation
 
     printf("ROXY-SYSTEM: maximum signal id:%d\n", SIGRTMAX);
-    if (ROXY_EVENT_SIGDISPLACEMENT + ROXY_EVENT_COUNT_LIMIT >= SIGRTMAX)
+    if (ROXY_EVENT_SIGDISPLACEMENT + ROXY_EVENT_COUNT >= SIGRTMAX)
     {
         if (ROXY_DEBUG)
         {
@@ -63,7 +63,7 @@ roxy_init()
     sigfillset(&signal_action.sa_mask);
     signal_action.sa_flags = SA_RESTART;
     int ret;
-    for (int event_id = 0; event_id < ROXY_EVENT_COUNT_LIMIT; event_id++)
+    for (int event_id = 0; event_id < ROXY_EVENT_COUNT; event_id++)
     {
         ret = sigaction(event_id + ROXY_EVENT_SIGDISPLACEMENT, &signal_action, NULL);
         if (ret)
@@ -76,7 +76,7 @@ roxy_init()
         }
     }
     */
-    for (int event_id = 0; event_id < ROXY_EVENT_COUNT_LIMIT; event_id++)
+    for (int event_id = 0; event_id < ROXY_EVENT_COUNT; event_id++)
     {
         pthread_mutex_init(&roxy_events[event_id].protect_mutex, NULL);
         pthread_cond_init(&roxy_events[event_id].waiting_condition, NULL);
@@ -103,7 +103,7 @@ roxy_init()
 enum roxy_status_code roxy_clean()
 {
     int ret;
-    for (int mqueue_id = 0; mqueue_id < ROXY_MQUEUE_COUNT_LIMIT; mqueue_id++)
+    for (int mqueue_id = 0; mqueue_id < ROXY_MQUEUE_COUNT; mqueue_id++)
     {
         if (strcmp(roxy_mqueues[mqueue_id].channel_name, " ") != 0)
         {
@@ -127,7 +127,7 @@ enum roxy_status_code roxy_clean()
 
 enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void *constructor_ptr, void *function_ptr, void *deconstructor_ptr, void *argument_ptr)
 {
-    if (task_id < ROXY_TASK_COUNT_LIMIT && roxy_tasks[task_id].status == TASK_EMPTY)
+    if (task_id < ROXY_TASK_COUNT && roxy_tasks[task_id].status == TASK_EMPTY)
     {
         // means this task haven't been created
         roxy_tasks[task_id].status = TASK_LOADED;
@@ -177,7 +177,7 @@ void *roxy_thread_runner(void *data)
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
-    if (task_id > ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > ROXY_TASK_THREAD_LIMIT)
+    if (task_id > ROXY_TASK_COUNT || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > ROXY_TASK_THREAD_LIMIT)
     {
         if (ROXY_DEBUG)
         {
@@ -264,7 +264,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 
         for (int i = 0; i < MAX_SEARCH_ITERATION; i++)
         {
-            search_index = rand() % ROXY_THREAD_COUNT_LIMIT;
+            search_index = rand() % ROXY_THREAD_COUNT;
             if (roxy_threads[search_index].status == THREAD_EMPTY)
             {
                 roxy_threads[search_index].status = THREAD_EXECUTING;
@@ -328,7 +328,7 @@ enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned wait_optio
 
 enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_priority)
 {
-    if (task_id < 0 || task_id >= ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY)
+    if (task_id < 0 || task_id >= ROXY_TASK_COUNT || roxy_tasks[task_id].status == TASK_EMPTY)
     {
         if (ROXY_DEBUG)
         {
@@ -369,7 +369,7 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
 
 enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
 {
-    if (section_id >= ROXY_CRITICAL_SECTION_COUNT_LIMIT)
+    if (section_id >= ROXY_CRITICAL_SECTION_COUNT)
     {
         return RUNTIME_ERROR;
     }
@@ -387,7 +387,7 @@ enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
 
 enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
 {
-    if (section_id >= ROXY_CRITICAL_SECTION_COUNT_LIMIT)
+    if (section_id >= ROXY_CRITICAL_SECTION_COUNT)
     {
         return RUNTIME_ERROR;
     }
@@ -405,7 +405,7 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
 
 enum roxy_status_code roxy_loop(unsigned task_id)
 {
-    if (task_id < 0 || task_id >= ROXY_TASK_COUNT_LIMIT || roxy_tasks[task_id].status == TASK_EMPTY)
+    if (task_id < 0 || task_id >= ROXY_TASK_COUNT || roxy_tasks[task_id].status == TASK_EMPTY)
     {
         if (ROXY_DEBUG)
         {
@@ -435,7 +435,7 @@ enum roxy_status_code roxy_loop(unsigned task_id)
 
 enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capacity, unsigned message_maximum_length)
 {
-    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT)
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT)
     {
         if (ROXY_DEBUG)
         {
@@ -484,7 +484,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
 
 enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_buffer, unsigned message_length)
 {
-    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
         if (ROXY_DEBUG)
         {
@@ -527,7 +527,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
 
 enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buffer, unsigned message_length, int blocking)
 {
-    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
         if (ROXY_DEBUG)
         {
@@ -577,7 +577,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
 
 int roxy_mqueue_get_pending(unsigned mqueue_id)
 {
-    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT_LIMIT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
+    if (mqueue_id < 0 || mqueue_id >= ROXY_MQUEUE_COUNT || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
         if (ROXY_DEBUG)
         {
@@ -631,7 +631,7 @@ enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id)
 
 enum roxy_status_code roxy_event_send(unsigned event_id)
 {
-    if (event_id >= ROXY_EVENT_COUNT_LIMIT)
+    if (event_id >= ROXY_EVENT_COUNT)
     {
         if (ROXY_DEBUG)
         {
@@ -662,7 +662,7 @@ enum roxy_status_code roxy_event_send(unsigned event_id)
 
 enum roxy_status_code roxy_event_receive(unsigned event_id)
 {
-    if (event_id >= ROXY_EVENT_COUNT_LIMIT)
+    if (event_id >= ROXY_EVENT_COUNT)
     {
         if (ROXY_DEBUG)
         {

@@ -8297,7 +8297,7 @@ struct roxy_task
     void *function_pointer;
     void *argument_pointer;
     void *deconstructor_pointer;
-    unsigned thread_ids[128];
+    unsigned thread_ids[8];
 };
 
 enum thread_status
@@ -8371,7 +8371,7 @@ static struct roxy_task roxy_tasks[128];
 static struct roxy_thread roxy_threads[1024];
 static pthread_mutex_t roxy_critical_sections[16];
 static struct roxy_mqueue roxy_mqueues[128];
-static struct roxy_event roxy_events[1024];
+static struct roxy_event roxy_events[128];
 static void *roxy_interrupts[64];
 # 23 "src/core.c"
 enum roxy_status_code
@@ -8399,7 +8399,7 @@ roxy_init()
 # 32 "src/core.c" 3 4
                                                                                                   ((void *)0)
 # 32 "src/core.c"
-                                                                                                      , {[0 ... 128 - 1] = -1}};
+                                                                                                      , {[0 ... 8 - 1] = -1}};
         roxy_tasks[i] = default_task;
     }
 
@@ -8421,7 +8421,7 @@ roxy_init()
         strcpy(roxy_mqueues[i].channel_name, "");
     }
 # 79 "src/core.c"
-    for (int event_id = 0; event_id < 1024; event_id++)
+    for (int event_id = 0; event_id < 128; event_id++)
     {
         pthread_mutex_init(&roxy_events[event_id].protect_mutex, 
 # 81 "src/core.c" 3 4
@@ -8558,7 +8558,7 @@ void *roxy_thread_runner(void *data)
 
 enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
-    if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 128)
+    if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 8)
     {
         if (1)
         {
@@ -8566,7 +8566,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         }
         return RUNTIME_ERROR;
     }
-    for (int i = 0; i < 128; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (roxy_tasks[task_id].thread_ids[i] != -1)
         {
@@ -8811,7 +8811,7 @@ enum roxy_status_code roxy_loop(unsigned task_id)
         }
         return RUNTIME_ERROR;
     }
-    for (int thread_index = 0; thread_index < 128; thread_index++)
+    for (int thread_index = 0; thread_index < 8; thread_index++)
     {
         int ret;
         if (roxy_tasks[task_id].thread_ids[thread_index] != -1)
@@ -9097,7 +9097,7 @@ enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id)
 
 enum roxy_status_code roxy_event_send(unsigned event_id)
 {
-    if (event_id >= 1024)
+    if (event_id >= 128)
     {
         if (1)
         {
@@ -9115,7 +9115,7 @@ enum roxy_status_code roxy_event_send(unsigned event_id)
 
 enum roxy_status_code roxy_event_receive(unsigned event_id)
 {
-    if (event_id >= 1024)
+    if (event_id >= 128)
     {
         if (1)
         {
