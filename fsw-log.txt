@@ -1,95 +1,15 @@
 ROXY-DEBUG: Priority provided by the os: 98
 ROXY-DEBUG: Priority defined by roxy: 64
-ROXY-SYSTEM: thread_id:556 pthread_id:139851712640576 running on os thread:23408
-ROXY-SYSTEM: thread_id:879 pthread_id:139851712529984 running on os thread:23409
-ROXY-SYSTEM: thread_id:836 pthread_id:139851712419392 running on os thread:23410
-ROXY-SYSTEM: thread_id:58 pthread_id:139851712308800 running on os thread:23411
-ROXY-SYSTEM: thread_id:760 pthread_id:139851712198208 running on os thread:23412
-ROXY-SYSTEM: thread_id:79 pthread_id:139851700733504 running on os thread:23413
-ROXY-SYSTEM: thread_id:842 pthread_id:139851700622912 running on os thread:23414
-ROXY-SYSTEM: thread_id:337 pthread_id:139851700512320 running on os thread:23415
-ROXY-SYSTEM: thread_id:915 pthread_id:139851700401728 running on os thread:23416
-ROXY-SYSTEM: thread_id:72 pthread_id:139851700291136 running on os thread:23417
-ROXY-SYSTEM: thread_id:396 pthread_id:139851700180544 running on os thread:23418
-SEQ send the VHF event at:1690876745339
-SCIO received the VHF event at:1690876745339
-SCIO executing phase 1 at:1690876745339
-SCIO exit at:1690876745339
-SEQ send the VHF event at:1690876746339
-SCIO received the VHF event at:1690876746339
-DHS received the VHF event at:1690876746339
-SCIO executing phase 1 at:1690876746339
-DHS executing phase 1 at:1690876746339
-DHS executing phase 2 at:1690876746339
-DHS send the AOCS_ACQ event at:1690876746339
-DHS executing phase 3 at:1690876746339
-DHS send the PF_ACQ event at:1690876746339
-SCIO exit at:1690876746339
-DHS executing phase 4 at:1690876746339
-DHS send the PL_ACQ event at:1690876746339
-SEQ send the VHF event at:1690876747339
-SCIO received the VHF event at:1690876747339
-SCIO executing phase 1 at:1690876747339
-SCIO exit at:1690876747339
-SEQ send the VHF event at:1690876748339
-SCIO received the VHF event at:1690876748339
-SCIO executing phase 1 at:1690876748339
-SCIO exit at:1690876748339
-SEQ send the VHF event at:1690876749339
-SCIO received the VHF event at:1690876749339
-SCIO executing phase 1 at:1690876749339
-SCIO exit at:1690876749339
-SEQ send the VHF event at:1690876750340
-SCIO received the VHF event at:1690876750340
-SCIO executing phase 1 at:1690876750340
-SCIO exit at:1690876750340
-SEQ send the VHF event at:1690876751340
-SCIO received the VHF event at:1690876751340
-SCIO executing phase 1 at:1690876751340
-SCIO exit at:1690876751340
-SEQ send the VHF event at:1690876752340
-SCIO received the VHF event at:1690876752340
-SCIO executing phase 1 at:1690876752340
-SCIO exit at:1690876752340
-SEQ send the VHF event at:1690876753340
-SCIO received the VHF event at:1690876753340
-SCIO executing phase 1 at:1690876753340
-SCIO exit at:1690876753340
-SEQ send the VHF event at:1690876754340
-SCIO received the VHF event at:1690876754340
-SCIO executing phase 1 at:1690876754340
-SCIO exit at:1690876754340
-SEQ send the VHF event at:1690876755340
-SCIO received the VHF event at:1690876755340
-SCIO executing phase 1 at:1690876755340
-SCIO exit at:1690876755340
-SEQ send the VHF event at:1690876756340
-SCIO received the VHF event at:1690876756340
-SCIO executing phase 1 at:1690876756340
-SCIO exit at:1690876756340
-SEQ send the VHF event at:1690876757340
-SCIO received the VHF event at:1690876757340
-SYS received the VHF event at:1690876757340
-SCIO executing phase 1 at:1690876757341
-SCIO exit at:1690876757341
-SYS executing phase 1 at:1690876757341
-SEQ send the VHF event at:1690876758341
-SCIO received the VHF event at:1690876758341
-SCIO executing phase 1 at:1690876758341
-SCIO exit at:1690876758341
-SEQ send the VHF event at:1690876759341
-SCIO received the VHF event at:1690876759341
-SCIO executing phase 1 at:1690876759341
-SCIO exit at:1690876759341
-SEQ send the VHF event at:1690876760341
-TM received the VHF event at:1690876760341
-TM executing phase 1 at:1690876760341
-SCIO received the VHF event at:1690876760341
-SCIO executing phase 1 at:1690876760341
-SCIO exit at:1690876760341
-TM exit at:1690876760341
-SEQ send the VHF event at:1690876761341
-SCIO received the VHF event at:1690876761341
-SCIO executing phase 1 at:1690876761341
-SCIO exit at:1690876761341
-SEQ send the VHF ev
+ROXY-SYSTEM: thread_id:556 pthread_id:140426584041024 running on os thread:26134
+ROXY-SYSTEM: thread_id:879 pthread_id:140426583930432 running on os thread:26135
+ROXY-SYSTEM: thread_id:836 pthread_id:140426583819840 running on os thread:26136
+ROXY-SYSTEM: thread_id:58 pthread_id:140426583709248 running on os thread:26137
+ROXY-SYSTEM: thread_id:760 pthread_id:140426583598656 running on os thread:26138
+ROXY-SYSTEM: thread_id:79 pthread_id:140426583488064 running on os thread:26139
+ROXY-SYSTEM: thread_id:842 pthread_id:140426572039744 running on os thread:26140
+ROXY-SYSTEM: thread_id:337 pthread_id:140426571929152 running on os thread:26141
+ROXY-SYSTEM: thread_id:915 pthread_id:140426571818560 running on os thread:26142
+ROXY-SYSTEM: thread_id:72 pthread_id:140426571707968 running on os thread:26143
+ROXY-SYSTEM: thread_id:396 pthread_id:140426571597376 running on os thread:26144
+seq=100, scio=56, dhs=0, tc=24, tm=13, gcq=9, mpq=0
+sys=0, aocs=0, pf=0, pl=0

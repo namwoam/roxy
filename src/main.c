@@ -22,6 +22,8 @@
 
 int work_done;
 
+int seq = 0, scio = 0, dhs = 0, tc = 0, tm = 0, gcq = 0, mpq = 0, sys = 0, aocs = 0, pf = 0, pl = 0;
+
 long get_timestamp()
 {
     struct timeval time;
@@ -41,12 +43,12 @@ void unlock_gate_lock()
     work_done += 1;
     if (work_done == 3)
     {
-        printf("Gate lock send the END_APP_SW event at:%ld\n", get_timestamp());
+        // printf("Gate lock send the END_APP_SW event at:%ld\n", get_timestamp());
         roxy_event_send(END_APP_SW_EVENT_ID);
     }
     else
     {
-        printf("current work_done=%d\n", work_done);
+        // printf("current work_done=%d\n", work_done);
     }
     roxy_critical_section_leave(0);
 }
@@ -60,8 +62,9 @@ void reset_gate_lock()
 
 void SEQ_interrupt_handler()
 {
-    printf("SEQ send the VHF event at:%ld\n", get_timestamp());
+    // printf("SEQ send the VHF event at:%ld\n", get_timestamp());
     roxy_event_send(VHF_EVENT_ID);
+    seq += 1;
 }
 
 void SCIO_VHF_task()
@@ -69,9 +72,10 @@ void SCIO_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("SCIO received the VHF event at:%ld\n", get_timestamp());
-        printf("SCIO executing phase 1 at:%ld\n", get_timestamp());
-        printf("SCIO exit at:%ld\n", get_timestamp());
+        // printf("SCIO received the VHF event at:%ld\n", get_timestamp());
+        // printf("SCIO executing phase 1 at:%ld\n", get_timestamp());
+        // printf("SCIO exit at:%ld\n", get_timestamp());
+        scio += 1;
     }
 }
 
@@ -80,9 +84,10 @@ void TC_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("TC received the VHF event at:%ld\n", get_timestamp());
-        printf("TC executing phase 1 at:%ld\n", get_timestamp());
-        printf("TC exit at:%ld\n", get_timestamp());
+        // printf("TC received the VHF event at:%ld\n", get_timestamp());
+        // printf("TC executing phase 1 at:%ld\n", get_timestamp());
+        // printf("TC exit at:%ld\n", get_timestamp());
+        tc += 1;
     }
 }
 
@@ -91,9 +96,10 @@ void TM_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("TM received the VHF event at:%ld\n", get_timestamp());
-        printf("TM executing phase 1 at:%ld\n", get_timestamp());
-        printf("TM exit at:%ld\n", get_timestamp());
+        // printf("TM received the VHF event at:%ld\n", get_timestamp());
+        // printf("TM executing phase 1 at:%ld\n", get_timestamp());
+        // printf("TM exit at:%ld\n", get_timestamp());
+        tm += 1;
     }
 }
 
@@ -102,9 +108,10 @@ void GCQ_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("GCQ received the VHF event at:%ld\n", get_timestamp());
-        printf("GCQ executing phase 1 at:%ld\n", get_timestamp());
-        printf("GCQ exit at:%ld\n", get_timestamp());
+        // printf("GCQ received the VHF event at:%ld\n", get_timestamp());
+        // printf("GCQ executing phase 1 at:%ld\n", get_timestamp());
+        // printf("GCQ exit at:%ld\n", get_timestamp());
+        gcq += 1;
     }
 }
 
@@ -113,9 +120,10 @@ void MPQ_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("MPQ received the VHF event at:%ld\n", get_timestamp());
-        printf("MPQ executing phase 1 at:%ld\n", get_timestamp());
-        printf("MPQ exit at:%ld\n", get_timestamp());
+        // printf("MPQ received the VHF event at:%ld\n", get_timestamp());
+        // printf("MPQ executing phase 1 at:%ld\n", get_timestamp());
+        // printf("MPQ exit at:%ld\n", get_timestamp());
+        mpq += 1;
     }
 }
 
@@ -124,12 +132,13 @@ void SYS_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("SYS received the VHF event at:%ld\n", get_timestamp());
-        printf("SYS executing phase 1 at:%ld\n", get_timestamp());
+        // printf("SYS received the VHF event at:%ld\n", get_timestamp());
+        // printf("SYS executing phase 1 at:%ld\n", get_timestamp());
         roxy_event_receive(END_APP_SW_EVENT_ID);
-        printf("SYS received the END_APP_SW event at:%ld\n", get_timestamp());
-        printf("SYS executing phase 2 at:%ld\n", get_timestamp());
-        printf("SYS exit at:%ld\n", get_timestamp());
+        // printf("SYS received the END_APP_SW event at:%ld\n", get_timestamp());
+        // printf("SYS executing phase 2 at:%ld\n", get_timestamp());
+        // printf("SYS exit at:%ld\n", get_timestamp());
+        sys += 1;
     }
 }
 
@@ -138,13 +147,14 @@ void AOCS_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("AOCS received the VHF event at:%ld\n", get_timestamp());
-        printf("AOCS executing phase 1 at:%ld\n", get_timestamp());
+        // printf("AOCS received the VHF event at:%ld\n", get_timestamp());
+        // printf("AOCS executing phase 1 at:%ld\n", get_timestamp());
         roxy_event_receive(AOCS_ACQ_EVENT_ID);
-        printf("AOCS received the AOCS_ACQ event at:%ld\n", get_timestamp());
-        printf("AOCS executing phase 2 at:%ld\n", get_timestamp());
+        // printf("AOCS received the AOCS_ACQ event at:%ld\n", get_timestamp());
+        // printf("AOCS executing phase 2 at:%ld\n", get_timestamp());
         unlock_gate_lock();
-        printf("AOCS exit at:%ld\n", get_timestamp());
+        // printf("AOCS exit at:%ld\n", get_timestamp());
+        aocs += 1;
     }
 }
 
@@ -153,13 +163,14 @@ void PF_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("PF received the VHF event at:%ld\n", get_timestamp());
-        printf("PF executing phase 1 at:%ld\n", get_timestamp());
+        // printf("PF received the VHF event at:%ld\n", get_timestamp());
+        // printf("PF executing phase 1 at:%ld\n", get_timestamp());
         roxy_event_receive(PF_ACQ_EVENT_ID);
-        printf("PF received the PF_ACQ event at:%ld\n", get_timestamp());
-        printf("PF executing phase 2 at:%ld\n", get_timestamp());
+        // printf("PF received the PF_ACQ event at:%ld\n", get_timestamp());
+        // printf("PF executing phase 2 at:%ld\n", get_timestamp());
         unlock_gate_lock();
-        printf("PF exit at:%ld\n", get_timestamp());
+        // printf("PF exit at:%ld\n", get_timestamp());
+        pf += 1;
     }
 }
 
@@ -168,13 +179,14 @@ void PL_VHF_task()
     while (1)
     {
         roxy_event_receive(VHF_EVENT_ID);
-        printf("PL received the VHF event at:%ld\n", get_timestamp());
-        printf("PL executing phase 1 at:%ld\n", get_timestamp());
+        // printf("PL received the VHF event at:%ld\n", get_timestamp());
+        // printf("PL executing phase 1 at:%ld\n", get_timestamp());
         roxy_event_receive(PL_ACQ_EVENT_ID);
-        printf("PL received the PL_ACQ event at:%ld\n", get_timestamp());
-        printf("PL executing phase 2 at:%ld\n", get_timestamp());
+        // printf("PL received the PL_ACQ event at:%ld\n", get_timestamp());
+        // printf("PL executing phase 2 at:%ld\n", get_timestamp());
         unlock_gate_lock();
-        printf("PL exit at:%ld\n", get_timestamp());
+        // printf("PL exit at:%ld\n", get_timestamp());
+        pl += 1;
     }
 }
 
@@ -182,29 +194,31 @@ void DHS_VHF_task()
 {
     reset_gate_lock();
     roxy_event_receive(VHF_EVENT_ID);
-    printf("DHS received the VHF event at:%ld\n", get_timestamp());
-    printf("DHS executing phase 1 at:%ld\n", get_timestamp());
-    printf("DHS executing phase 2 at:%ld\n", get_timestamp());
-    printf("DHS send the AOCS_ACQ event at:%ld\n", get_timestamp());
+    // printf("DHS received the VHF event at:%ld\n", get_timestamp());
+    // printf("DHS executing phase 1 at:%ld\n", get_timestamp());
+    // printf("DHS executing phase 2 at:%ld\n", get_timestamp());
+    // printf("DHS send the AOCS_ACQ event at:%ld\n", get_timestamp());
     roxy_event_send(AOCS_ACQ_EVENT_ID);
-    printf("DHS executing phase 3 at:%ld\n", get_timestamp());
-    printf("DHS send the PF_ACQ event at:%ld\n", get_timestamp());
+    // printf("DHS executing phase 3 at:%ld\n", get_timestamp());
+    // printf("DHS send the PF_ACQ event at:%ld\n", get_timestamp());
     roxy_event_send(PF_ACQ_EVENT_ID);
-    printf("DHS executing phase 4 at:%ld\n", get_timestamp());
-    printf("DHS send the PL_ACQ event at:%ld\n", get_timestamp());
+    // printf("DHS executing phase 4 at:%ld\n", get_timestamp());
+    // printf("DHS send the PL_ACQ event at:%ld\n", get_timestamp());
     roxy_event_send(PL_ACQ_EVENT_ID);
     roxy_event_receive(END_APP_SW_EVENT_ID);
-    printf("DHS received the END_APP_SW event at:%ld\n", get_timestamp());
-    printf("DHS executing phase 5 at:%ld\n", get_timestamp());
-    printf("DHS exit at:%ld\n", get_timestamp());
+    // printf("DHS received the END_APP_SW event at:%ld\n", get_timestamp());
+    // printf("DHS executing phase 5 at:%ld\n", get_timestamp());
+    // printf("DHS exit at:%ld\n", get_timestamp());
+    dhs += 1;
 }
 
 void timer_simulator()
 {
-    while (1)
+#define ITERATION_LIMIT 100
+    for (int iteration = 0; iteration < ITERATION_LIMIT; iteration++)
     {
         SEQ_interrupt_handler();
-        roxy_task_wait(1, ROXY_WAIT_SECOND);
+        roxy_task_wait(1 * 1000 * 1000, ROXY_WAIT_NANOSECOND);
     }
 }
 
@@ -224,10 +238,9 @@ int main(int argc, char *argv[])
     roxy_task_create(AOCS_VHF_TASK_ID, TASK_PRIORITY, NULL, AOCS_VHF_task, NULL, NULL);
     roxy_task_create(PF_VHF_TASK_ID, TASK_PRIORITY, NULL, PF_VHF_task, NULL, NULL);
     roxy_task_create(PL_VHF_TASK_ID, TASK_PRIORITY, NULL, PL_VHF_task, NULL, NULL);
-    
 
     roxy_task_create(TIM_SIM_TASK_ID, 20, NULL, timer_simulator, NULL, NULL);
-    
+
     roxy_task_start(SCIO_VHF_TASK_ID, 1);
     roxy_task_start(DHS_VHF_TASK_ID, 1);
     roxy_task_start(TC_VHF_TASK_ID, 1);
@@ -244,4 +257,6 @@ int main(int argc, char *argv[])
     roxy_task_start(TIM_SIM_TASK_ID, 1);
     roxy_loop(TIM_SIM_TASK_ID);
     roxy_clean();
+    printf("seq=%d, scio=%d, dhs=%d, tc=%d, tm=%d, gcq=%d, mpq=%d\n", seq, scio, dhs, tc, tm, gcq, mpq);
+    printf("sys=%d, aocs=%d, pf=%d, pl=%d\n", sys, aocs, pf, pl);
 }

@@ -105,7 +105,7 @@ enum roxy_status_code roxy_clean()
     int ret;
     for (int mqueue_id = 0; mqueue_id < ROXY_MQUEUE_COUNT; mqueue_id++)
     {
-        if (strcmp(roxy_mqueues[mqueue_id].channel_name, " ") != 0)
+        if (strcmp(roxy_mqueues[mqueue_id].channel_name, "") != 0)
         {
             ret = mq_unlink(roxy_mqueues[mqueue_id].channel_name);
             if (ret)
