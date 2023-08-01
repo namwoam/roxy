@@ -1,0 +1,15 @@
+ROXY-DEBUG: Priority provided by the os: 98
+ROXY-DEBUG: Priority defined by roxy: 64
+ROXY-SYSTEM: thread_id:556 pthread_id:140653310928448 running on os thread:28539
+ROXY-SYSTEM: thread_id:879 pthread_id:140653310817856 running on os thread:28540
+ROXY-SYSTEM: thread_id:836 pthread_id:140653310707264 running on os thread:28541
+ROXY-SYSTEM: thread_id:58 pthread_id:140653299013184 running on os thread:28542
+ROXY-SYSTEM: thread_id:760 pthread_id:140653298902592 running on os thread:28543
+ROXY-SYSTEM: thread_id:79 pthread_id:140653298792000 running on os thread:28544
+ROXY-SYSTEM: thread_id:842 pthread_id:140653298681408 running on os thread:28545
+ROXY-SYSTEM: thread_id:337 pthread_id:140653298570816 running on os thread:28546
+ROXY-SYSTEM: thread_id:915 pthread_id:140653298460224 running on os thread:28547
+ROXY-SYSTEM: thread_id:72 pthread_id:140653250664000 running on os thread:28548
+ROXY-SYSTEM: thread_id:396 pthread_id:140653250553408 running on os thread:28549
+seq=100, scio=100, dhs=0, tc=100, tm=100, gcq=100, mpq=100
+sys=0, aocs=0, pf=1, pl=0

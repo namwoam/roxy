@@ -17,7 +17,7 @@ SCIO_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L2:
-	movl	$100, %edi
+	movl	$10, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, scio(%rip)
 	jmp	.L2
@@ -41,7 +41,7 @@ TC_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L6:
-	movl	$100, %edi
+	movl	$12, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, tc(%rip)
 	jmp	.L6
@@ -65,7 +65,7 @@ TM_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L9:
-	movl	$100, %edi
+	movl	$13, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, tm(%rip)
 	jmp	.L9
@@ -89,7 +89,7 @@ GCQ_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L12:
-	movl	$100, %edi
+	movl	$14, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, gcq(%rip)
 	jmp	.L12
@@ -113,7 +113,7 @@ MPQ_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L15:
-	movl	$100, %edi
+	movl	$15, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, mpq(%rip)
 	jmp	.L15
@@ -137,7 +137,7 @@ SYS_VHF_task:
 	.p2align 4,,10
 	.p2align 3
 .L18:
-	movl	$100, %edi
+	movl	$16, %edi
 	call	roxy_event_receive@PLT
 	movl	$104, %edi
 	call	roxy_event_receive@PLT
@@ -154,15 +154,25 @@ DHS_VHF_task:
 .LFB80:
 	.cfi_startproc
 	endbr64
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	popq	%rax
+	.cfi_def_cfa_offset 8
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
+	.p2align 4,,10
+	.p2align 3
+.L21:
 	xorl	%edi, %edi
 	call	roxy_critical_section_enter@PLT
 	xorl	%edi, %edi
 	movl	$0, work_done(%rip)
 	call	roxy_critical_section_leave@PLT
-	movl	$100, %edi
+	movl	$11, %edi
 	call	roxy_event_receive@PLT
+	xorl	%esi, %esi
+	movl	$10000000, %edi
+	call	roxy_task_wait@PLT
 	movl	$101, %edi
 	call	roxy_event_send@PLT
 	movl	$102, %edi
@@ -172,9 +182,7 @@ DHS_VHF_task:
 	movl	$104, %edi
 	call	roxy_event_receive@PLT
 	addl	$1, dhs(%rip)
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
-	ret
+	jmp	.L21
 	.cfi_endproc
 .LFE80:
 	.size	DHS_VHF_task, .-DHS_VHF_task
@@ -189,18 +197,36 @@ timer_simulator:
 	pushq	%rbx
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
-	movl	$100, %ebx
+	movl	$1000, %ebx
 	.p2align 4,,10
 	.p2align 3
-.L23:
-	movl	$100, %edi
+.L24:
+	movl	$10, %edi
+	call	roxy_event_send@PLT
+	movl	$11, %edi
+	call	roxy_event_send@PLT
+	movl	$12, %edi
+	call	roxy_event_send@PLT
+	movl	$13, %edi
+	call	roxy_event_send@PLT
+	movl	$14, %edi
+	call	roxy_event_send@PLT
+	movl	$15, %edi
+	call	roxy_event_send@PLT
+	movl	$16, %edi
+	call	roxy_event_send@PLT
+	movl	$17, %edi
+	call	roxy_event_send@PLT
+	movl	$18, %edi
+	call	roxy_event_send@PLT
+	movl	$19, %edi
 	call	roxy_event_send@PLT
 	xorl	%esi, %esi
-	movl	$1000000, %edi
+	movl	$125000000, %edi
 	addl	$1, seq(%rip)
 	call	roxy_task_wait@PLT
 	subl	$1, %ebx
-	jne	.L23
+	jne	.L24
 	popq	%rbx
 	.cfi_def_cfa_offset 8
 	ret
@@ -213,56 +239,6 @@ timer_simulator:
 	.string	"Vital error: custom gate lock malfunction"
 	.zero	54
 	.text
-	.p2align 4
-	.globl	PL_VHF_task
-	.type	PL_VHF_task, @function
-PL_VHF_task:
-.LASANPC79:
-.LFB79:
-	.cfi_startproc
-	endbr64
-	pushq	%rax
-	.cfi_def_cfa_offset 16
-	popq	%rax
-	.cfi_def_cfa_offset 8
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
-.L29:
-	movl	$100, %edi
-	call	roxy_event_receive@PLT
-	movl	$103, %edi
-	call	roxy_event_receive@PLT
-	xorl	%edi, %edi
-	call	roxy_critical_section_enter@PLT
-	movl	work_done(%rip), %eax
-	cmpl	$3, %eax
-	ja	.L31
-	addl	$1, %eax
-	movl	%eax, work_done(%rip)
-	cmpl	$3, %eax
-	je	.L32
-.L28:
-	xorl	%edi, %edi
-	call	roxy_critical_section_leave@PLT
-	addl	$1, pl(%rip)
-	jmp	.L29
-	.p2align 4,,10
-	.p2align 3
-.L31:
-	movl	$1, %edi
-	leaq	.LC0(%rip), %rsi
-	xorl	%eax, %eax
-	call	__printf_chk@PLT
-	call	__asan_handle_no_return@PLT
-	xorl	%edi, %edi
-	call	exit@PLT
-.L32:
-	movl	$104, %edi
-	call	roxy_event_send@PLT
-	jmp	.L28
-	.cfi_endproc
-.LFE79:
-	.size	PL_VHF_task, .-PL_VHF_task
 	.p2align 4
 	.globl	AOCS_VHF_task
 	.type	AOCS_VHF_task, @function
@@ -277,8 +253,8 @@ AOCS_VHF_task:
 	.cfi_def_cfa_offset 8
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-.L36:
-	movl	$100, %edi
+.L30:
+	movl	$17, %edi
 	call	roxy_event_receive@PLT
 	movl	$101, %edi
 	call	roxy_event_receive@PLT
@@ -286,19 +262,19 @@ AOCS_VHF_task:
 	call	roxy_critical_section_enter@PLT
 	movl	work_done(%rip), %eax
 	cmpl	$3, %eax
-	ja	.L38
+	ja	.L32
 	addl	$1, %eax
 	movl	%eax, work_done(%rip)
 	cmpl	$3, %eax
-	je	.L39
-.L35:
+	je	.L33
+.L29:
 	xorl	%edi, %edi
 	call	roxy_critical_section_leave@PLT
 	addl	$1, aocs(%rip)
-	jmp	.L36
+	jmp	.L30
 	.p2align 4,,10
 	.p2align 3
-.L38:
+.L32:
 	movl	$1, %edi
 	leaq	.LC0(%rip), %rsi
 	xorl	%eax, %eax
@@ -306,10 +282,10 @@ AOCS_VHF_task:
 	call	__asan_handle_no_return@PLT
 	xorl	%edi, %edi
 	call	exit@PLT
-.L39:
+.L33:
 	movl	$104, %edi
 	call	roxy_event_send@PLT
-	jmp	.L35
+	jmp	.L29
 	.cfi_endproc
 .LFE77:
 	.size	AOCS_VHF_task, .-AOCS_VHF_task
@@ -327,8 +303,8 @@ PF_VHF_task:
 	.cfi_def_cfa_offset 8
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-.L43:
-	movl	$100, %edi
+.L37:
+	movl	$18, %edi
 	call	roxy_event_receive@PLT
 	movl	$102, %edi
 	call	roxy_event_receive@PLT
@@ -336,19 +312,19 @@ PF_VHF_task:
 	call	roxy_critical_section_enter@PLT
 	movl	work_done(%rip), %eax
 	cmpl	$3, %eax
-	ja	.L45
+	ja	.L39
 	addl	$1, %eax
 	movl	%eax, work_done(%rip)
 	cmpl	$3, %eax
-	je	.L46
-.L42:
+	je	.L40
+.L36:
 	xorl	%edi, %edi
 	call	roxy_critical_section_leave@PLT
 	addl	$1, pf(%rip)
-	jmp	.L43
+	jmp	.L37
 	.p2align 4,,10
 	.p2align 3
-.L45:
+.L39:
 	movl	$1, %edi
 	leaq	.LC0(%rip), %rsi
 	xorl	%eax, %eax
@@ -356,17 +332,67 @@ PF_VHF_task:
 	call	__asan_handle_no_return@PLT
 	xorl	%edi, %edi
 	call	exit@PLT
-.L46:
+.L40:
 	movl	$104, %edi
 	call	roxy_event_send@PLT
-	jmp	.L42
+	jmp	.L36
 	.cfi_endproc
 .LFE78:
 	.size	PF_VHF_task, .-PF_VHF_task
+	.p2align 4
+	.globl	PL_VHF_task
+	.type	PL_VHF_task, @function
+PL_VHF_task:
+.LASANPC79:
+.LFB79:
+	.cfi_startproc
+	endbr64
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	popq	%rax
+	.cfi_def_cfa_offset 8
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+.L44:
+	movl	$19, %edi
+	call	roxy_event_receive@PLT
+	movl	$103, %edi
+	call	roxy_event_receive@PLT
+	xorl	%edi, %edi
+	call	roxy_critical_section_enter@PLT
+	movl	work_done(%rip), %eax
+	cmpl	$3, %eax
+	ja	.L46
+	addl	$1, %eax
+	movl	%eax, work_done(%rip)
+	cmpl	$3, %eax
+	je	.L47
+.L43:
+	xorl	%edi, %edi
+	call	roxy_critical_section_leave@PLT
+	addl	$1, pl(%rip)
+	jmp	.L44
+	.p2align 4,,10
+	.p2align 3
+.L46:
+	movl	$1, %edi
+	leaq	.LC0(%rip), %rsi
+	xorl	%eax, %eax
+	call	__printf_chk@PLT
+	call	__asan_handle_no_return@PLT
+	xorl	%edi, %edi
+	call	exit@PLT
+.L47:
+	movl	$104, %edi
+	call	roxy_event_send@PLT
+	jmp	.L43
+	.cfi_endproc
+.LFE79:
+	.size	PL_VHF_task, .-PL_VHF_task
 	.globl	__asan_stack_malloc_0
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC1:
-	.string	"1 32 16 7 time:29"
+	.string	"1 32 16 7 time:38"
 	.text
 	.p2align 4
 	.globl	get_timestamp
@@ -397,8 +423,8 @@ get_timestamp:
 	movq	%rsp, %rbx
 	movq	%rbx, %rbp
 	testl	%eax, %eax
-	jne	.L55
-.L47:
+	jne	.L56
+.L48:
 	leaq	.LC1(%rip), %rax
 	movq	%rbx, %r12
 	leaq	32(%rbx), %r13
@@ -419,13 +445,13 @@ get_timestamp:
 	movq	%r13, %rax
 	shrq	$3, %rax
 	cmpb	$0, 2147450880(%rax)
-	jne	.L56
+	jne	.L57
 	imulq	$1000, -64(%r14), %rsi
 	leaq	40(%rbx), %rdi
 	movq	%rdi, %rax
 	shrq	$3, %rax
 	cmpb	$0, 2147450880(%rax)
-	jne	.L57
+	jne	.L58
 	movabsq	$2361183241434822607, %rdx
 	movq	-56(%r14), %rcx
 	movq	%rcx, %rax
@@ -435,12 +461,12 @@ get_timestamp:
 	subq	%rcx, %rdx
 	leaq	(%rdx,%rsi), %rax
 	cmpq	%rbx, %rbp
-	jne	.L58
+	jne	.L59
 	movq	$0, 2147450880(%r12)
-.L49:
+.L50:
 	movq	88(%rsp), %rdx
 	subq	%fs:40, %rdx
-	jne	.L59
+	jne	.L60
 	addq	$96, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 48
@@ -455,26 +481,26 @@ get_timestamp:
 	popq	%r14
 	.cfi_def_cfa_offset 8
 	ret
-.L55:
+.L56:
 	.cfi_restore_state
 	movl	$64, %edi
 	call	__asan_stack_malloc_0@PLT
 	testq	%rax, %rax
 	cmovne	%rax, %rbx
-	jmp	.L47
-.L58:
+	jmp	.L48
+.L59:
 	movabsq	$-723401728380766731, %rsi
 	movq	$1172321806, (%rbx)
 	movq	%rsi, 2147450880(%r12)
 	movq	56(%rbx), %rdx
 	movb	$0, (%rdx)
-	jmp	.L49
-.L57:
+	jmp	.L50
+.L58:
 	call	__asan_report_load8@PLT
-.L56:
+.L57:
 	movq	%r13, %rdi
 	call	__asan_report_load8@PLT
-.L59:
+.L60:
 	call	__stack_chk_fail@PLT
 	.cfi_endproc
 .LFE67:
@@ -493,11 +519,11 @@ unlock_gate_lock:
 	call	roxy_critical_section_enter@PLT
 	movl	work_done(%rip), %eax
 	cmpl	$3, %eax
-	ja	.L64
+	ja	.L65
 	addl	$1, %eax
 	movl	%eax, work_done(%rip)
 	cmpl	$3, %eax
-	je	.L65
+	je	.L66
 	xorl	%edi, %edi
 	addq	$8, %rsp
 	.cfi_remember_state
@@ -505,7 +531,7 @@ unlock_gate_lock:
 	jmp	roxy_critical_section_leave@PLT
 	.p2align 4,,10
 	.p2align 3
-.L64:
+.L65:
 	.cfi_restore_state
 	movl	$1, %edi
 	leaq	.LC0(%rip), %rsi
@@ -516,7 +542,7 @@ unlock_gate_lock:
 	call	exit@PLT
 	.p2align 4,,10
 	.p2align 3
-.L65:
+.L66:
 	movl	$104, %edi
 	call	roxy_event_send@PLT
 	xorl	%edi, %edi
@@ -556,7 +582,25 @@ SEQ_interrupt_handler:
 	endbr64
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-	movl	$100, %edi
+	movl	$10, %edi
+	call	roxy_event_send@PLT
+	movl	$11, %edi
+	call	roxy_event_send@PLT
+	movl	$12, %edi
+	call	roxy_event_send@PLT
+	movl	$13, %edi
+	call	roxy_event_send@PLT
+	movl	$14, %edi
+	call	roxy_event_send@PLT
+	movl	$15, %edi
+	call	roxy_event_send@PLT
+	movl	$16, %edi
+	call	roxy_event_send@PLT
+	movl	$17, %edi
+	call	roxy_event_send@PLT
+	movl	$18, %edi
+	call	roxy_event_send@PLT
+	movl	$19, %edi
 	call	roxy_event_send@PLT
 	addl	$1, seq(%rip)
 	addq	$8, %rsp
@@ -822,7 +866,7 @@ __odr_asan.pl:
 	.size	.LASANLOC1, 16
 .LASANLOC1:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	94
 	.globl	__odr_asan.pf
 	.bss
@@ -836,7 +880,7 @@ __odr_asan.pf:
 	.size	.LASANLOC2, 16
 .LASANLOC2:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	86
 	.globl	__odr_asan.aocs
 	.bss
@@ -850,7 +894,7 @@ __odr_asan.aocs:
 	.size	.LASANLOC3, 16
 .LASANLOC3:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	76
 	.globl	__odr_asan.sys
 	.bss
@@ -864,7 +908,7 @@ __odr_asan.sys:
 	.size	.LASANLOC4, 16
 .LASANLOC4:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	67
 	.globl	__odr_asan.mpq
 	.bss
@@ -878,7 +922,7 @@ __odr_asan.mpq:
 	.size	.LASANLOC5, 16
 .LASANLOC5:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	58
 	.globl	__odr_asan.gcq
 	.bss
@@ -892,7 +936,7 @@ __odr_asan.gcq:
 	.size	.LASANLOC6, 16
 .LASANLOC6:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	49
 	.globl	__odr_asan.tm
 	.bss
@@ -906,7 +950,7 @@ __odr_asan.tm:
 	.size	.LASANLOC7, 16
 .LASANLOC7:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	41
 	.globl	__odr_asan.tc
 	.bss
@@ -920,7 +964,7 @@ __odr_asan.tc:
 	.size	.LASANLOC8, 16
 .LASANLOC8:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	33
 	.globl	__odr_asan.dhs
 	.bss
@@ -934,7 +978,7 @@ __odr_asan.dhs:
 	.size	.LASANLOC9, 16
 .LASANLOC9:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	24
 	.globl	__odr_asan.scio
 	.bss
@@ -948,7 +992,7 @@ __odr_asan.scio:
 	.size	.LASANLOC10, 16
 .LASANLOC10:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	14
 	.globl	__odr_asan.seq
 	.bss
@@ -962,7 +1006,7 @@ __odr_asan.seq:
 	.size	.LASANLOC11, 16
 .LASANLOC11:
 	.quad	.LC4
-	.long	25
+	.long	34
 	.long	5
 	.globl	__odr_asan.work_done
 	.bss
@@ -976,7 +1020,7 @@ __odr_asan.work_done:
 	.size	.LASANLOC12, 16
 .LASANLOC12:
 	.quad	.LC4
-	.long	23
+	.long	32
 	.long	5
 	.section	.rodata.str1.1
 .LC5:
@@ -1004,9 +1048,9 @@ __odr_asan.work_done:
 .LC16:
 	.string	"work_done"
 .LC17:
-	.string	"*.LC0"
-.LC18:
 	.string	"*.LC2"
+.LC18:
+	.string	"*.LC0"
 .LC19:
 	.string	"*.LC3"
 	.section	.data.rel.local
@@ -1110,16 +1154,16 @@ __odr_asan.work_done:
 	.quad	0
 	.quad	.LASANLOC12
 	.quad	__odr_asan.work_done
-	.quad	.LC0
-	.quad	42
+	.quad	.LC2
+	.quad	55
 	.quad	96
 	.quad	.LC17
 	.quad	.LC4
 	.quad	0
 	.quad	0
 	.quad	0
-	.quad	.LC2
-	.quad	55
+	.quad	.LC0
+	.quad	42
 	.quad	96
 	.quad	.LC18
 	.quad	.LC4

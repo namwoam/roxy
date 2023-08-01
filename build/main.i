@@ -6811,7 +6811,7 @@ enum roxy_status_code roxy_event_receive(unsigned event_id);
 enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr);
 # 7 "include/main.h" 2
 # 2 "src/main.c" 2
-# 23 "src/main.c"
+# 32 "src/main.c"
 int work_done;
 
 int seq = 0, scio = 0, dhs = 0, tc = 0, tm = 0, gcq = 0, mpq = 0, sys = 0, aocs = 0, pf = 0, pl = 0;
@@ -6820,9 +6820,9 @@ long get_timestamp()
 {
     struct timeval time;
     gettimeofday(&time, 
-# 30 "src/main.c" 3 4
+# 39 "src/main.c" 3 4
                        ((void *)0)
-# 30 "src/main.c"
+# 39 "src/main.c"
                            );
 
     return time.tv_sec * 1000 + time.tv_usec / 1000;
@@ -6859,7 +6859,16 @@ void reset_gate_lock()
 void SEQ_interrupt_handler()
 {
 
-    roxy_event_send(100);
+    roxy_event_send(10);
+    roxy_event_send(11);
+    roxy_event_send(12);
+    roxy_event_send(13);
+    roxy_event_send(14);
+    roxy_event_send(15);
+    roxy_event_send(16);
+    roxy_event_send(17);
+    roxy_event_send(18);
+    roxy_event_send(19);
     seq += 1;
 }
 
@@ -6867,7 +6876,7 @@ void SCIO_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(10);
 
 
 
@@ -6879,7 +6888,7 @@ void TC_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(12);
 
 
 
@@ -6891,7 +6900,7 @@ void TM_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(13);
 
 
 
@@ -6903,7 +6912,7 @@ void GCQ_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(14);
 
 
 
@@ -6915,7 +6924,7 @@ void MPQ_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(15);
 
 
 
@@ -6927,7 +6936,7 @@ void SYS_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(16);
 
 
         roxy_event_receive(104);
@@ -6942,7 +6951,7 @@ void AOCS_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(17);
 
 
         roxy_event_receive(101);
@@ -6958,7 +6967,7 @@ void PF_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(18);
 
 
         roxy_event_receive(102);
@@ -6974,7 +6983,7 @@ void PL_VHF_task()
 {
     while (1)
     {
-        roxy_event_receive(100);
+        roxy_event_receive(19);
 
 
         roxy_event_receive(103);
@@ -6988,33 +6997,37 @@ void PL_VHF_task()
 
 void DHS_VHF_task()
 {
-    reset_gate_lock();
-    roxy_event_receive(100);
+    while (1)
+    {
+        reset_gate_lock();
+        roxy_event_receive(11);
+
+        roxy_task_wait(10 * 1000 * 1000, 0);
 
 
 
-
-    roxy_event_send(101);
-
-
-    roxy_event_send(102);
+        roxy_event_send(101);
 
 
-    roxy_event_send(103);
-    roxy_event_receive(104);
+        roxy_event_send(102);
+
+
+        roxy_event_send(103);
+        roxy_event_receive(104);
 
 
 
-    dhs += 1;
+        dhs += 1;
+    }
 }
 
 void timer_simulator()
 {
 
-    for (int iteration = 0; iteration < 100; iteration++)
+    for (int iteration = 0; iteration < 1000; iteration++)
     {
         SEQ_interrupt_handler();
-        roxy_task_wait(1 * 1000 * 1000, 0);
+        roxy_task_wait(125 * 1000 * 1000, 0);
     }
 }
 
@@ -7022,151 +7035,151 @@ int main(int argc, char *argv[])
 {
     roxy_init();
     roxy_task_create(100, 10, 
-# 228 "src/main.c" 3 4
+# 250 "src/main.c" 3 4
                                                      ((void *)0)
-# 228 "src/main.c"
+# 250 "src/main.c"
                                                          , SCIO_VHF_task, 
-# 228 "src/main.c" 3 4
+# 250 "src/main.c" 3 4
                                                                           ((void *)0)
-# 228 "src/main.c"
+# 250 "src/main.c"
                                                                               , 
-# 228 "src/main.c" 3 4
+# 250 "src/main.c" 3 4
                                                                                 ((void *)0)
-# 228 "src/main.c"
+# 250 "src/main.c"
                                                                                     );
 
     roxy_task_create(101, 10, 
-# 230 "src/main.c" 3 4
+# 252 "src/main.c" 3 4
                                                     ((void *)0)
-# 230 "src/main.c"
+# 252 "src/main.c"
                                                         , DHS_VHF_task, 
-# 230 "src/main.c" 3 4
+# 252 "src/main.c" 3 4
                                                                         ((void *)0)
-# 230 "src/main.c"
+# 252 "src/main.c"
                                                                             , 
-# 230 "src/main.c" 3 4
+# 252 "src/main.c" 3 4
                                                                               ((void *)0)
-# 230 "src/main.c"
+# 252 "src/main.c"
                                                                                   );
     roxy_task_create(102, 10, 
-# 231 "src/main.c" 3 4
+# 253 "src/main.c" 3 4
                                                    ((void *)0)
-# 231 "src/main.c"
+# 253 "src/main.c"
                                                        , TC_VHF_task, 
-# 231 "src/main.c" 3 4
+# 253 "src/main.c" 3 4
                                                                       ((void *)0)
-# 231 "src/main.c"
+# 253 "src/main.c"
                                                                           , 
-# 231 "src/main.c" 3 4
+# 253 "src/main.c" 3 4
                                                                             ((void *)0)
-# 231 "src/main.c"
+# 253 "src/main.c"
                                                                                 );
     roxy_task_create(103, 10, 
-# 232 "src/main.c" 3 4
+# 254 "src/main.c" 3 4
                                                    ((void *)0)
-# 232 "src/main.c"
+# 254 "src/main.c"
                                                        , TM_VHF_task, 
-# 232 "src/main.c" 3 4
+# 254 "src/main.c" 3 4
                                                                       ((void *)0)
-# 232 "src/main.c"
+# 254 "src/main.c"
                                                                           , 
-# 232 "src/main.c" 3 4
+# 254 "src/main.c" 3 4
                                                                             ((void *)0)
-# 232 "src/main.c"
+# 254 "src/main.c"
                                                                                 );
     roxy_task_create(104, 10, 
-# 233 "src/main.c" 3 4
+# 255 "src/main.c" 3 4
                                                     ((void *)0)
-# 233 "src/main.c"
+# 255 "src/main.c"
                                                         , GCQ_VHF_task, 
-# 233 "src/main.c" 3 4
+# 255 "src/main.c" 3 4
                                                                         ((void *)0)
-# 233 "src/main.c"
+# 255 "src/main.c"
                                                                             , 
-# 233 "src/main.c" 3 4
+# 255 "src/main.c" 3 4
                                                                               ((void *)0)
-# 233 "src/main.c"
+# 255 "src/main.c"
                                                                                   );
     roxy_task_create(105, 10, 
-# 234 "src/main.c" 3 4
+# 256 "src/main.c" 3 4
                                                     ((void *)0)
-# 234 "src/main.c"
+# 256 "src/main.c"
                                                         , MPQ_VHF_task, 
-# 234 "src/main.c" 3 4
+# 256 "src/main.c" 3 4
                                                                         ((void *)0)
-# 234 "src/main.c"
+# 256 "src/main.c"
                                                                             , 
-# 234 "src/main.c" 3 4
+# 256 "src/main.c" 3 4
                                                                               ((void *)0)
-# 234 "src/main.c"
+# 256 "src/main.c"
                                                                                   );
 
     roxy_task_create(106, 10, 
-# 236 "src/main.c" 3 4
+# 258 "src/main.c" 3 4
                                                     ((void *)0)
-# 236 "src/main.c"
+# 258 "src/main.c"
                                                         , SYS_VHF_task, 
-# 236 "src/main.c" 3 4
+# 258 "src/main.c" 3 4
                                                                         ((void *)0)
-# 236 "src/main.c"
+# 258 "src/main.c"
                                                                             , 
-# 236 "src/main.c" 3 4
+# 258 "src/main.c" 3 4
                                                                               ((void *)0)
-# 236 "src/main.c"
+# 258 "src/main.c"
                                                                                   );
 
     roxy_task_create(107, 10, 
-# 238 "src/main.c" 3 4
+# 260 "src/main.c" 3 4
                                                      ((void *)0)
-# 238 "src/main.c"
+# 260 "src/main.c"
                                                          , AOCS_VHF_task, 
-# 238 "src/main.c" 3 4
+# 260 "src/main.c" 3 4
                                                                           ((void *)0)
-# 238 "src/main.c"
+# 260 "src/main.c"
                                                                               , 
-# 238 "src/main.c" 3 4
+# 260 "src/main.c" 3 4
                                                                                 ((void *)0)
-# 238 "src/main.c"
+# 260 "src/main.c"
                                                                                     );
     roxy_task_create(108, 10, 
-# 239 "src/main.c" 3 4
+# 261 "src/main.c" 3 4
                                                    ((void *)0)
-# 239 "src/main.c"
+# 261 "src/main.c"
                                                        , PF_VHF_task, 
-# 239 "src/main.c" 3 4
+# 261 "src/main.c" 3 4
                                                                       ((void *)0)
-# 239 "src/main.c"
+# 261 "src/main.c"
                                                                           , 
-# 239 "src/main.c" 3 4
+# 261 "src/main.c" 3 4
                                                                             ((void *)0)
-# 239 "src/main.c"
+# 261 "src/main.c"
                                                                                 );
     roxy_task_create(109, 10, 
-# 240 "src/main.c" 3 4
+# 262 "src/main.c" 3 4
                                                    ((void *)0)
-# 240 "src/main.c"
+# 262 "src/main.c"
                                                        , PL_VHF_task, 
-# 240 "src/main.c" 3 4
+# 262 "src/main.c" 3 4
                                                                       ((void *)0)
-# 240 "src/main.c"
+# 262 "src/main.c"
                                                                           , 
-# 240 "src/main.c" 3 4
+# 262 "src/main.c" 3 4
                                                                             ((void *)0)
-# 240 "src/main.c"
+# 262 "src/main.c"
                                                                                 );
 
     roxy_task_create(110, 20, 
-# 242 "src/main.c" 3 4
+# 264 "src/main.c" 3 4
                                          ((void *)0)
-# 242 "src/main.c"
+# 264 "src/main.c"
                                              , timer_simulator, 
-# 242 "src/main.c" 3 4
+# 264 "src/main.c" 3 4
                                                                 ((void *)0)
-# 242 "src/main.c"
+# 264 "src/main.c"
                                                                     , 
-# 242 "src/main.c" 3 4
+# 264 "src/main.c" 3 4
                                                                       ((void *)0)
-# 242 "src/main.c"
+# 264 "src/main.c"
                                                                           );
 
     roxy_task_start(100, 1);

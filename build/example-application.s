@@ -19,7 +19,7 @@ _sub_I_00099_0:
 	.section	.init_array.00099,"aw"
 	.align 8
 	.quad	_sub_I_00099_0
-	.ident	"GCC: (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0"
+	.ident	"GCC: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0"
 	.section	.note.GNU-stack,"",@progbits
 	.section	.note.gnu.property,"a"
 	.align 8
