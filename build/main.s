@@ -1874,8 +1874,8 @@ timer_simulator:
 	call	__printf_chk@PLT
 	movl	$100, %edi
 	call	roxy_event_send@PLT
-	xorl	%esi, %esi
-	movl	$125000000, %edi
+	movl	$1, %esi
+	movl	$1, %edi
 	call	roxy_task_wait@PLT
 .L183:
 	movq	%rbp, %r15

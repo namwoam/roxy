@@ -7000,7 +7000,7 @@ void timer_simulator()
     while (1)
     {
         SEQ_interrupt_handler();
-        roxy_task_wait(125 * 1000 * 1000, 0);
+        roxy_task_wait(1, 1);
     }
 }
 
