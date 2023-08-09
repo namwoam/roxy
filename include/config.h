@@ -1,3 +1,23 @@
+/*******************************************************************************
+*
+*  File Name    :  config.h
+*
+*  Purpose      :  Exported configuration settings in the roxy system
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #include <sched.h>
 #include <limits.h>
 #ifndef CONFIG_H
