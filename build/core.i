@@ -8497,7 +8497,7 @@ roxy_init()
                                                                                                        2
 # 110 "src/core.c"
                                                                                                                            );
-    if (1)
+    if (0)
     {
         printf("ROXY-DEBUG: Priority provided by the os: %d\n", os_priority_level);
         printf("ROXY-DEBUG: Priority defined by roxy: %d\n", 64);
@@ -8519,13 +8519,13 @@ enum roxy_status_code roxy_clean()
             ret = mq_unlink(roxy_mqueues[mqueue_id].channel_name);
             if (ret)
             {
-                if (1)
+                if (0)
                 {
                     printf("ROXY-DEBUG: Failed to unlink the mqueue (mqueue_id=%d , channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
                 }
                 return RUNTIME_ERROR;
             }
-            if (1)
+            if (0)
             {
                 printf("ROXY-SYSTEM: Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
             }
@@ -8547,7 +8547,7 @@ enum roxy_status_code roxy_task_create(unsigned task_id, unsigned priority, void
         roxy_tasks[task_id].argument_pointer = argument_ptr;
         return SUCCESS;
     }
-    if (1)
+    if (0)
     {
         printf("ROXY-DEBUG: task_id out-of-bound or task already existed\n");
     }
@@ -8561,7 +8561,7 @@ void *roxy_thread_runner(void *data)
     void (*constructor)();
     void (*deconstructor)();
     roxy_threads[args->thread_id].os_thread_id = gettid();
-    if (1)
+    if (0)
     {
         printf("ROXY-SYSTEM: thread_id:%d pthread_id:%lu running on os thread:%d\n", args->thread_id, roxy_threads[args->thread_id].posix_thread_id, roxy_threads[args->thread_id].os_thread_id);
     }
@@ -8604,7 +8604,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
 {
     if (task_id > 128 || roxy_tasks[task_id].status == TASK_EMPTY || thread_count > 8)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to start the task (task_id=%d)\n", task_id);
         }
@@ -8614,7 +8614,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
     {
         if (roxy_tasks[task_id].thread_ids[i] != -1)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: The task (task_id=%d) was already started\n", task_id);
             }
@@ -8657,7 +8657,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         ret = pthread_attr_init(&thread_attr);
         if (ret)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: init pthread attributes failed\n");
             }
@@ -8672,7 +8672,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                                                                            );
         if (ret)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: pthread setstacksize failed\n");
             }
@@ -8686,7 +8686,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                                                                            );
         if (ret)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: pthread setschedpolicy failed\n");
             }
@@ -8700,7 +8700,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
         ret = pthread_attr_setschedparam(&thread_attr, &scheduler_param);
         if (ret)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: pthread setschedparam failed\n");
             }
@@ -8714,7 +8714,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                                                                               );
         if (ret)
         {
-            if (1)
+            if (0)
             {
                 printf("ROXY-DEBUG: pthread setinheritsched failed\n");
             }
@@ -8734,7 +8734,7 @@ enum roxy_status_code roxy_task_start(unsigned task_id, unsigned thread_count)
                 ret = pthread_create(&roxy_threads[search_index].posix_thread_id, &thread_attr, roxy_thread_runner, &roxy_threads[search_index].arg);
                 if (ret)
                 {
-                    if (1)
+                    if (0)
                     {
                         printf("ROXY-DEBUG: create compute pthread failed\n");
                     }
@@ -8769,7 +8769,7 @@ enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned wait_optio
     }
     else
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Invalid wait option\n");
         }
@@ -8778,7 +8778,7 @@ enum roxy_status_code roxy_task_wait(unsigned time_interval, unsigned wait_optio
 
     if (nanosleep(&req, &rem) == -1)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Error occurred during wait (might be integer overflow)\n");
         }
@@ -8791,7 +8791,7 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
 {
     if (task_id < 0 || task_id >= 128 || roxy_tasks[task_id].status == TASK_EMPTY)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
         }
@@ -8799,7 +8799,7 @@ enum roxy_status_code roxy_task_set_priority(unsigned task_id, unsigned new_prio
     }
     if (roxy_tasks[task_id].status != TASK_LOADED)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Task must be in the loaded state to set priority, task_id=%d\n", task_id);
         }
@@ -8818,7 +8818,7 @@ enum roxy_status_code roxy_critical_section_enter(unsigned section_id)
     int ret = pthread_mutex_lock(&roxy_critical_sections[section_id]);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to lock the critical section mutex (section_id=%d)\n", section_id);
         }
@@ -8836,7 +8836,7 @@ enum roxy_status_code roxy_critical_section_leave(unsigned section_id)
     int ret = pthread_mutex_unlock(&roxy_critical_sections[section_id]);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to unlock the critical section mutex (section_id=%d)\n", section_id);
         }
@@ -8849,7 +8849,7 @@ enum roxy_status_code roxy_loop(unsigned task_id)
 {
     if (task_id < 0 || task_id >= 128 || roxy_tasks[task_id].status == TASK_EMPTY)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to find the task (task_id=%d)\n", task_id);
         }
@@ -8867,7 +8867,7 @@ enum roxy_status_code roxy_loop(unsigned task_id)
                                                                                                               );
             if (ret)
             {
-                if (1)
+                if (0)
                 {
                     printf("ROXY-DEBUG: Failed to join the thread: thread_id=%lu, error_code=%d\n", roxy_threads[roxy_tasks[task_id].thread_ids[thread_index]].posix_thread_id, ret);
                 }
@@ -8883,7 +8883,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
 {
     if (mqueue_id < 0 || mqueue_id >= 128)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to start the message queue (mqueue_id=%d)\n", mqueue_id);
         }
@@ -8891,7 +8891,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
     }
     if (strcmp(roxy_mqueues[mqueue_id].channel_name, "") != 0)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has been initialized before\n", mqueue_id);
         }
@@ -8920,7 +8920,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
                                                                                                  , 0644, &mqueue_attr);
     if (((mqd_t)-1) == mqueue_descriptor)
     {
-        if (1)
+        if (0)
         {
             extern int 
 # 487 "src/core.c" 3 4
@@ -8939,7 +8939,7 @@ enum roxy_status_code roxy_mqueue_create(unsigned mqueue_id, unsigned queue_capa
     ret = mq_close(mqueue_descriptor);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -8952,7 +8952,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
 {
     if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
         }
@@ -8970,7 +8970,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
                                                                                          );
     if (mqueue_descriptor == -1)
     {
-        if (1)
+        if (0)
         {
             extern int 
 # 521 "src/core.c" 3 4
@@ -8989,7 +8989,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
     ret = mq_send(mqueue_descriptor, message_buffer, message_length, 0);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to transmit data on message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name, ret);
         }
@@ -8998,7 +8998,7 @@ enum roxy_status_code roxy_mqueue_send(unsigned mqueue_id, const char *message_b
     ret = mq_close(mqueue_descriptor);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -9011,7 +9011,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
 {
     if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
         }
@@ -9048,7 +9048,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
     }
     else
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Invalid blocking option at roxy_mqueue_receive\n");
         }
@@ -9056,7 +9056,7 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
     }
     if (mqueue_descriptor == -1)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -9064,11 +9064,21 @@ enum roxy_status_code roxy_mqueue_receive(unsigned mqueue_id, char *message_buff
     }
     int message_size;
     int ret;
-    message_size = mq_receive(mqueue_descriptor, message_buffer, message_length, 0);
+    int error_code;
+    message_size = mq_receive(mqueue_descriptor, message_buffer, message_length, &error_code);
+    if (message_size == -1)
+    {
+        if (0)
+        {
+            printf("ROXY-DEBUG: Failed to receive message from message queue (mqueue_id=%d, channel_name=%s) error_code=%d\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name , error_code);
+        }
+        mq_close(mqueue_descriptor);
+        return RUNTIME_ERROR;
+    }
     ret = mq_close(mqueue_descriptor);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to close message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -9081,7 +9091,7 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
 {
     if (mqueue_id < 0 || mqueue_id >= 128 || strcmp(roxy_mqueues[mqueue_id].channel_name, "") == 0)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: The message queue (mqueue_id=%d), has not been initialized before\n", mqueue_id);
         }
@@ -9089,17 +9099,17 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
     }
     mqd_t mqueue_descriptor;
     mqueue_descriptor = mq_open(roxy_mqueues[mqueue_id].channel_name, 
-# 609 "src/core.c" 3 4
+# 619 "src/core.c" 3 4
                                                                      00 
-# 609 "src/core.c"
+# 619 "src/core.c"
                                                                               | 
-# 609 "src/core.c" 3 4
+# 619 "src/core.c" 3 4
                                                                                 02000000
-# 609 "src/core.c"
+# 619 "src/core.c"
                                                                                          );
     if (mqueue_descriptor == -1)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to open message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -9110,7 +9120,7 @@ int roxy_mqueue_get_pending(unsigned mqueue_id)
     ret = mq_getattr(mqueue_descriptor, &mqueue_attr);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to obtain the attribute of message queue (mqueue_id=%d, channel_name=%s)\n", mqueue_id, roxy_mqueues[mqueue_id].channel_name);
         }
@@ -9127,13 +9137,13 @@ enum roxy_status_code roxy_mqueue_flush(unsigned mqueue_id)
     ret = mq_unlink(channel_name);
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Failed to unlink the mqueue (mqueue_id=%d , channel_name=%s) error_code=%d\n", mqueue_id, channel_name, ret);
         }
         return RUNTIME_ERROR;
     }
-    if (1)
+    if (0)
     {
         printf("ROXY-SYSTEM: Successfully unlink mqueue (mqueue_id=%d , channel_name=%s)\n", mqueue_id, channel_name);
     }
@@ -9143,13 +9153,13 @@ enum roxy_status_code roxy_event_send(unsigned event_id)
 {
     if (event_id >= 128)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Invalid event (event_id=%d)\n", event_id);
         }
         return RUNTIME_ERROR;
     }
-# 676 "src/core.c"
+# 686 "src/core.c"
     pthread_mutex_lock(&roxy_events[event_id].protect_mutex);
     roxy_events[event_id].gate = 0;
     pthread_cond_broadcast(&roxy_events[event_id].waiting_condition);
@@ -9161,13 +9171,13 @@ enum roxy_status_code roxy_event_receive(unsigned event_id)
 {
     if (event_id >= 128)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Invalid event (event_id=%d)\n", event_id);
         }
         return RUNTIME_ERROR;
     }
-# 718 "src/core.c"
+# 728 "src/core.c"
     pthread_mutex_lock(&roxy_events[event_id].protect_mutex);
     roxy_events[event_id].gate = 1;
     while (roxy_events[event_id].gate == 1)
@@ -9181,9 +9191,9 @@ enum roxy_status_code roxy_event_receive(unsigned event_id)
 void roxy_signal_handler(int signal_vector)
 {
     if (roxy_interrupts[signal_vector] == 
-# 730 "src/core.c" 3 4
+# 740 "src/core.c" 3 4
                                          ((void *)0)
-# 730 "src/core.c"
+# 740 "src/core.c"
                                              )
     {
         return;
@@ -9198,28 +9208,28 @@ enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_pt
 {
     struct sigaction signal_action;
     signal_action.
-# 743 "src/core.c" 3 4
+# 753 "src/core.c" 3 4
                  __sigaction_handler.sa_handler 
-# 743 "src/core.c"
+# 753 "src/core.c"
                             = function_ptr;
     sigemptyset(&signal_action.sa_mask);
     sigaddset(&signal_action.sa_mask, signal_id);
     if (signal_id >= 64)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Interrupt signal out of bound (signal_id=%d)\n", signal_id);
         }
     }
     int ret;
     ret = sigaction(signal_id, &signal_action, 
-# 754 "src/core.c" 3 4
+# 764 "src/core.c" 3 4
                                               ((void *)0)
-# 754 "src/core.c"
+# 764 "src/core.c"
                                                   );
     if (ret)
     {
-        if (1)
+        if (0)
         {
             printf("ROXY-DEBUG: Error setting up signal handler at signal_id=%d\n", signal_id);
         }

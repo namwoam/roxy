@@ -42,7 +42,7 @@ enum roxy_status_code
 
 #define ROXY_SCHEDULE_POLICY SCHED_RR
 
-#define ROXY_DEBUG 1 // 1 for active
+#define ROXY_DEBUG 0 // 1 for active
 #define ROXY_RANDOM_SEED 8080
 
 #define ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH 256
