@@ -20,6 +20,7 @@
 *******************************************************************************/
 #include "main.h"
 #include <sys/time.h>
+/*
 #include <gpiod.h>
 
 struct gpiod_chip *chip;
@@ -71,3 +72,4 @@ int main(int argc, char *argv[])
     roxy_clean();
     return 0;
 }
+**/

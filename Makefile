@@ -5,7 +5,7 @@ TARGET := bin/run
 SRCEXT := c
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -lrt -lc -lpthread -lgpiod
+CFLAGS := -lrt -lc -lpthread
 LIB := -L lib
 INC := -I include
 
