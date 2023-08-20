@@ -1,3 +1,23 @@
+/*******************************************************************************
+*
+*  File Name    :  model.h
+*
+*  Purpose      :  Exported types for structs used in the roxy system
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #include <pthread.h>
 
 #ifndef MODEL_H

@@ -1,5 +1,25 @@
+/*******************************************************************************
+ *
+ *  File Name    :  example-application.c
+ *
+ *  Purpose      :  FSW software simulation application for the roxy SDK
+ *
+ *  References   :  None
+ *
+ *  Design Notes :  None
+ *
+ *  Author       :  An-Che Liang
+ *
+ *  Project      :  Platfrom Migration Experiment
+ *
+ *  Target       :  Raspberry Pi 3B / Linux
+ *
+ *  Modification History:
+ *                  Baseline, 2023-08
+ *
+ *******************************************************************************/
 #include "main.h"
-/*
+
 #define SCIO_VHF_TASK_ID 100
 #define DHS_VHF_TASK_ID 101
 #define TC_VHF_TASK_ID 102
@@ -11,6 +31,8 @@
 #define PF_VHF_TASK_ID 108
 #define PL_VHF_TASK_ID 109
 #define TIM_SIM_TASK_ID 110
+#define WRITER_ASYNC_TASK_ID 111
+#define READER_ASYNC_TASK_ID 112
 
 #define TASK_PRIORITY 10
 
@@ -28,6 +50,9 @@
 #define PF_ACQ_EVENT_ID 102
 #define PL_ACQ_EVENT_ID 103
 #define END_APP_SW_EVENT_ID 104
+
+#define WRITER_MQUEUE_ID 100
+#define READER_MQUEUE_ID 101
 
 int work_done;
 
@@ -99,24 +124,34 @@ void SCIO_VHF_task()
 
 void TC_VHF_task()
 {
+    enum roxy_status_code status;
+    char message_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
     while (1)
     {
         roxy_event_receive(VHF2TC_EVENT_ID);
         // printf("TC received the VHF event at:%ld\n", get_timestamp());
         // printf("TC executing phase 1 at:%ld\n", get_timestamp());
         // printf("TC exit at:%ld\n", get_timestamp());
+        status = roxy_mqueue_receive(READER_MQUEUE_ID, message_buffer, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH, ROXY_MQUEUE_NONBLOCKING);
+        if (status == SUCCESS)
+        {
+            printf("%s", message_buffer);
+        }
         tc += 1;
     }
 }
 
 void TM_VHF_task()
 {
+    char message_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
     while (1)
     {
         roxy_event_receive(VHF2TM_EVENT_ID);
         // printf("TM received the VHF event at:%ld\n", get_timestamp());
         // printf("TM executing phase 1 at:%ld\n", get_timestamp());
         // printf("TM exit at:%ld\n", get_timestamp());
+        sprintf(message_buffer, "Hello from TM: %d\n", tm);
+        roxy_mqueue_send(WRITER_MQUEUE_ID, message_buffer, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
         tm += 1;
     }
 }
@@ -234,6 +269,46 @@ void DHS_VHF_task()
     }
 }
 
+void writer_task()
+{
+    char message_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
+    FILE *fptr;
+    while (1)
+    {
+        roxy_mqueue_receive(WRITER_MQUEUE_ID, message_buffer, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH, ROXY_MQUEUE_BLOCKING);
+        fptr = fopen("file-system-experiment.txt", "a");
+        if (fptr == NULL)
+        {
+            printf("Failed to open file, exiting\n");
+            exit(0);
+        }
+        fwrite(message_buffer, sizeof(char), strlen(message_buffer), fptr);
+        fclose(fptr);
+    }
+}
+
+void reader_task()
+{
+    char message_buffer[ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH];
+    FILE *fptr;
+    int filesize;
+    while (1)
+    {
+        fptr = fopen("file-system-experiment.txt", "r");
+        if (fptr == NULL)
+        {
+            printf("Failed to open file, exiting\n");
+            exit(0);
+        }
+        fseek(fptr, 0L, SEEK_END);
+        filesize = ftell(fptr);
+        fclose(fptr);
+        sprintf(message_buffer, "filesize:%d bytes\n", filesize);
+        roxy_mqueue_send(READER_MQUEUE_ID, message_buffer, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
+        roxy_task_wait(1, ROXY_WAIT_SECOND);
+    }
+}
+
 void timer_simulator()
 {
 #define ITERATION_LIMIT 1000
@@ -247,8 +322,11 @@ void timer_simulator()
 int main(int argc, char *argv[])
 {
     roxy_init();
+    roxy_mqueue_flush(WRITER_MQUEUE_ID);
+    roxy_mqueue_create(WRITER_MQUEUE_ID, ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
+    roxy_mqueue_flush(READER_MQUEUE_ID);
+    roxy_mqueue_create(READER_MQUEUE_ID, ROXY_MQUEUE_RECOMMENDED_QUEUE_CAPACITY, ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH);
     roxy_task_create(SCIO_VHF_TASK_ID, TASK_PRIORITY, NULL, SCIO_VHF_task, NULL, NULL);
-
     roxy_task_create(DHS_VHF_TASK_ID, TASK_PRIORITY, NULL, DHS_VHF_task, NULL, NULL);
     roxy_task_create(TC_VHF_TASK_ID, TASK_PRIORITY, NULL, TC_VHF_task, NULL, NULL);
     roxy_task_create(TM_VHF_TASK_ID, TASK_PRIORITY, NULL, TM_VHF_task, NULL, NULL);
@@ -262,6 +340,9 @@ int main(int argc, char *argv[])
     roxy_task_create(PL_VHF_TASK_ID, TASK_PRIORITY, NULL, PL_VHF_task, NULL, NULL);
 
     roxy_task_create(TIM_SIM_TASK_ID, 20, NULL, timer_simulator, NULL, NULL);
+
+    roxy_task_create(WRITER_ASYNC_TASK_ID, 20, NULL, writer_task, NULL, NULL);
+    roxy_task_create(READER_ASYNC_TASK_ID, 20, NULL, reader_task, NULL, NULL);
 
     roxy_task_start(SCIO_VHF_TASK_ID, 1);
     roxy_task_start(DHS_VHF_TASK_ID, 1);
@@ -277,9 +358,11 @@ int main(int argc, char *argv[])
     roxy_task_start(PL_VHF_TASK_ID, 1);
 
     roxy_task_start(TIM_SIM_TASK_ID, 1);
+
+    roxy_task_start(WRITER_ASYNC_TASK_ID, 1);
+    roxy_task_start(READER_ASYNC_TASK_ID, 1);
     roxy_loop(TIM_SIM_TASK_ID);
     roxy_clean();
     printf("seq=%d, scio=%d, dhs=%d, tc=%d, tm=%d, gcq=%d, mpq=%d\n", seq, scio, dhs, tc, tm, gcq, mpq);
     printf("sys=%d, aocs=%d, pf=%d, pl=%d\n", sys, aocs, pf, pl);
 }
-*/

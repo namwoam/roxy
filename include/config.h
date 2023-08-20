@@ -1,3 +1,23 @@
+/*******************************************************************************
+*
+*  File Name    :  config.h
+*
+*  Purpose      :  Exported configuration settings in the roxy system
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #include <sched.h>
 #include <limits.h>
 #ifndef CONFIG_H
@@ -22,7 +42,7 @@ enum roxy_status_code
 
 #define ROXY_SCHEDULE_POLICY SCHED_RR
 
-#define ROXY_DEBUG 1 // 1 for active
+#define ROXY_DEBUG 0 // 1 for active
 #define ROXY_RANDOM_SEED 8080
 
 #define ROXY_MQUEUE_RECOMMENDED_MESSAGE_LENGTH 256

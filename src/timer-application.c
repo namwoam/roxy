@@ -1,5 +1,26 @@
+/*******************************************************************************
+*
+*  File Name    :  timer-application.c
+*
+*  Purpose      :  Testing hardware timer with roxy SDK
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #include "main.h"
 #include <sys/time.h>
+/*
 #include <gpiod.h>
 /*
 struct gpiod_chip *chip;
@@ -50,4 +71,4 @@ int main(int argc, char *argv[])
     roxy_clean();
     return 0;
 }
-*/
+**/

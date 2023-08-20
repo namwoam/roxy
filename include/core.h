@@ -1,3 +1,23 @@
+/*******************************************************************************
+*
+*  File Name    :  core.h
+*
+*  Purpose      :  Exported functions in the roxy system
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #define _GNU_SOURCE
 #include <pthread.h>
 #include <sched.h>
