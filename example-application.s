@@ -1,12 +1,12 @@
 	.arch armv8-a
-	.file	"timer-application.c"
+	.file	"example-application.c"
 	.text
 	.section	.text.startup,"ax",@progbits
 	.align	2
 	.p2align 4,,11
 	.type	_sub_I_00099_0, %function
 _sub_I_00099_0:
-.LFB23:
+.LFB0:
 	.cfi_startproc
 	stp	x29, x30, [sp, -16]!
 	.cfi_def_cfa_offset 16
@@ -20,7 +20,7 @@ _sub_I_00099_0:
 	.cfi_def_cfa_offset 0
 	b	__asan_version_mismatch_check_v8
 	.cfi_endproc
-.LFE23:
+.LFE0:
 	.size	_sub_I_00099_0, .-_sub_I_00099_0
 	.section	.init_array.00099,"aw"
 	.align	3

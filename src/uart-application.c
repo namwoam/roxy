@@ -1,3 +1,23 @@
+/*******************************************************************************
+*
+*  File Name    :  uart-application.c
+*
+*  Purpose      :  Testing uart connectivity with roxy SDK
+*
+*  References   :  None
+*
+*  Design Notes :  None
+*
+*  Author       :  An-Che Liang
+*
+*  Project      :  Platfrom Migration Experiment
+*
+*  Target       :  Raspberry Pi 3B / Linux
+*
+*  Modification History:
+*                  Baseline, 2023-08
+*
+*******************************************************************************/
 #include "main.h"
 #include <termios.h>
 #include <ctype.h>
@@ -57,7 +77,7 @@ void idle_task()
     while (1)
     {
         printf("program running\n");
-        roxy_task_wait(1, ROXY_WAIT_SECOND);
+        roxy_task_wait(10, ROXY_WAIT_SECOND);
     }
 }
 

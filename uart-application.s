@@ -5,7 +5,7 @@
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align	3
 .LC0:
-	.string	"3 32 16 8 buffer:6 64 60 16 terminal_setting 160 256 9 message:6"
+	.string	"3 32 16 9 buffer:26 64 60 16 terminal_setting 160 256 10 message:26"
 	.global	__asan_stack_free_3
 	.text
 	.align	2
@@ -261,7 +261,7 @@ idle_task:
 	mov	x0, x19
 	bl	puts
 	mov	w1, 1
-	mov	w0, w1
+	mov	w0, 10
 	bl	roxy_task_wait
 	b	.L43
 	.cfi_endproc

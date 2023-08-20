@@ -5,7 +5,9 @@
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 32 "<command-line>" 2
 # 1 "src/timer-application.c"
+# 21 "src/timer-application.c"
 # 1 "include/main.h" 1
+# 21 "include/main.h"
 # 1 "/usr/include/time.h" 1 3 4
 # 25 "/usr/include/time.h" 3 4
 # 1 "/usr/include/features.h" 1 3 4
@@ -480,7 +482,7 @@ extern int timespec_get (struct timespec *__ts, int __base)
      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
 # 301 "/usr/include/time.h" 3 4
 
-# 2 "include/main.h" 2
+# 22 "include/main.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 25 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1561,12 +1563,12 @@ __attribute__ ((__nothrow__ , __leaf__)) atof (const char *__nptr)
 # 1014 "/usr/include/stdlib.h" 2 3 4
 # 1023 "/usr/include/stdlib.h" 3 4
 
-# 3 "include/main.h" 2
+# 23 "include/main.h" 2
 
 
 
 # 1 "include/core.h" 1
-
+# 22 "include/core.h"
 # 1 "/usr/include/pthread.h" 1 3 4
 # 22 "/usr/include/pthread.h" 3 4
 # 1 "/usr/include/sched.h" 1 3 4
@@ -2334,7 +2336,7 @@ __attribute__ ((__nothrow__ , __leaf__)) pthread_equal (pthread_t __thread1, pth
 
 
 
-# 3 "include/core.h" 2
+# 23 "include/core.h" 2
 
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
@@ -2989,7 +2991,7 @@ __attribute__ ((__nothrow__ , __leaf__)) ferror_unlocked (FILE *__stream)
 # 865 "/usr/include/stdio.h" 2 3 4
 # 873 "/usr/include/stdio.h" 3 4
 
-# 5 "include/core.h" 2
+# 25 "include/core.h" 2
 
 # 1 "/usr/include/aarch64-linux-gnu/sys/mman.h" 1 3 4
 # 25 "/usr/include/aarch64-linux-gnu/sys/mman.h" 3 4
@@ -3073,7 +3075,7 @@ extern int shm_open (const char *__name, int __oflag, mode_t __mode);
 extern int shm_unlink (const char *__name);
 
 
-# 7 "include/core.h" 2
+# 27 "include/core.h" 2
 # 1 "/usr/include/errno.h" 1 3 4
 # 28 "/usr/include/errno.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/errno.h" 1 3 4
@@ -3102,7 +3104,7 @@ extern int shm_unlink (const char *__name);
 extern int *__errno_location (void) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
 # 52 "/usr/include/errno.h" 3 4
 
-# 8 "include/core.h" 2
+# 28 "include/core.h" 2
 # 1 "/usr/include/aarch64-linux-gnu/sys/resource.h" 1 3 4
 # 24 "/usr/include/aarch64-linux-gnu/sys/resource.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/resource.h" 1 3 4
@@ -3375,7 +3377,7 @@ extern int setpriority (__priority_which_t __which, id_t __who, int __prio)
      __attribute__ ((__nothrow__ , __leaf__));
 
 
-# 9 "include/core.h" 2
+# 29 "include/core.h" 2
 # 1 "/usr/include/fcntl.h" 1 3 4
 # 28 "/usr/include/fcntl.h" 3 4
 
@@ -3455,7 +3457,7 @@ extern int posix_fadvise (int __fd, off_t __offset, off_t __len,
 extern int posix_fallocate (int __fd, off_t __offset, off_t __len);
 # 304 "/usr/include/fcntl.h" 3 4
 
-# 10 "include/core.h" 2
+# 30 "include/core.h" 2
 # 1 "/usr/include/mqueue.h" 1 3 4
 # 24 "/usr/include/mqueue.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h" 1 3 4
@@ -3568,7 +3570,7 @@ extern int mq_timedsend (mqd_t __mqdes, const char *__msg_ptr,
   __attribute__ ((__nonnull__ (2, 5)));
 # 96 "/usr/include/mqueue.h" 3 4
 
-# 11 "include/core.h" 2
+# 31 "include/core.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -3826,7 +3828,7 @@ extern char *stpncpy (char *__restrict __dest,
      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
 # 499 "/usr/include/string.h" 3 4
 
-# 12 "include/core.h" 2
+# 32 "include/core.h" 2
 # 1 "/usr/include/signal.h" 1 3 4
 # 27 "/usr/include/signal.h" 3 4
 
@@ -4868,7 +4870,7 @@ extern int __libc_current_sigrtmax (void) __attribute__ ((__nothrow__ , __leaf__
 # 375 "/usr/include/signal.h" 2 3 4
 
 
-# 13 "include/core.h" 2
+# 33 "include/core.h" 2
 # 1 "/usr/include/unistd.h" 1 3 4
 # 27 "/usr/include/unistd.h" 3 4
 
@@ -6084,19 +6086,15 @@ int getentropy (void *__buffer, size_t __length) ;
 # 1171 "/usr/include/unistd.h" 2 3 4
 
 
-# 14 "include/core.h" 2
+# 34 "include/core.h" 2
 
 
 
 
 # 1 "include/model.h" 1
-
-
-
-
-
+# 26 "include/model.h"
 # 1 "include/config.h" 1
-
+# 22 "include/config.h"
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 1 3 4
 # 34 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 3 4
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/syslimits.h" 1 3 4
@@ -6132,19 +6130,19 @@ int getentropy (void *__buffer, size_t __length) ;
 # 196 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 2 3 4
 # 8 "/usr/lib/gcc/aarch64-linux-gnu/10/include/syslimits.h" 2 3 4
 # 35 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 2 3 4
-# 3 "include/config.h" 2
+# 23 "include/config.h" 2
 
 
 
-# 5 "include/config.h"
+# 25 "include/config.h"
 enum roxy_status_code
 {
     SUCCESS = 0,
     CONFIG_ERROR = 1,
     RUNTIME_ERROR = 2
 };
-# 7 "include/model.h" 2
-# 15 "include/model.h"
+# 27 "include/model.h" 2
+# 35 "include/model.h"
 enum task_status
 {
     TASK_EMPTY = 0,
@@ -6196,12 +6194,12 @@ struct roxy_event
     pthread_cond_t waiting_condition;
     int gate;
 };
-# 19 "include/core.h" 2
+# 39 "include/core.h" 2
 # 1 "include/config.h" 1
-
+# 22 "include/config.h"
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 1 3 4
-# 3 "include/config.h" 2
-# 20 "include/core.h" 2
+# 23 "include/config.h" 2
+# 40 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_loop(unsigned task_id);
@@ -6231,731 +6229,5 @@ enum roxy_status_code roxy_event_send(unsigned event_id);
 enum roxy_status_code roxy_event_receive(unsigned event_id);
 
 enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr);
-# 7 "include/main.h" 2
-# 2 "src/timer-application.c" 2
-
-# 1 "/usr/include/gpiod.h" 1 3 4
-# 11 "/usr/include/gpiod.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/stdbool.h" 1 3 4
-# 12 "/usr/include/gpiod.h" 2 3 4
-# 46 "/usr/include/gpiod.h" 3 4
-
-# 46 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip;
-struct gpiod_line;
-struct gpiod_chip_iter;
-struct gpiod_line_iter;
-struct gpiod_line_bulk;
-# 94 "/usr/include/gpiod.h" 3 4
-enum {
- GPIOD_CTXLESS_FLAG_OPEN_DRAIN = (1UL << (0)),
-
- GPIOD_CTXLESS_FLAG_OPEN_SOURCE = (1UL << (1)),
-
- GPIOD_CTXLESS_FLAG_BIAS_DISABLE = (1UL << (2)),
-
- GPIOD_CTXLESS_FLAG_BIAS_PULL_DOWN = (1UL << (3)),
-
- GPIOD_CTXLESS_FLAG_BIAS_PULL_UP = (1UL << (4)),
-
-};
-# 115 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_get_value(const char *device, unsigned int offset,
-       _Bool active_low, const char *consumer) __attribute__((visibility("default")));
-# 127 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
-    _Bool active_low, const char *consumer,
-    int flags) __attribute__((visibility("default")));
-# 141 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_get_value_multiple(const char *device,
-         const unsigned int *offsets, int *values,
-         unsigned int num_lines, _Bool active_low,
-         const char *consumer) __attribute__((visibility("default")));
-# 157 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_get_value_multiple_ext(const char *device,
-      const unsigned int *offsets,
-      int *values, unsigned int num_lines,
-      _Bool active_low, const char *consumer,
-      int flags) __attribute__((visibility("default")));
-
-
-
-
-typedef void (*gpiod_ctxless_set_value_cb)(void *);
-# 181 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_set_value(const char *device, unsigned int offset, int value,
-       _Bool active_low, const char *consumer,
-       gpiod_ctxless_set_value_cb cb,
-       void *data) __attribute__((visibility("default")));
-# 200 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_set_value_ext(const char *device, unsigned int offset,
-    int value, _Bool active_low,
-    const char *consumer,
-    gpiod_ctxless_set_value_cb cb,
-    void *data, int flags) __attribute__((visibility("default")));
-# 219 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_set_value_multiple(const char *device,
-         const unsigned int *offsets,
-         const int *values, unsigned int num_lines,
-         _Bool active_low, const char *consumer,
-         gpiod_ctxless_set_value_cb cb,
-         void *data) __attribute__((visibility("default")));
-# 240 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_set_value_multiple_ext(const char *device,
-      const unsigned int *offsets,
-      const int *values,
-      unsigned int num_lines,
-      _Bool active_low,
-      const char *consumer,
-      gpiod_ctxless_set_value_cb cb,
-      void *data, int flags) __attribute__((visibility("default")));
-
-
-
-
-enum {
-
- GPIOD_CTXLESS_EVENT_RISING_EDGE = 1,
-
- GPIOD_CTXLESS_EVENT_FALLING_EDGE,
-
- GPIOD_CTXLESS_EVENT_BOTH_EDGES,
-};
-
-
-
-
-enum {
- GPIOD_CTXLESS_EVENT_CB_TIMEOUT = 1,
-
- GPIOD_CTXLESS_EVENT_CB_RISING_EDGE,
-
- GPIOD_CTXLESS_EVENT_CB_FALLING_EDGE,
-
-};
-
-
-
-
-enum {
- GPIOD_CTXLESS_EVENT_CB_RET_ERR = -1,
-
- GPIOD_CTXLESS_EVENT_CB_RET_OK = 0,
-
- GPIOD_CTXLESS_EVENT_CB_RET_STOP = 1,
-
-};
-# 296 "/usr/include/gpiod.h" 3 4
-typedef int (*gpiod_ctxless_event_handle_cb)(int, unsigned int,
-          const struct timespec *, void *);
-
-
-
-
-
-
-
-enum {
- GPIOD_CTXLESS_EVENT_POLL_RET_STOP = -2,
-
- GPIOD_CTXLESS_EVENT_POLL_RET_ERR = -1,
-
- GPIOD_CTXLESS_EVENT_POLL_RET_TIMEOUT = 0,
-
-};
-
-
-
-
-struct gpiod_ctxless_event_poll_fd {
- int fd;
-
- _Bool event;
-
-};
-# 336 "/usr/include/gpiod.h" 3 4
-typedef int (*gpiod_ctxless_event_poll_cb)(unsigned int,
-    struct gpiod_ctxless_event_poll_fd *,
-    const struct timespec *, void *);
-# 358 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_loop(const char *device, unsigned int offset,
-        _Bool active_low, const char *consumer,
-        const struct timespec *timeout,
-        gpiod_ctxless_event_poll_cb poll_cb,
-        gpiod_ctxless_event_handle_cb event_cb,
-        void *data) __attribute__((visibility("default"))) __attribute__((deprecated));
-# 396 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_loop_multiple(const char *device,
-          const unsigned int *offsets,
-          unsigned int num_lines, _Bool active_low,
-          const char *consumer,
-          const struct timespec *timeout,
-          gpiod_ctxless_event_poll_cb poll_cb,
-          gpiod_ctxless_event_handle_cb event_cb,
-          void *data) __attribute__((visibility("default"))) __attribute__((deprecated));
-# 421 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_monitor(const char *device, int event_type,
-    unsigned int offset, _Bool active_low,
-    const char *consumer,
-    const struct timespec *timeout,
-    gpiod_ctxless_event_poll_cb poll_cb,
-    gpiod_ctxless_event_handle_cb event_cb,
-    void *data) __attribute__((visibility("default")));
-# 446 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_monitor_ext(const char *device, int event_type,
-        unsigned int offset, _Bool active_low,
-        const char *consumer,
-        const struct timespec *timeout,
-        gpiod_ctxless_event_poll_cb poll_cb,
-        gpiod_ctxless_event_handle_cb event_cb,
-        void *data, int flags) __attribute__((visibility("default")));
-# 484 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_monitor_multiple(
-   const char *device, int event_type,
-   const unsigned int *offsets,
-   unsigned int num_lines, _Bool active_low,
-   const char *consumer, const struct timespec *timeout,
-   gpiod_ctxless_event_poll_cb poll_cb,
-   gpiod_ctxless_event_handle_cb event_cb,
-   void *data) __attribute__((visibility("default")));
-# 524 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_event_monitor_multiple_ext(
-   const char *device, int event_type,
-   const unsigned int *offsets,
-   unsigned int num_lines, _Bool active_low,
-   const char *consumer, const struct timespec *timeout,
-   gpiod_ctxless_event_poll_cb poll_cb,
-   gpiod_ctxless_event_handle_cb event_cb,
-   void *data, int flags) __attribute__((visibility("default")));
-# 548 "/usr/include/gpiod.h" 3 4
-int gpiod_ctxless_find_line(const char *name, char *chipname,
-       size_t chipname_size,
-       unsigned int *offset) __attribute__((visibility("default")));
-# 566 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *gpiod_chip_open(const char *path) __attribute__((visibility("default")));
-# 575 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *gpiod_chip_open_by_name(const char *name) __attribute__((visibility("default")));
-# 584 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *gpiod_chip_open_by_number(unsigned int num) __attribute__((visibility("default")));
-# 594 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *gpiod_chip_open_by_label(const char *label) __attribute__((visibility("default")));
-# 605 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *gpiod_chip_open_lookup(const char *descr) __attribute__((visibility("default")));
-
-
-
-
-
-void gpiod_chip_close(struct gpiod_chip *chip) __attribute__((visibility("default")));
-
-
-
-
-
-
-const char *gpiod_chip_name(struct gpiod_chip *chip) __attribute__((visibility("default")));
-
-
-
-
-
-
-const char *gpiod_chip_label(struct gpiod_chip *chip) __attribute__((visibility("default")));
-
-
-
-
-
-
-unsigned int gpiod_chip_num_lines(struct gpiod_chip *chip) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-struct gpiod_line *
-gpiod_chip_get_line(struct gpiod_chip *chip, unsigned int offset) __attribute__((visibility("default")));
-# 651 "/usr/include/gpiod.h" 3 4
-int gpiod_chip_get_lines(struct gpiod_chip *chip,
-    unsigned int *offsets, unsigned int num_offsets,
-    struct gpiod_line_bulk *bulk) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_chip_get_all_lines(struct gpiod_chip *chip,
-        struct gpiod_line_bulk *bulk) __attribute__((visibility("default")));
-# 676 "/usr/include/gpiod.h" 3 4
-struct gpiod_line *
-gpiod_chip_find_line(struct gpiod_chip *chip, const char *name) __attribute__((visibility("default")));
-# 692 "/usr/include/gpiod.h" 3 4
-int gpiod_chip_find_lines(struct gpiod_chip *chip, const char **names,
-     struct gpiod_line_bulk *bulk) __attribute__((visibility("default")));
-# 722 "/usr/include/gpiod.h" 3 4
-struct gpiod_line_bulk {
- struct gpiod_line *lines[64];
-
- unsigned int num_lines;
-
-};
-# 742 "/usr/include/gpiod.h" 3 4
-static inline void gpiod_line_bulk_init(struct gpiod_line_bulk *bulk)
-{
- bulk->num_lines = 0;
-}
-
-
-
-
-
-
-static inline void gpiod_line_bulk_add(struct gpiod_line_bulk *bulk,
-           struct gpiod_line *line)
-{
- bulk->lines[bulk->num_lines++] = line;
-}
-
-
-
-
-
-
-
-static inline struct gpiod_line *
-gpiod_line_bulk_get_line(struct gpiod_line_bulk *bulk, unsigned int offset)
-{
- return bulk->lines[offset];
-}
-
-
-
-
-
-
-static inline unsigned int
-gpiod_line_bulk_num_lines(struct gpiod_line_bulk *bulk)
-{
- return bulk->num_lines;
-}
-# 824 "/usr/include/gpiod.h" 3 4
-enum {
- GPIOD_LINE_DIRECTION_INPUT = 1,
-
- GPIOD_LINE_DIRECTION_OUTPUT,
-
-};
-
-
-
-
-enum {
- GPIOD_LINE_ACTIVE_STATE_HIGH = 1,
-
- GPIOD_LINE_ACTIVE_STATE_LOW,
-
-};
-
-
-
-
-enum {
- GPIOD_LINE_BIAS_AS_IS = 1,
-
- GPIOD_LINE_BIAS_DISABLE,
-
- GPIOD_LINE_BIAS_PULL_UP,
-
- GPIOD_LINE_BIAS_PULL_DOWN,
-
-};
-
-
-
-
-
-
-unsigned int gpiod_line_offset(struct gpiod_line *line) __attribute__((visibility("default")));
-# 869 "/usr/include/gpiod.h" 3 4
-const char *gpiod_line_name(struct gpiod_line *line) __attribute__((visibility("default")));
-# 878 "/usr/include/gpiod.h" 3 4
-const char *gpiod_line_consumer(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-int gpiod_line_direction(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-int gpiod_line_active_state(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_bias(struct gpiod_line *line) __attribute__((visibility("default")));
-# 911 "/usr/include/gpiod.h" 3 4
-_Bool gpiod_line_is_used(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-_Bool gpiod_line_is_open_drain(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-_Bool gpiod_line_is_open_source(struct gpiod_line *line) __attribute__((visibility("default")));
-# 947 "/usr/include/gpiod.h" 3 4
-int gpiod_line_update(struct gpiod_line *line) __attribute__((visibility("default")));
-# 956 "/usr/include/gpiod.h" 3 4
-_Bool
-gpiod_line_needs_update(struct gpiod_line *line) __attribute__((visibility("default"))) __attribute__((deprecated));
-# 972 "/usr/include/gpiod.h" 3 4
-enum {
- GPIOD_LINE_REQUEST_DIRECTION_AS_IS = 1,
-
- GPIOD_LINE_REQUEST_DIRECTION_INPUT,
-
- GPIOD_LINE_REQUEST_DIRECTION_OUTPUT,
-
- GPIOD_LINE_REQUEST_EVENT_FALLING_EDGE,
-
- GPIOD_LINE_REQUEST_EVENT_RISING_EDGE,
-
- GPIOD_LINE_REQUEST_EVENT_BOTH_EDGES,
-
-};
-
-
-
-
-enum {
- GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN = (1UL << (0)),
-
- GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE = (1UL << (1)),
-
- GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW = (1UL << (2)),
-
- GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE = (1UL << (3)),
-
- GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN = (1UL << (4)),
-
- GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP = (1UL << (5)),
-
-};
-
-
-
-
-struct gpiod_line_request_config {
- const char *consumer;
-
- int request_type;
-
- int flags;
-
-};
-# 1029 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request(struct gpiod_line *line,
-         const struct gpiod_line_request_config *config,
-         int default_val) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_input(struct gpiod_line *line,
-        const char *consumer) __attribute__((visibility("default")));
-# 1049 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_output(struct gpiod_line *line,
-         const char *consumer, int default_val) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_rising_edge_events(struct gpiod_line *line,
-       const char *consumer) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_falling_edge_events(struct gpiod_line *line,
-        const char *consumer) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_both_edges_events(struct gpiod_line *line,
-      const char *consumer) __attribute__((visibility("default")));
-# 1086 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_input_flags(struct gpiod_line *line,
-       const char *consumer, int flags) __attribute__((visibility("default")));
-# 1097 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_output_flags(struct gpiod_line *line,
-        const char *consumer, int flags,
-        int default_val) __attribute__((visibility("default")));
-# 1108 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_rising_edge_events_flags(struct gpiod_line *line,
-      const char *consumer,
-      int flags) __attribute__((visibility("default")));
-# 1119 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_falling_edge_events_flags(struct gpiod_line *line,
-       const char *consumer,
-       int flags) __attribute__((visibility("default")));
-# 1130 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_both_edges_events_flags(struct gpiod_line *line,
-            const char *consumer,
-            int flags) __attribute__((visibility("default")));
-# 1147 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk(struct gpiod_line_bulk *bulk,
-       const struct gpiod_line_request_config *config,
-       const int *default_vals) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_bulk_input(struct gpiod_line_bulk *bulk,
-      const char *consumer) __attribute__((visibility("default")));
-# 1167 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_output(struct gpiod_line_bulk *bulk,
-       const char *consumer,
-       const int *default_vals) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_bulk_rising_edge_events(struct gpiod_line_bulk *bulk,
-            const char *consumer) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_bulk_falling_edge_events(struct gpiod_line_bulk *bulk,
-      const char *consumer) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_request_bulk_both_edges_events(struct gpiod_line_bulk *bulk,
-           const char *consumer) __attribute__((visibility("default")));
-# 1205 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_input_flags(struct gpiod_line_bulk *bulk,
-     const char *consumer,
-     int flags) __attribute__((visibility("default")));
-# 1217 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_output_flags(struct gpiod_line_bulk *bulk,
-      const char *consumer, int flags,
-      const int *default_vals) __attribute__((visibility("default")));
-# 1228 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_rising_edge_events_flags(
-     struct gpiod_line_bulk *bulk,
-     const char *consumer,
-     int flags) __attribute__((visibility("default")));
-# 1240 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_falling_edge_events_flags(
-     struct gpiod_line_bulk *bulk,
-     const char *consumer,
-     int flags) __attribute__((visibility("default")));
-# 1252 "/usr/include/gpiod.h" 3 4
-int gpiod_line_request_bulk_both_edges_events_flags(
-     struct gpiod_line_bulk *bulk,
-     const char *consumer,
-     int flags) __attribute__((visibility("default")));
-
-
-
-
-
-void gpiod_line_release(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1270 "/usr/include/gpiod.h" 3 4
-void gpiod_line_release_bulk(struct gpiod_line_bulk *bulk) __attribute__((visibility("default")));
-
-
-
-
-
-
-_Bool gpiod_line_is_requested(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-_Bool gpiod_line_is_free(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1303 "/usr/include/gpiod.h" 3 4
-int gpiod_line_get_value(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1316 "/usr/include/gpiod.h" 3 4
-int gpiod_line_get_value_bulk(struct gpiod_line_bulk *bulk,
-         int *values) __attribute__((visibility("default")));
-# 1326 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_value(struct gpiod_line *line, int value) __attribute__((visibility("default")));
-# 1339 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_value_bulk(struct gpiod_line_bulk *bulk,
-         const int *values) __attribute__((visibility("default")));
-# 1365 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_config(struct gpiod_line *line, int direction,
-     int flags, int value) __attribute__((visibility("default")));
-# 1386 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_config_bulk(struct gpiod_line_bulk *bulk,
-          int direction, int flags,
-          const int *values) __attribute__((visibility("default")));
-# 1398 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_flags(struct gpiod_line *line, int flags) __attribute__((visibility("default")));
-# 1410 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_flags_bulk(struct gpiod_line_bulk *bulk,
-         int flags) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-int gpiod_line_set_direction_input(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1430 "/usr/include/gpiod.h" 3 4
-int
-gpiod_line_set_direction_input_bulk(struct gpiod_line_bulk *bulk) __attribute__((visibility("default")));
-# 1440 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_direction_output(struct gpiod_line *line,
-        int value) __attribute__((visibility("default")));
-# 1455 "/usr/include/gpiod.h" 3 4
-int gpiod_line_set_direction_output_bulk(struct gpiod_line_bulk *bulk,
-      const int *values) __attribute__((visibility("default")));
-# 1473 "/usr/include/gpiod.h" 3 4
-enum {
- GPIOD_LINE_EVENT_RISING_EDGE = 1,
-
- GPIOD_LINE_EVENT_FALLING_EDGE,
-
-};
-
-
-
-
-struct gpiod_line_event {
- struct timespec ts;
-
- int event_type;
-
-};
-# 1497 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_wait(struct gpiod_line *line,
-     const struct timespec *timeout) __attribute__((visibility("default")));
-# 1509 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_wait_bulk(struct gpiod_line_bulk *bulk,
-          const struct timespec *timeout,
-          struct gpiod_line_bulk *event_bulk) __attribute__((visibility("default")));
-# 1520 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_read(struct gpiod_line *line,
-     struct gpiod_line_event *event) __attribute__((visibility("default")));
-# 1532 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_read_multiple(struct gpiod_line *line,
-       struct gpiod_line_event *events,
-       unsigned int num_events) __attribute__((visibility("default")));
-# 1546 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_get_fd(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1558 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_read_fd(int fd, struct gpiod_line_event *event) __attribute__((visibility("default")));
-# 1569 "/usr/include/gpiod.h" 3 4
-int gpiod_line_event_read_fd_multiple(int fd, struct gpiod_line_event *events,
-          unsigned int num_events) __attribute__((visibility("default")));
-# 1593 "/usr/include/gpiod.h" 3 4
-struct gpiod_line *
-gpiod_line_get(const char *device, unsigned int offset) __attribute__((visibility("default")));
-# 1609 "/usr/include/gpiod.h" 3 4
-struct gpiod_line *gpiod_line_find(const char *name) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-void gpiod_line_close_chip(struct gpiod_line *line) __attribute__((visibility("default")));
-
-
-
-
-
-
-struct gpiod_chip *gpiod_line_get_chip(struct gpiod_line *line) __attribute__((visibility("default")));
-# 1646 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip_iter *gpiod_chip_iter_new(void) __attribute__((visibility("default")));
-
-
-
-
-
-
-void gpiod_chip_iter_free(struct gpiod_chip_iter *iter) __attribute__((visibility("default")));
-# 1664 "/usr/include/gpiod.h" 3 4
-void gpiod_chip_iter_free_noclose(struct gpiod_chip_iter *iter) __attribute__((visibility("default")));
-# 1673 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *
-gpiod_chip_iter_next(struct gpiod_chip_iter *iter) __attribute__((visibility("default")));
-# 1684 "/usr/include/gpiod.h" 3 4
-struct gpiod_chip *
-gpiod_chip_iter_next_noclose(struct gpiod_chip_iter *iter) __attribute__((visibility("default")));
-# 1723 "/usr/include/gpiod.h" 3 4
-struct gpiod_line_iter *
-gpiod_line_iter_new(struct gpiod_chip *chip) __attribute__((visibility("default")));
-
-
-
-
-
-void gpiod_line_iter_free(struct gpiod_line_iter *iter) __attribute__((visibility("default")));
-
-
-
-
-
-
-
-struct gpiod_line *
-gpiod_line_iter_next(struct gpiod_line_iter *iter) __attribute__((visibility("default")));
-# 1765 "/usr/include/gpiod.h" 3 4
-const char *gpiod_version_string(void) __attribute__((visibility("default")));
-# 4 "src/timer-application.c" 2
+# 27 "include/main.h" 2
+# 22 "src/timer-application.c" 2

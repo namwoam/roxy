@@ -5,7 +5,9 @@
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 32 "<command-line>" 2
 # 1 "src/uart-application.c"
+# 21 "src/uart-application.c"
 # 1 "include/main.h" 1
+# 21 "include/main.h"
 # 1 "/usr/include/time.h" 1 3 4
 # 25 "/usr/include/time.h" 3 4
 # 1 "/usr/include/features.h" 1 3 4
@@ -480,7 +482,7 @@ extern int timespec_get (struct timespec *__ts, int __base)
      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
 # 301 "/usr/include/time.h" 3 4
 
-# 2 "include/main.h" 2
+# 22 "include/main.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 25 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1561,12 +1563,12 @@ __attribute__ ((__nothrow__ , __leaf__)) atof (const char *__nptr)
 # 1014 "/usr/include/stdlib.h" 2 3 4
 # 1023 "/usr/include/stdlib.h" 3 4
 
-# 3 "include/main.h" 2
+# 23 "include/main.h" 2
 
 
 
 # 1 "include/core.h" 1
-
+# 22 "include/core.h"
 # 1 "/usr/include/pthread.h" 1 3 4
 # 22 "/usr/include/pthread.h" 3 4
 # 1 "/usr/include/sched.h" 1 3 4
@@ -2334,7 +2336,7 @@ __attribute__ ((__nothrow__ , __leaf__)) pthread_equal (pthread_t __thread1, pth
 
 
 
-# 3 "include/core.h" 2
+# 23 "include/core.h" 2
 
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
@@ -2989,7 +2991,7 @@ __attribute__ ((__nothrow__ , __leaf__)) ferror_unlocked (FILE *__stream)
 # 865 "/usr/include/stdio.h" 2 3 4
 # 873 "/usr/include/stdio.h" 3 4
 
-# 5 "include/core.h" 2
+# 25 "include/core.h" 2
 
 # 1 "/usr/include/aarch64-linux-gnu/sys/mman.h" 1 3 4
 # 25 "/usr/include/aarch64-linux-gnu/sys/mman.h" 3 4
@@ -3073,7 +3075,7 @@ extern int shm_open (const char *__name, int __oflag, mode_t __mode);
 extern int shm_unlink (const char *__name);
 
 
-# 7 "include/core.h" 2
+# 27 "include/core.h" 2
 # 1 "/usr/include/errno.h" 1 3 4
 # 28 "/usr/include/errno.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/errno.h" 1 3 4
@@ -3102,7 +3104,7 @@ extern int shm_unlink (const char *__name);
 extern int *__errno_location (void) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__));
 # 52 "/usr/include/errno.h" 3 4
 
-# 8 "include/core.h" 2
+# 28 "include/core.h" 2
 # 1 "/usr/include/aarch64-linux-gnu/sys/resource.h" 1 3 4
 # 24 "/usr/include/aarch64-linux-gnu/sys/resource.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/resource.h" 1 3 4
@@ -3375,7 +3377,7 @@ extern int setpriority (__priority_which_t __which, id_t __who, int __prio)
      __attribute__ ((__nothrow__ , __leaf__));
 
 
-# 9 "include/core.h" 2
+# 29 "include/core.h" 2
 # 1 "/usr/include/fcntl.h" 1 3 4
 # 28 "/usr/include/fcntl.h" 3 4
 
@@ -3455,7 +3457,7 @@ extern int posix_fadvise (int __fd, off_t __offset, off_t __len,
 extern int posix_fallocate (int __fd, off_t __offset, off_t __len);
 # 304 "/usr/include/fcntl.h" 3 4
 
-# 10 "include/core.h" 2
+# 30 "include/core.h" 2
 # 1 "/usr/include/mqueue.h" 1 3 4
 # 24 "/usr/include/mqueue.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h" 1 3 4
@@ -3568,7 +3570,7 @@ extern int mq_timedsend (mqd_t __mqdes, const char *__msg_ptr,
   __attribute__ ((__nonnull__ (2, 5)));
 # 96 "/usr/include/mqueue.h" 3 4
 
-# 11 "include/core.h" 2
+# 31 "include/core.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -3826,7 +3828,7 @@ extern char *stpncpy (char *__restrict __dest,
      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
 # 499 "/usr/include/string.h" 3 4
 
-# 12 "include/core.h" 2
+# 32 "include/core.h" 2
 # 1 "/usr/include/signal.h" 1 3 4
 # 27 "/usr/include/signal.h" 3 4
 
@@ -4868,7 +4870,7 @@ extern int __libc_current_sigrtmax (void) __attribute__ ((__nothrow__ , __leaf__
 # 375 "/usr/include/signal.h" 2 3 4
 
 
-# 13 "include/core.h" 2
+# 33 "include/core.h" 2
 # 1 "/usr/include/unistd.h" 1 3 4
 # 27 "/usr/include/unistd.h" 3 4
 
@@ -6084,19 +6086,15 @@ int getentropy (void *__buffer, size_t __length) ;
 # 1171 "/usr/include/unistd.h" 2 3 4
 
 
-# 14 "include/core.h" 2
+# 34 "include/core.h" 2
 
 
 
 
 # 1 "include/model.h" 1
-
-
-
-
-
+# 26 "include/model.h"
 # 1 "include/config.h" 1
-
+# 22 "include/config.h"
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 1 3 4
 # 34 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 3 4
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/syslimits.h" 1 3 4
@@ -6132,19 +6130,19 @@ int getentropy (void *__buffer, size_t __length) ;
 # 196 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 2 3 4
 # 8 "/usr/lib/gcc/aarch64-linux-gnu/10/include/syslimits.h" 2 3 4
 # 35 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 2 3 4
-# 3 "include/config.h" 2
+# 23 "include/config.h" 2
 
 
 
-# 5 "include/config.h"
+# 25 "include/config.h"
 enum roxy_status_code
 {
     SUCCESS = 0,
     CONFIG_ERROR = 1,
     RUNTIME_ERROR = 2
 };
-# 7 "include/model.h" 2
-# 15 "include/model.h"
+# 27 "include/model.h" 2
+# 35 "include/model.h"
 enum task_status
 {
     TASK_EMPTY = 0,
@@ -6196,12 +6194,12 @@ struct roxy_event
     pthread_cond_t waiting_condition;
     int gate;
 };
-# 19 "include/core.h" 2
+# 39 "include/core.h" 2
 # 1 "include/config.h" 1
-
+# 22 "include/config.h"
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/10/include/limits.h" 1 3 4
-# 3 "include/config.h" 2
-# 20 "include/core.h" 2
+# 23 "include/config.h" 2
+# 40 "include/core.h" 2
 
 enum roxy_status_code roxy_init(void);
 enum roxy_status_code roxy_loop(unsigned task_id);
@@ -6231,8 +6229,8 @@ enum roxy_status_code roxy_event_send(unsigned event_id);
 enum roxy_status_code roxy_event_receive(unsigned event_id);
 
 enum roxy_status_code roxy_interrupt_catch(unsigned signal_id, void *function_ptr);
-# 7 "include/main.h" 2
-# 2 "src/uart-application.c" 2
+# 27 "include/main.h" 2
+# 22 "src/uart-application.c" 2
 # 1 "/usr/include/termios.h" 1 3 4
 # 35 "/usr/include/termios.h" 3 4
 
@@ -6346,7 +6344,7 @@ extern __pid_t tcgetsid (int __fd) __attribute__ ((__nothrow__ , __leaf__));
 
 
 
-# 3 "src/uart-application.c" 2
+# 23 "src/uart-application.c" 2
 # 1 "/usr/include/ctype.h" 1 3 4
 # 28 "/usr/include/ctype.h" 3 4
 
@@ -6445,9 +6443,9 @@ extern int __toupper_l (int __c, locale_t __l) __attribute__ ((__nothrow__ , __l
 extern int toupper_l (int __c, locale_t __l) __attribute__ ((__nothrow__ , __leaf__));
 # 327 "/usr/include/ctype.h" 3 4
 
-# 4 "src/uart-application.c" 2
+# 24 "src/uart-application.c" 2
 
-# 4 "src/uart-application.c"
+# 24 "src/uart-application.c"
 void reading_task()
 {
     char buffer[16], message[256];
@@ -6455,13 +6453,13 @@ void reading_task()
     while (1)
     {
         int serial_port = open("/dev/ttyS0", 
-# 10 "src/uart-application.c" 3 4
+# 30 "src/uart-application.c" 3 4
                                             02 
-# 10 "src/uart-application.c"
+# 30 "src/uart-application.c"
                                                    | 
-# 10 "src/uart-application.c" 3 4
+# 30 "src/uart-application.c" 3 4
                                                      0400
-# 10 "src/uart-application.c"
+# 30 "src/uart-application.c"
                                                              );
         if (serial_port < 0)
         {
@@ -6471,36 +6469,36 @@ void reading_task()
         if (tcgetattr(serial_port, &terminal_setting) != 0)
         {
             printf("Error %i from tcgetattr: %s\n", 
-# 18 "src/uart-application.c" 3 4
+# 38 "src/uart-application.c" 3 4
                                                    (*__errno_location ())
-# 18 "src/uart-application.c"
+# 38 "src/uart-application.c"
                                                         , strerror(
-# 18 "src/uart-application.c" 3 4
+# 38 "src/uart-application.c" 3 4
                                                                    (*__errno_location ())
-# 18 "src/uart-application.c"
+# 38 "src/uart-application.c"
                                                                         ));
             continue;
         }
 
         cfsetispeed(&terminal_setting, 
-# 22 "src/uart-application.c" 3 4
+# 42 "src/uart-application.c" 3 4
                                       0000015
-# 22 "src/uart-application.c"
+# 42 "src/uart-application.c"
                                            );
         if (tcsetattr(serial_port, 
-# 23 "src/uart-application.c" 3 4
+# 43 "src/uart-application.c" 3 4
                                   0
-# 23 "src/uart-application.c"
+# 43 "src/uart-application.c"
                                          , &terminal_setting) != 0)
         {
             printf("Error %i from tcsetattr: %s\n", 
-# 25 "src/uart-application.c" 3 4
+# 45 "src/uart-application.c" 3 4
                                                    (*__errno_location ())
-# 25 "src/uart-application.c"
+# 45 "src/uart-application.c"
                                                         , strerror(
-# 25 "src/uart-application.c" 3 4
+# 45 "src/uart-application.c" 3 4
                                                                    (*__errno_location ())
-# 25 "src/uart-application.c"
+# 45 "src/uart-application.c"
                                                                         ));
             continue;
         }
@@ -6512,13 +6510,13 @@ void reading_task()
             for (int index = 0; index < buffer_length; index++)
             {
                 if (!
-# 35 "src/uart-application.c" 3 4
+# 55 "src/uart-application.c" 3 4
                     ((*__ctype_b_loc ())[(int) ((
-# 35 "src/uart-application.c"
+# 55 "src/uart-application.c"
                     buffer[index]
-# 35 "src/uart-application.c" 3 4
+# 55 "src/uart-application.c" 3 4
                     ))] & (unsigned short int) _IScntrl)
-# 35 "src/uart-application.c"
+# 55 "src/uart-application.c"
                                           )
                 {
                     strncat(message, &buffer[index], 1);
@@ -6544,7 +6542,7 @@ void idle_task()
     while (1)
     {
         printf("program running\n");
-        roxy_task_wait(1, 1);
+        roxy_task_wait(10, 1);
     }
 }
 
@@ -6552,31 +6550,31 @@ int main(int argc, char *argv[])
 {
     roxy_init();
     roxy_task_create(100, 10, 
-# 67 "src/uart-application.c" 3 4
+# 87 "src/uart-application.c" 3 4
                              ((void *)0)
-# 67 "src/uart-application.c"
+# 87 "src/uart-application.c"
                                  , 
-# 67 "src/uart-application.c" 3 4
+# 87 "src/uart-application.c" 3 4
                                    ((void *)0)
-# 67 "src/uart-application.c"
+# 87 "src/uart-application.c"
                                        , idle_task, 
-# 67 "src/uart-application.c" 3 4
+# 87 "src/uart-application.c" 3 4
                                                     ((void *)0)
-# 67 "src/uart-application.c"
+# 87 "src/uart-application.c"
                                                         );
     roxy_task_start(100, 1);
     roxy_task_create(101, 10, 
-# 69 "src/uart-application.c" 3 4
+# 89 "src/uart-application.c" 3 4
                              ((void *)0)
-# 69 "src/uart-application.c"
+# 89 "src/uart-application.c"
                                  , 
-# 69 "src/uart-application.c" 3 4
+# 89 "src/uart-application.c" 3 4
                                    ((void *)0)
-# 69 "src/uart-application.c"
+# 89 "src/uart-application.c"
                                        , reading_task, 
-# 69 "src/uart-application.c" 3 4
+# 89 "src/uart-application.c" 3 4
                                                        ((void *)0)
-# 69 "src/uart-application.c"
+# 89 "src/uart-application.c"
                                                            );
     roxy_task_start(101, 1);
     roxy_loop(100);
