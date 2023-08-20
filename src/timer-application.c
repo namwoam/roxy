@@ -1,7 +1,7 @@
 #include "main.h"
 #include <sys/time.h>
 #include <gpiod.h>
-
+/*
 struct gpiod_chip *chip;
 struct gpiod_line *lineRed;
 
@@ -26,8 +26,7 @@ void timer_handler()
 
 void idle_task()
 {
-    int i = 0;
-    for (int i = 0; i < 60 * 120; i++)
+    while (1)
     {
         printf("program running\n");
         roxy_task_wait(1, ROXY_WAIT_SECOND);
@@ -51,3 +50,4 @@ int main(int argc, char *argv[])
     roxy_clean();
     return 0;
 }
+*/
